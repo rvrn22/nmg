@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="@AssemblyName@">
+  <class name="@NameSpace@.@ClassName@, @AssemblyName@" lazy="true" table="@TableName@">
+    <id name="Id" type="long" column="ID">
+      <generator class="native">
+        <param name="sequence">@SequenceName@</param>
+      </generator>
+    </id>
+  </class>
+</hibernate-mapping>
