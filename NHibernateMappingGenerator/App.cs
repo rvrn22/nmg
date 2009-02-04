@@ -14,6 +14,24 @@ namespace NHibernateMappingGenerator
             InitializeComponent();
             dbTableDetailsGridView.AutoGenerateColumns = true;
             tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
+            serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
+            BindData();
+        }
+
+        private void ServerTypeSelected(object sender, EventArgs e)
+        {
+            if((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle)
+            {
+                
+            }
+        }
+
+        private void BindData()
+        {
+            serverTypeComboBox.Items.Add(ServerType.Oracle);
+            serverTypeComboBox.Items.Add(ServerType.SqlServer2005);
+            serverTypeComboBox.Items.Add(ServerType.SqlServer2008);
+            serverTypeComboBox.SelectedIndex = 0;
         }
 
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
@@ -61,6 +79,12 @@ namespace NHibernateMappingGenerator
 
         private void connectBtn_Click(object sender, EventArgs e)
         {
+            if((ServerType)serverTypeComboBox.SelectedItem != ServerType.Oracle)
+            {
+                MessageBox.Show("Only Oracle Server is currently supported.", "DB Support Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                return;
+            }
             Cursor.Current = Cursors.WaitCursor;
             try
             {
@@ -124,7 +148,12 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";
-                var generator = new MappingGenerator(folderTextBox.Text, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
+                string folderPath = folderTextBox.Text;
+                if(!folderPath.EndsWith("\\"))
+                {
+                    folderPath += "\\";
+                }
+                var generator = new MappingGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
                 generator.GenerateMappingFile();
                 generator.GenerateCodeFile();
                 errorLabel.Text = "Generated all files successfully.";

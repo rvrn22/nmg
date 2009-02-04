@@ -45,6 +45,7 @@
             this.nameSpaceTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.assemblyNameTextBox = new System.Windows.Forms.TextBox();
+            this.serverTypeComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,7 +53,7 @@
             // 
             this.connStrTextBox.Location = new System.Drawing.Point(147, 9);
             this.connStrTextBox.Name = "connStrTextBox";
-            this.connStrTextBox.Size = new System.Drawing.Size(606, 20);
+            this.connStrTextBox.Size = new System.Drawing.Size(490, 20);
             this.connStrTextBox.TabIndex = 0;
             this.connStrTextBox.Text = "Data Source=XE; user ID=Sample; Password=password;";
             // 
@@ -67,7 +68,7 @@
             // 
             // connectBtn
             // 
-            this.connectBtn.Location = new System.Drawing.Point(759, 8);
+            this.connectBtn.Location = new System.Drawing.Point(903, 8);
             this.connectBtn.Name = "connectBtn";
             this.connectBtn.Size = new System.Drawing.Size(75, 23);
             this.connectBtn.TabIndex = 2;
@@ -80,15 +81,15 @@
             this.tablesComboBox.FormattingEnabled = true;
             this.tablesComboBox.Location = new System.Drawing.Point(16, 63);
             this.tablesComboBox.Name = "tablesComboBox";
-            this.tablesComboBox.Size = new System.Drawing.Size(406, 21);
+            this.tablesComboBox.Size = new System.Drawing.Size(496, 21);
             this.tablesComboBox.TabIndex = 3;
             // 
             // sequencesComboBox
             // 
             this.sequencesComboBox.FormattingEnabled = true;
-            this.sequencesComboBox.Location = new System.Drawing.Point(428, 63);
+            this.sequencesComboBox.Location = new System.Drawing.Point(518, 63);
             this.sequencesComboBox.Name = "sequencesComboBox";
-            this.sequencesComboBox.Size = new System.Drawing.Size(406, 21);
+            this.sequencesComboBox.Size = new System.Drawing.Size(460, 21);
             this.sequencesComboBox.TabIndex = 4;
             // 
             // dbTableDetailsGridView
@@ -101,7 +102,7 @@
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.ReadOnly = true;
             this.dbTableDetailsGridView.RowHeadersVisible = false;
-            this.dbTableDetailsGridView.Size = new System.Drawing.Size(818, 281);
+            this.dbTableDetailsGridView.Size = new System.Drawing.Size(962, 281);
             this.dbTableDetailsGridView.TabIndex = 5;
             // 
             // errorLabel
@@ -183,11 +184,20 @@
             this.assemblyNameTextBox.TabIndex = 14;
             this.assemblyNameTextBox.Text = "Sample.CustomerService.Domain";
             // 
+            // serverTypeComboBox
+            // 
+            this.serverTypeComboBox.FormattingEnabled = true;
+            this.serverTypeComboBox.Location = new System.Drawing.Point(644, 9);
+            this.serverTypeComboBox.Name = "serverTypeComboBox";
+            this.serverTypeComboBox.Size = new System.Drawing.Size(244, 21);
+            this.serverTypeComboBox.TabIndex = 15;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(849, 620);
+            this.ClientSize = new System.Drawing.Size(990, 620);
+            this.Controls.Add(this.serverTypeComboBox);
             this.Controls.Add(this.assemblyNameTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.nameSpaceTextBox);
@@ -230,6 +240,7 @@
         private System.Windows.Forms.TextBox nameSpaceTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox assemblyNameTextBox;
+        private System.Windows.Forms.ComboBox serverTypeComboBox;
     }
 }
 
