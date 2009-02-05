@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.OracleClient;
 using System.Drawing;
 using System.Windows.Forms;
+using NMG.Core;
 
 namespace NHibernateMappingGenerator
 {
