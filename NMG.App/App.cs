@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OracleClient;
 using System.Drawing;
 using System.Windows.Forms;
 using NMG.Core;
+using NMG.Service;
 
 namespace NHibernateMappingGenerator
 {
@@ -52,22 +50,8 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var conn = new OracleConnection(connStrTextBox.Text);
-                conn.Open();
-                using (conn)
-                {
-                    var dbTable = new ColumnDetails();
-                    OracleCommand tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = "select * from user_tab_cols where table_name = '" + selectedTableName + "'";
-                    OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                    while (oracleDataReader.Read())
-                    {
-                        string columnName = oracleDataReader.GetString(1);
-                        string dataType = oracleDataReader.GetString(2);
-                        dbTable.Add(new ColumnDetail(columnName, dataType));
-                    }
-                    dbTableDetailsGridView.DataSource = dbTable;
-                }
+                var dbController = new OracleDBController(connStrTextBox.Text);
+                dbTableDetailsGridView.DataSource = dbController.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
             {
@@ -100,34 +84,13 @@ namespace NHibernateMappingGenerator
         {
             try
             {
-                var conn = new OracleConnection(connStrTextBox.Text);
-                conn.Open();
-                using (conn)
-                {
-                    var tables = new List<string>();
-                    OracleCommand tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = "select * from user_tables";
-                    OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                    while(oracleDataReader.Read())
-                    {
-                        string tableName = oracleDataReader.GetString(0);
-                        tables.Add(tableName);
-                    }
-                    tablesComboBox.Items.AddRange(tables.ToArray());
-                    tablesComboBox.SelectedIndex = 0;
-                    
-                    var sequences = new List<string>();
-                    OracleCommand seqCommand = conn.CreateCommand();
-                    seqCommand.CommandText = "select * from user_sequences";
-                    OracleDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                    while(seqReader.Read())
-                    {
-                        string tableName = seqReader.GetString(0);
-                        sequences.Add(tableName);
-                    }
-                    sequencesComboBox.Items.AddRange(sequences.ToArray());
-                    sequencesComboBox.SelectedIndex = 0;
-                }
+                var dbController = new OracleDBController(connStrTextBox.Text);
+                tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
+                tablesComboBox.SelectedIndex = 0;
+
+
+                sequencesComboBox.Items.AddRange(dbController.GetSequences().ToArray());
+                sequencesComboBox.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
