@@ -6,29 +6,20 @@ using Microsoft.CSharp;
 
 namespace NMG.Core
 {
-    public class CodeGenerator
+    public class CodeGenerator : BaseCodeGenerator
     {
-        private readonly string filePath;
-        private readonly string nameSpace;
-        private readonly string className;
-        private readonly ColumnDetails columnDetails;
-
-        public CodeGenerator(string filePath, string nameSpace, string className, ColumnDetails columnDetails)
+        public CodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails) : base(filePath, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
         {
-            this.filePath = filePath;
-            this.nameSpace = nameSpace;
-            this.className = className;
-            this.columnDetails = columnDetails;
         }
 
-        public void Generate()
+        public override void Generate()
         {
             var compileUnit = new CodeCompileUnit();
             var codeNamespace = new CodeNamespace(nameSpace);
             var firstimport = new CodeNamespaceImport("System");
             codeNamespace.Imports.Add(firstimport);
 
-            var newType = new CodeTypeDeclaration(className) {Attributes = MemberAttributes.Public};
+            var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
             foreach (ColumnDetail columnDetail in columnDetails)
             {
                 string propertyName = columnDetail.ColumnName.GetFormattedText();
@@ -43,7 +34,7 @@ namespace NMG.Core
             codeNamespace.Types.Add(newType);
             compileUnit.Namespaces.Add(codeNamespace);
 
-            WriteToFile(compileUnit, className, filePath);
+            WriteToFile(compileUnit, tableName.GetFormattedText(), filePath);
         }
 
         private static Type GetMappedType(string dataType)

@@ -3,28 +3,15 @@ using System.Xml;
 
 namespace NMG.Core
 {
-    public class MappingGenerator
+    public class BaseMappingGenerator : BaseGenerator
     {
-        private readonly string path;
-        private readonly string tableName;
-        private readonly string nameSpace;
-        private readonly string assemblyName;
-        private readonly string sequenceNumber;
-        private readonly ColumnDetails columnDetails;
-
-        public MappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails)
+        public BaseMappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails) : base(path, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
         {
-            this.path = path;
-            this.tableName = tableName;
-            this.nameSpace = nameSpace;
-            this.assemblyName = assemblyName;
-            this.sequenceNumber = sequenceNumber;
-            this.columnDetails = columnDetails;
         }
 
-        public void GenerateMappingFile()
+        public override void Generate()
         {
-            string fileName = path + tableName.GetFormattedText() + ".hbm.xml";
+            string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
             var fs = new FileStream(fileName, FileMode.Create);
             var streamReader = new StreamReader("NHibernateTemplate.xml");
 
@@ -77,14 +64,6 @@ namespace NMG.Core
                 writer.Write(generatedXML);
                 writer.Flush();
             }
-        }
-
-        
-
-        public void GenerateCodeFile()
-        {
-            var generator = new CodeGenerator(path, nameSpace, tableName.GetFormattedText(), columnDetails);
-            generator.Generate();
         }
     }
 }

@@ -21,10 +21,8 @@ namespace NHibernateMappingGenerator
 
         private void ServerTypeSelected(object sender, EventArgs e)
         {
-            if((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle)
-            {
-                
-            }
+            bool isOracleSelected = ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle);
+            sequencesComboBox.Enabled = isOracleSelected;
         }
 
         private void BindData()
@@ -154,9 +152,10 @@ namespace NHibernateMappingGenerator
                 {
                     folderPath += "\\";
                 }
-                var generator = new MappingGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
-                generator.GenerateMappingFile();
-                generator.GenerateCodeFile();
+                var generator = new OracleMappingGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
+                var codeGenerator = new CodeGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
+                generator.Generate();
+                codeGenerator.Generate();
                 errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
