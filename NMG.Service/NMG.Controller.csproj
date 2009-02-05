@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBController.cs" />
+    <Compile Include="MappingController.cs" />
     <Compile Include="OracleDBController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

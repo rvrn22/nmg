@@ -110,15 +110,8 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";
-                string folderPath = folderTextBox.Text;
-                if(!folderPath.EndsWith("\\"))
-                {
-                    folderPath += "\\";
-                }
-                var generator = new OracleMappingGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
-                var codeGenerator = new CodeGenerator(folderPath, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails) dbTableDetailsGridView.DataSource);
-                generator.Generate();
-                codeGenerator.Generate();
+                var controller = new MappingController(folderTextBox.Text, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails)dbTableDetailsGridView.DataSource);
+                controller.Generate();
                 errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
