@@ -84,6 +84,10 @@
       <Project>{A15F2280-C07B-4BBA-B822-6D06C464A582}</Project>
       <Name>NMG.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NMG.Service\NMG.Controller.csproj">
+      <Project>{CE0F8E0F-0392-4910-A728-D980F4043904}</Project>
+      <Name>NMG.Controller</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
