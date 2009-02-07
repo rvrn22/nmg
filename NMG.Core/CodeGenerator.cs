@@ -18,12 +18,12 @@ namespace NMG.Core
             var codeNamespace = new CodeNamespace(nameSpace);
             var firstimport = new CodeNamespaceImport("System");
             codeNamespace.Imports.Add(firstimport);
-
+            var mapper = new DataTypeMapper();
             var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
             foreach (ColumnDetail columnDetail in columnDetails)
             {
                 string propertyName = columnDetail.ColumnName.GetFormattedText();
-                var field = new CodeMemberField(GetMappedType(columnDetail.DataType), propertyName.MakeFirstCharLowerCase());
+                var field = new CodeMemberField(mapper.MapFromOracle(columnDetail.DataType), propertyName.MakeFirstCharLowerCase());
                 newType.Members.Add(field);
             }
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
@@ -35,19 +35,6 @@ namespace NMG.Core
             compileUnit.Namespaces.Add(codeNamespace);
 
             WriteToFile(compileUnit, tableName.GetFormattedText(), filePath);
-        }
-
-        private static Type GetMappedType(string dataType)
-        {
-            if(dataType == "DATE")
-            {
-                return typeof(DateTime);
-            }
-            if (dataType == "NUMBER")
-            {
-                return typeof(long);
-            }
-            return typeof(string);
         }
 
         private static void WriteToFile(CodeCompileUnit compileUnit, string className, string filePath)

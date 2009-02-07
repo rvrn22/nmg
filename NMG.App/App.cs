@@ -11,7 +11,6 @@ namespace NHibernateMappingGenerator
         public App()
         {
             InitializeComponent();
-            dbTableDetailsGridView.AutoGenerateColumns = true;
             tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             BindData();
@@ -25,10 +24,13 @@ namespace NHibernateMappingGenerator
 
         private void BindData()
         {
-            serverTypeComboBox.Items.Add(ServerType.Oracle);
-            serverTypeComboBox.Items.Add(ServerType.SqlServer2005);
-            serverTypeComboBox.Items.Add(ServerType.SqlServer2008);
+            serverTypeComboBox.DataSource = Enum.GetValues(typeof(ServerType));
             serverTypeComboBox.SelectedIndex = 0;
+
+            columnName.DataPropertyName = "ColumnName";
+            columnDataType.DataPropertyName = "DataType";
+            oracleType.DataPropertyName = "MappedType";
+            oracleType.DataSource = new DotNetTypes();
         }
 
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
@@ -119,7 +121,5 @@ namespace NHibernateMappingGenerator
                 errorLabel.Text = ex.Message;
             }
         }
-
-
     }
 }

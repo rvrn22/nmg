@@ -48,6 +48,7 @@
     <Compile Include="BaseCodeGenerator.cs" />
     <Compile Include="BaseMappingGenerator.cs" />
     <Compile Include="CodeGenerator.cs" />
+    <Compile Include="DataTypeMapper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IMappingGenerator.cs" />
     <Compile Include="BaseGenerator.cs" />

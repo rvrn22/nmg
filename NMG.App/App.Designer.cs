@@ -46,6 +46,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.assemblyNameTextBox = new System.Windows.Forms.TextBox();
             this.serverTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.oracleType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,9 +101,12 @@
             this.dbTableDetailsGridView.AllowUserToDeleteRows = false;
             this.dbTableDetailsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dbTableDetailsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dbTableDetailsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.columnName,
+            this.columnDataType,
+            this.oracleType});
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(16, 110);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
-            this.dbTableDetailsGridView.ReadOnly = true;
             this.dbTableDetailsGridView.RowHeadersVisible = false;
             this.dbTableDetailsGridView.Size = new System.Drawing.Size(962, 281);
             this.dbTableDetailsGridView.TabIndex = 5;
@@ -192,6 +198,25 @@
             this.serverTypeComboBox.Size = new System.Drawing.Size(244, 21);
             this.serverTypeComboBox.TabIndex = 15;
             // 
+            // columnName
+            // 
+            this.columnName.HeaderText = "Column Name";
+            this.columnName.Name = "columnName";
+            this.columnName.ReadOnly = true;
+            // 
+            // columnDataType
+            // 
+            this.columnDataType.HeaderText = "Data Type";
+            this.columnDataType.Name = "columnDataType";
+            this.columnDataType.ReadOnly = true;
+            // 
+            // oracleType
+            // 
+            this.oracleType.HeaderText = "Oracle Type";
+            this.oracleType.Name = "oracleType";
+            this.oracleType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.oracleType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -241,6 +266,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox assemblyNameTextBox;
         private System.Windows.Forms.ComboBox serverTypeComboBox;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnDataType;
+        private System.Windows.Forms.DataGridViewComboBoxColumn oracleType;
     }
 }
 
