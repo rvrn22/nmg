@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMG.Tests", "NMG.Tests\NMG.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMG.Controller", "NMG.Service\NMG.Controller.csproj", "{CE0F8E0F-0392-4910-A728-D980F4043904}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NMG.Installer", "NMG.Installer\NMG.Installer.vdproj", "{2BD0F2AF-44B5-4D7E-B9B0-D34A858EA4F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,8 @@ Global
 		{CE0F8E0F-0392-4910-A728-D980F4043904}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE0F8E0F-0392-4910-A728-D980F4043904}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE0F8E0F-0392-4910-A728-D980F4043904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BD0F2AF-44B5-4D7E-B9B0-D34A858EA4F6}.Debug|Any CPU.ActiveCfg = Debug
+		{2BD0F2AF-44B5-4D7E-B9B0-D34A858EA4F6}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
