@@ -55,6 +55,7 @@
     <Compile Include="OracleMappingGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerType.cs" />
+    <Compile Include="SqlMappingGenerator.cs" />
     <Compile Include="StringConstants.cs" />
     <Compile Include="ColumnDetails.cs" />
   </ItemGroup>

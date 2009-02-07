@@ -11,7 +11,7 @@ namespace NMG.Service
         {
         }
 
-        public ColumnDetails GetTableDetails(string selectedTableName)
+        public override ColumnDetails GetTableDetails(string selectedTableName)
         {
             var columnDetails = new ColumnDetails();
             var conn = new OracleConnection(connectionStr);
@@ -20,19 +20,19 @@ namespace NMG.Service
             {
 
                 OracleCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "select * from user_tab_cols where table_name = '" + selectedTableName + "'";
+                tableCommand.CommandText = "select column_name, data_type from user_tab_cols where table_name = '" + selectedTableName + "'";
                 OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (oracleDataReader.Read())
                 {
-                    string columnName = oracleDataReader.GetString(1);
-                    string dataType = oracleDataReader.GetString(2);
+                    string columnName = oracleDataReader.GetString(0);
+                    string dataType = oracleDataReader.GetString(1);
                     columnDetails.Add(new ColumnDetail(columnName, dataType));
                 }
             }
             return columnDetails;
         }
 
-        public List<string> GetTables()
+        public override List<string> GetTables()
         {
             var tables = new List<string>();
             var conn = new OracleConnection(connectionStr);
@@ -51,7 +51,7 @@ namespace NMG.Service
             return tables;
         }
 
-        public List<string> GetSequences()
+        public override List<string> GetSequences()
         {
             var sequences = new List<string>();
             var conn = new OracleConnection(connectionStr);

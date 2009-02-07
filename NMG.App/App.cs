@@ -19,6 +19,7 @@ namespace NHibernateMappingGenerator
         private void ServerTypeSelected(object sender, EventArgs e)
         {
             bool isOracleSelected = ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle);
+            connStrTextBox.Text = isOracleSelected ? StringConstants.ORACLE_CONN_STR_TEMPLATE : StringConstants.SQL_CONN_STR_TEMPLATE;
             sequencesComboBox.Enabled = isOracleSelected;
         }
 
@@ -52,7 +53,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var dbController = new OracleDBController(connStrTextBox.Text);
+                var dbController = GetDbController();
                 dbTableDetailsGridView.DataSource = dbController.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -64,12 +65,6 @@ namespace NHibernateMappingGenerator
 
         private void connectBtn_Click(object sender, EventArgs e)
         {
-            if((ServerType)serverTypeComboBox.SelectedItem != ServerType.Oracle)
-            {
-                MessageBox.Show("Only Oracle Server is currently supported.", "DB Support Error", MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                return;
-            }
             Cursor.Current = Cursors.WaitCursor;
             try
             {
@@ -82,17 +77,37 @@ namespace NHibernateMappingGenerator
 
         }
 
+        private DBController GetDbController()
+        {
+            string connectionStr = connStrTextBox.Text;
+            DBController dbController;
+            if ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle)
+            {
+                dbController = new OracleDBController(connectionStr);
+            }
+            else
+            {
+                dbController = new SqlServerDBController(connectionStr);
+            }
+            return dbController;
+        }
+
         private void PopulateTablesAndSequences()
         {
+            DBController dbController = GetDbController();
             try
             {
-                var dbController = new OracleDBController(connStrTextBox.Text);
                 tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
-                tablesComboBox.SelectedIndex = 0;
-
+                if (tablesComboBox.Items.Count > 0)
+                {
+                    tablesComboBox.SelectedIndex = 0;
+                }
 
                 sequencesComboBox.Items.AddRange(dbController.GetSequences().ToArray());
-                sequencesComboBox.SelectedIndex = 0;
+                if (sequencesComboBox.Items.Count > 0)
+                {
+                    sequencesComboBox.SelectedIndex = 0;
+                }
             }
             catch (Exception ex)
             {
@@ -112,7 +127,13 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";
-                var controller = new MappingController(folderTextBox.Text, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequencesComboBox.SelectedItem.ToString(), (ColumnDetails)dbTableDetailsGridView.DataSource);
+                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
+                string sequence = string.Empty;
+                if(sequencesComboBox.SelectedItem != null)
+                {
+                    sequence = sequencesComboBox.SelectedItem.ToString();
+                }
+                var controller = new MappingController(serverType, folderTextBox.Text, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, (ColumnDetails)dbTableDetailsGridView.DataSource);
                 controller.Generate();
                 errorLabel.Text = "Generated all files successfully.";
             }

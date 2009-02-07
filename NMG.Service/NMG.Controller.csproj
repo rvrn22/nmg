@@ -50,6 +50,7 @@
     <Compile Include="MappingController.cs" />
     <Compile Include="OracleDBController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServerDBController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NMG.Core\NMG.Core.csproj">

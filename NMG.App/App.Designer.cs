@@ -1,4 +1,6 @@
-﻿namespace NHibernateMappingGenerator
+﻿using System.Windows.Forms;
+
+namespace NHibernateMappingGenerator
 {
     partial class App
     {
@@ -35,6 +37,9 @@
             this.tablesComboBox = new System.Windows.Forms.ComboBox();
             this.sequencesComboBox = new System.Windows.Forms.ComboBox();
             this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.oracleType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.errorLabel = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderTextBox = new System.Windows.Forms.TextBox();
@@ -46,9 +51,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.assemblyNameTextBox = new System.Windows.Forms.TextBox();
             this.serverTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.oracleType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,6 +85,7 @@
             // 
             // tablesComboBox
             // 
+            this.tablesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.tablesComboBox.FormattingEnabled = true;
             this.tablesComboBox.Location = new System.Drawing.Point(16, 63);
             this.tablesComboBox.Name = "tablesComboBox";
@@ -89,6 +94,7 @@
             // 
             // sequencesComboBox
             // 
+            this.sequencesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.sequencesComboBox.FormattingEnabled = true;
             this.sequencesComboBox.Location = new System.Drawing.Point(518, 63);
             this.sequencesComboBox.Name = "sequencesComboBox";
@@ -110,6 +116,25 @@
             this.dbTableDetailsGridView.RowHeadersVisible = false;
             this.dbTableDetailsGridView.Size = new System.Drawing.Size(962, 281);
             this.dbTableDetailsGridView.TabIndex = 5;
+            // 
+            // columnName
+            // 
+            this.columnName.HeaderText = "Column Name";
+            this.columnName.Name = "columnName";
+            this.columnName.ReadOnly = true;
+            // 
+            // columnDataType
+            // 
+            this.columnDataType.HeaderText = "Data Type";
+            this.columnDataType.Name = "columnDataType";
+            this.columnDataType.ReadOnly = true;
+            // 
+            // oracleType
+            // 
+            this.oracleType.HeaderText = "Oracle Type";
+            this.oracleType.Name = "oracleType";
+            this.oracleType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.oracleType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // errorLabel
             // 
@@ -192,36 +217,38 @@
             // 
             // serverTypeComboBox
             // 
+            this.serverTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.serverTypeComboBox.FormattingEnabled = true;
             this.serverTypeComboBox.Location = new System.Drawing.Point(644, 9);
             this.serverTypeComboBox.Name = "serverTypeComboBox";
             this.serverTypeComboBox.Size = new System.Drawing.Size(244, 21);
             this.serverTypeComboBox.TabIndex = 15;
             // 
-            // columnName
+            // label4
             // 
-            this.columnName.HeaderText = "Column Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 44);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Select a table";
             // 
-            // columnDataType
+            // label5
             // 
-            this.columnDataType.HeaderText = "Data Type";
-            this.columnDataType.Name = "columnDataType";
-            this.columnDataType.ReadOnly = true;
-            // 
-            // oracleType
-            // 
-            this.oracleType.HeaderText = "Oracle Type";
-            this.oracleType.Name = "oracleType";
-            this.oracleType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.oracleType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(518, 44);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(207, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Select the sequence for the selected table";
             // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(990, 620);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.serverTypeComboBox);
             this.Controls.Add(this.assemblyNameTextBox);
             this.Controls.Add(this.label3);
@@ -269,6 +296,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnDataType;
         private System.Windows.Forms.DataGridViewComboBoxColumn oracleType;
+        private Label label4;
+        private Label label5;
     }
 }
 
