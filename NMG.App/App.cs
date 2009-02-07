@@ -10,10 +10,12 @@ namespace NHibernateMappingGenerator
     {
         public App()
         {
-            InitializeComponent();
+            InitializeComponent();            
             tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             BindData();
+            tablesComboBox.Enabled = false;
+            sequencesComboBox.Enabled = false;
         }
 
         private void ServerTypeSelected(object sender, EventArgs e)
@@ -30,8 +32,8 @@ namespace NHibernateMappingGenerator
 
             columnName.DataPropertyName = "ColumnName";
             columnDataType.DataPropertyName = "DataType";
-            oracleType.DataPropertyName = "MappedType";
-            oracleType.DataSource = new DotNetTypes();
+            cSharpType.DataPropertyName = "MappedType";
+            cSharpType.DataSource = new DotNetTypes();
         }
 
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
@@ -59,7 +61,6 @@ namespace NHibernateMappingGenerator
             catch (Exception ex)
             {
                 errorLabel.Text = ex.Message;
-                errorLabel.ForeColor = Color.Tomato;
             }
         }
 
@@ -98,13 +99,17 @@ namespace NHibernateMappingGenerator
             try
             {
                 tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
-                if (tablesComboBox.Items.Count > 0)
+                bool hasTables = tablesComboBox.Items.Count > 0;
+                tablesComboBox.Enabled = hasTables;
+                if (hasTables)
                 {
                     tablesComboBox.SelectedIndex = 0;
                 }
 
                 sequencesComboBox.Items.AddRange(dbController.GetSequences().ToArray());
-                if (sequencesComboBox.Items.Count > 0)
+                bool hasSequences = sequencesComboBox.Items.Count > 0;
+                sequencesComboBox.Enabled = hasSequences;
+                if (hasSequences)
                 {
                     sequencesComboBox.SelectedIndex = 0;
                 }
@@ -112,7 +117,6 @@ namespace NHibernateMappingGenerator
             catch (Exception ex)
             {
                 errorLabel.Text = ex.Message;
-                errorLabel.ForeColor = Color.Tomato;
             }
         }
 
@@ -124,6 +128,11 @@ namespace NHibernateMappingGenerator
 
         private void generateButton_Click(object sender, EventArgs e)
         {
+            if(tablesComboBox.SelectedItem == null || dbTableDetailsGridView.DataSource == null)
+            {
+                errorLabel.Text = "Please select a table above to generate the mapping files.";
+            }
+
             try
             {
                 errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";

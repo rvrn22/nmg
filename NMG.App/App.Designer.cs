@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace NHibernateMappingGenerator
 {
@@ -39,7 +40,7 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
             this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.oracleType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.errorLabel = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderTextBox = new System.Windows.Forms.TextBox();
@@ -110,7 +111,7 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnName,
             this.columnDataType,
-            this.oracleType});
+            this.cSharpType});
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(16, 110);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
@@ -129,20 +130,22 @@ namespace NHibernateMappingGenerator
             this.columnDataType.Name = "columnDataType";
             this.columnDataType.ReadOnly = true;
             // 
-            // oracleType
+            // cSharpType
             // 
-            this.oracleType.HeaderText = "Oracle Type";
-            this.oracleType.Name = "oracleType";
-            this.oracleType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.oracleType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.cSharpType.HeaderText = "C# Type";
+            this.cSharpType.Name = "cSharpType";
+            this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // errorLabel
             // 
             this.errorLabel.AutoSize = true;
             this.errorLabel.Location = new System.Drawing.Point(16, 595);
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(0, 13);
+            this.errorLabel.Size = new System.Drawing.Size(500, 13);
             this.errorLabel.TabIndex = 6;
+            this.errorLabel.Font = new Font(FontFamily.GenericSansSerif, 12,FontStyle.Bold);
+            this.errorLabel.ForeColor = Color.Crimson;
             // 
             // folderTextBox
             // 
@@ -295,7 +298,7 @@ namespace NHibernateMappingGenerator
         private System.Windows.Forms.ComboBox serverTypeComboBox;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnDataType;
-        private System.Windows.Forms.DataGridViewComboBoxColumn oracleType;
+        private System.Windows.Forms.DataGridViewComboBoxColumn cSharpType;
         private Label label4;
         private Label label5;
     }
