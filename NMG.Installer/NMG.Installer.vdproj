@@ -57,8 +57,14 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_EDE7CC136B1A460E98DC5385B6B9FFAA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
+        "OwnerKey" = "8:_0F3DE3075403403DA2AE5CB05CF6A69E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,13 +82,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0F3DE3075403403DA2AE5CB05CF6A69E"
+        "OwnerKey" = "8:_9671A640E3900322C4B6682CB9E12CF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9671A640E3900322C4B6682CB9E12CF4"
+        "OwnerKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -103,22 +109,64 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
+                    {
+                    "Name" = "8:.NET Framework 3.5 SP1"
+                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
+            }
         }
         "Release"
         {
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\NMG.Installer.msi"
+        "OutputFilename" = "8:Release\\NHibernateMappingGenerator.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
+                    {
+                    "Name" = "8:.NET Framework 3.5 SP1"
+                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -210,6 +258,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDE7CC136B1A460E98DC5385B6B9FFAA"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\Lib\\Icons\\Aeon\\Applications.ico"
+            "TargetName" = "8:Applications.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -225,6 +293,17 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_94D6F0C6CF8F45CC8F4D1AD45600C142"
+                    {
+                    "Name" = "8:Skillent Technologies"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_9DE55585DED14BEBB0CBA44BF9285267"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_C126F22353114CA7A67E5376421B75F1"
@@ -265,21 +344,21 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:NMG.Installer"
+        "ProductName" = "8:NHibernate Mapping Generator"
         "ProductCode" = "8:{A13084CD-D57E-43B5-85AD-5F80425C376B}"
-        "PackageCode" = "8:{309A9343-9E52-470E-B0A1-9F99E17D8FE9}"
+        "PackageCode" = "8:{8990F468-A57C-4E6C-AEB7-C5032B33275C}"
         "UpgradeCode" = "8:{065B1A19-D8AE-4666-8A7C-6AE3B49FE5F2}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:Skillent Technologies"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:NMG.Installer"
+        "Title" = "8:NHibernate Mapping Generator"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
+        "ARPCONTACT" = "8:Skillent Technologies"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -386,6 +465,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_290E8051ACDD4B88B5DEE7227FE1E5CF"
+            {
+            "Name" = "8:NHibernate Mapping Generator"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_0F3DE3075403403DA2AE5CB05CF6A69E"
+            "Folder" = "8:_94D6F0C6CF8F45CC8F4D1AD45600C142"
+            "WorkingFolder" = "8:_C126F22353114CA7A67E5376421B75F1"
+            "Icon" = "8:_EDE7CC136B1A460E98DC5385B6B9FFAA"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
