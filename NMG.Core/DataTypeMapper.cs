@@ -6,11 +6,11 @@ namespace NMG.Core
     {
         public Type MapFromOracle(string dataType)
         {
-            if (dataType == "DATE")
+            if (dataType == "DATE" || dataType == "datetime")
             {
                 return typeof(DateTime);
             }
-            if (dataType == "NUMBER")
+            if (dataType == "NUMBER" || dataType == "nchar")
             {
                 return typeof(long);
             }

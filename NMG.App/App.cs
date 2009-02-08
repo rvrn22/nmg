@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.ComponentModel;
 using System.Windows.Forms;
 using NMG.Core;
 using NMG.Service;
@@ -16,6 +16,21 @@ namespace NHibernateMappingGenerator
             BindData();
             tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
+            Closing += App_Closing;
+            var applicationSettings = ApplicationSettings.Load();
+            if (applicationSettings != null)
+            {
+                connStrTextBox.Text = applicationSettings.ConnectionString;
+                serverTypeComboBox.SelectedItem = applicationSettings.ServerType;
+                nameSpaceTextBox.Text = applicationSettings.NameSpace;
+                assemblyNameTextBox.Text = applicationSettings.AssemblyName;
+            }
+        }
+
+        private void App_Closing(object sender, CancelEventArgs e)
+        {
+            var applicationSettings = new ApplicationSettings(connStrTextBox.Text, (ServerType) serverTypeComboBox.SelectedItem, nameSpaceTextBox.Text, assemblyNameTextBox.Text);
+            applicationSettings.Save();
         }
 
         private void ServerTypeSelected(object sender, EventArgs e)
@@ -69,6 +84,8 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
+                tablesComboBox.Items.Clear();
+                sequencesComboBox.Items.Clear();
                 PopulateTablesAndSequences();
             }
             finally
@@ -95,7 +112,7 @@ namespace NHibernateMappingGenerator
 
         private void PopulateTablesAndSequences()
         {
-            DBController dbController = GetDbController();
+            var dbController = GetDbController();
             try
             {
                 tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());

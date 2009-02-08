@@ -12,16 +12,11 @@ namespace NMG.Core
         {
             ColumnName = columnName;
             DataType = dataType;
+            MappedType = new DataTypeMapper().MapFromOracle(DataType).Name;
         }
 
         public string ColumnName { get; set; }
         public string DataType { get; set; }
-        public string MappedType
-        {
-            get
-            {
-                return new DataTypeMapper().MapFromOracle(DataType).Name;
-            }
-        }
+        public string MappedType { get; set; }
     }
 }
