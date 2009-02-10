@@ -34,15 +34,20 @@ namespace NMG.Service
                 using(var constraintCommand = conn.CreateCommand())
                 {
                     constraintCommand.CommandText = "select constraint_name from user_constraints where table_name = '" + selectedTableName + "' and constraint_type = 'P'";
-                    var constraintName = (OracleString) constraintCommand.ExecuteOracleScalar();
-                    using(var pkColumnCommand = conn.CreateCommand())
+                    var value = constraintCommand.ExecuteOracleScalar();
+                    if (value != null)
                     {
-                        pkColumnCommand.CommandText = "select column_name from user_cons_columns where table_name = '" + selectedTableName+ "' and constraint_name = '"+ constraintName.Value +"'";
-                        var pkColumnName = (OracleString)pkColumnCommand.ExecuteOracleScalar();
-                        if(!string.IsNullOrEmpty(pkColumnName.Value))
+                        var constraintName = (OracleString) value;
+                        using(var pkColumnCommand = conn.CreateCommand())
                         {
-                            var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName.Value));
-                            columnDetail.IsPrimaryKey = true;
+                            pkColumnCommand.CommandText = "select column_name from user_cons_columns where table_name = '" + selectedTableName+ "' and constraint_name = '"+ constraintName.Value +"'";
+                            var colName = pkColumnCommand.ExecuteOracleScalar();
+                            if(colName != null)
+                            {
+                                var pkColumnName = (OracleString)colName;
+                                var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName.Value));
+                                columnDetail.IsPrimaryKey = true;
+                            }
                         }
                     }
                 }

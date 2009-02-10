@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using NMG.Core;
@@ -62,11 +63,11 @@ namespace NHibernateMappingGenerator
             {
                 Cursor.Current = Cursors.Default;
             }
-
         }
 
         private void PopulateTableDetails()
         {
+            errorLabel.Text = string.Empty;
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
@@ -112,6 +113,7 @@ namespace NHibernateMappingGenerator
 
         private void PopulateTablesAndSequences()
         {
+            errorLabel.Text = string.Empty;
             var dbController = GetDbController();
             try
             {
@@ -145,27 +147,71 @@ namespace NHibernateMappingGenerator
 
         private void generateButton_Click(object sender, EventArgs e)
         {
+            errorLabel.Text = string.Empty;
             if(tablesComboBox.SelectedItem == null || dbTableDetailsGridView.DataSource == null)
             {
                 errorLabel.Text = "Please select a table above to generate the mapping files.";
+                return;
             }
-
             try
             {
                 errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";
-                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
-                string sequence = string.Empty;
-                if(sequencesComboBox.SelectedItem != null)
+                
+                var tableNames = new List<string>();
+ 
+                if(tablesComboBox.SelectedItem != null)
                 {
-                    sequence = sequencesComboBox.SelectedItem.ToString();
+                    tableNames.Add(tablesComboBox.SelectedItem.ToString());
                 }
-                var controller = new MappingController(serverType, folderTextBox.Text, tablesComboBox.SelectedItem.ToString(), nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, (ColumnDetails)dbTableDetailsGridView.DataSource);
-                controller.Generate();
-                errorLabel.Text = "Generated all files successfully.";
+                Generate(tableNames);
             }
             catch (Exception ex)
             {
                 errorLabel.Text = ex.Message;
+            }
+        }
+
+        private void generateAllBtn_Click(object sender, EventArgs e)
+        {
+            errorLabel.Text = string.Empty;
+            if (tablesComboBox.Items == null || tablesComboBox.Items.Count == 0)
+            {
+                errorLabel.Text = "Please connect to a database to populate the tables first.";
+                return;
+            }
+            try
+            {
+                var tableNames = new List<string>();
+                foreach (var item in tablesComboBox.Items)
+                {
+                    tableNames.Add(item.ToString()); 
+                }
+                Generate(tableNames);
+            }
+            catch (Exception ex)
+            {
+                errorLabel.Text = ex.Message;
+            }
+        }
+
+        private void Generate(List<string> tableNames)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                string sequence = string.Empty;
+                if (sequencesComboBox.SelectedItem != null)
+                {
+                    sequence = sequencesComboBox.SelectedItem.ToString();
+                }
+                var serverType = (ServerType)serverTypeComboBox.SelectedItem;
+                var controller = new MappingController(serverType, folderTextBox.Text, tableNames, nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, (ColumnDetails)dbTableDetailsGridView.DataSource);
+                controller.Generate();
+                errorLabel.Text = "Generated all files successfully.";
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
             }
         }
     }

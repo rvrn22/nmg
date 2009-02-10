@@ -54,6 +54,7 @@ namespace NHibernateMappingGenerator
             this.serverTypeComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.generateAllBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,12 +141,12 @@ namespace NHibernateMappingGenerator
             // errorLabel
             // 
             this.errorLabel.AutoSize = true;
+            this.errorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.errorLabel.ForeColor = System.Drawing.Color.Crimson;
             this.errorLabel.Location = new System.Drawing.Point(16, 595);
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(500, 13);
+            this.errorLabel.Size = new System.Drawing.Size(0, 20);
             this.errorLabel.TabIndex = 6;
-            this.errorLabel.Font = new Font(FontFamily.GenericSansSerif, 12,FontStyle.Bold);
-            this.errorLabel.ForeColor = Color.Crimson;
             // 
             // folderTextBox
             // 
@@ -159,7 +160,7 @@ namespace NHibernateMappingGenerator
             // 
             this.generateButton.Location = new System.Drawing.Point(16, 526);
             this.generateButton.Name = "generateButton";
-            this.generateButton.Size = new System.Drawing.Size(75, 23);
+            this.generateButton.Size = new System.Drawing.Size(106, 23);
             this.generateButton.TabIndex = 8;
             this.generateButton.Text = "&Generate";
             this.generateButton.UseVisualStyleBackColor = true;
@@ -245,11 +246,22 @@ namespace NHibernateMappingGenerator
             this.label5.TabIndex = 17;
             this.label5.Text = "Select the sequence for the selected table";
             // 
+            // generateAllBtn
+            // 
+            this.generateAllBtn.Location = new System.Drawing.Point(16, 555);
+            this.generateAllBtn.Name = "generateAllBtn";
+            this.generateAllBtn.Size = new System.Drawing.Size(106, 23);
+            this.generateAllBtn.TabIndex = 18;
+            this.generateAllBtn.Text = "Generate &All";
+            this.generateAllBtn.UseVisualStyleBackColor = true;
+            this.generateAllBtn.Click += new System.EventHandler(this.generateAllBtn_Click);
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(990, 620);
+            this.Controls.Add(this.generateAllBtn);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.serverTypeComboBox);
@@ -301,6 +313,7 @@ namespace NHibernateMappingGenerator
         private System.Windows.Forms.DataGridViewComboBoxColumn cSharpType;
         private Label label4;
         private Label label5;
+        private Button generateAllBtn;
     }
 }
 
