@@ -18,17 +18,43 @@ namespace NMG.Service
             conn.Open();
             using (conn)
             {
-
-                SqlCommand tableDetailsCommand = conn.CreateCommand();
-                tableDetailsCommand.CommandText = "select column_name, data_type, character_maximum_length from information_schema.columns where table_name = '" + selectedTableName + "'";
-                SqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                if (sqlDataReader != null)
-                    while (sqlDataReader.Read())
+                using (var tableDetailsCommand = conn.CreateCommand())
+                {
+                    tableDetailsCommand.CommandText = "select column_name, data_type, character_maximum_length from information_schema.columns where table_name = '" + selectedTableName + "'";
+                    using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
-                        string columnName = sqlDataReader.GetString(0);
-                        string dataType = sqlDataReader.GetString(1);
-                        columnDetails.Add(new ColumnDetail(columnName, dataType));
+                        if (sqlDataReader != null)
+                        {
+                            while (sqlDataReader.Read())
+                            {
+                                var columnName = sqlDataReader.GetString(0);
+                                var dataType = sqlDataReader.GetString(1);
+                                columnDetails.Add(new ColumnDetail(columnName, dataType));
+                            }
+                        }
                     }
+                }
+
+                using (var constraintCommand = conn.CreateCommand())
+                {
+                    constraintCommand.CommandText = "select constraint_name from information_schema.TABLE_CONSTRAINTS where table_name = '" + selectedTableName + "' and constraint_type = 'PRIMARY KEY'";
+                    var value = constraintCommand.ExecuteScalar();
+                    if (value != null)
+                    {
+                        var constraintName = (string)value;
+                        using (var pkColumnCommand = conn.CreateCommand())
+                        {
+                            pkColumnCommand.CommandText = "select column_name from information_schema.CONSTRAINT_COLUMN_USAGE where table_name = '" + selectedTableName + "' and constraint_name = '" + constraintName + "'";
+                            var colName = pkColumnCommand.ExecuteScalar();
+                            if (colName != null)
+                            {
+                                var pkColumnName = (string)colName;
+                                var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName));
+                                columnDetail.IsPrimaryKey = true;
+                            }
+                        }
+                    }
+                }
             }
             columnDetails.Sort((x, y) => x.ColumnName.CompareTo(y.ColumnName));
             return columnDetails;
