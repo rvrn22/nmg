@@ -6,7 +6,7 @@ namespace NMG.Core
         protected string tableName;
         protected string nameSpace;
         protected string assemblyName;
-        protected string sequenceNumber;
+        protected string sequenceName;
         protected ColumnDetails columnDetails;
 
         protected BaseGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails)
@@ -15,7 +15,7 @@ namespace NMG.Core
             this.tableName = tableName;
             this.nameSpace = nameSpace;
             this.assemblyName = assemblyName;
-            this.sequenceNumber = sequenceNumber;
+            this.sequenceName = sequenceNumber;
             this.columnDetails = columnDetails;
         } 
 

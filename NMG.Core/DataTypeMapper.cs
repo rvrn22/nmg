@@ -4,7 +4,7 @@ namespace NMG.Core
 {
     public class DataTypeMapper
     {
-        public Type MapFromOracle(string dataType)
+        public Type MapFromDBType(string dataType)
         {
             if (dataType == "DATE" || dataType == "datetime")
             {

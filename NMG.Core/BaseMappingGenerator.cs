@@ -3,9 +3,10 @@ using System.Xml;
 
 namespace NMG.Core
 {
-    public class BaseMappingGenerator : BaseGenerator
+    public abstract class BaseMappingGenerator : BaseGenerator
     {
-        public BaseMappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails) : base(path, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
+        public BaseMappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails)
+            : base(path, tableName, nameSpace, assemblyName, sequenceName, columnDetails)
         {
         }
 
@@ -13,43 +14,37 @@ namespace NMG.Core
         {
             string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
             var fs = new FileStream(fileName, FileMode.Create);
-            var streamReader = new StreamReader("NHibernateTemplate.xml");
 
             using (fs)
             {
-                using (streamReader)
-                {
-                    string text = streamReader.ReadToEnd();
-                    text = text.Replace("@ClassName@", tableName.GetFormattedText());
-                    text = text.Replace("@TableName@", tableName);
-                    text = text.Replace("@AssemblyName@", assemblyName);
-                    text = text.Replace("@NameSpace@", nameSpace);
-                    text = text.Replace("@SequenceName@", sequenceNumber);
+                var xmldoc = new XmlDocument();
+                var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
+                xmldoc.AppendChild(xmlDeclaration);
+                var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
+                root.SetAttribute("assembly", assemblyName);
+                xmldoc.AppendChild(root);
 
-                    var xmldoc = new XmlDocument();
-                    xmldoc.Load(new StringReader(text));
+                var classElement = xmldoc.CreateElement("class");
+                classElement.SetAttribute("name", nameSpace + "." + tableName.GetFormattedText() + ", " + assemblyName);
+                classElement.SetAttribute("table", tableName);
+                classElement.SetAttribute("lazy", "true");
+                root.AppendChild(classElement);
+                var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
+                var idElement = xmldoc.CreateElement("id");
+                idElement.SetAttribute("name", "id");
+                var mapper = new DataTypeMapper();
+                idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
+                idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
+                idElement.SetAttribute("access", "field");
+                classElement.AppendChild(idElement);
 
-                    foreach (var columnDetail in columnDetails)
-                    {
-                        if (xmldoc.DocumentElement == null) continue;
-                        XmlNode classNode = xmldoc.DocumentElement.FirstChild;
-                        XmlNode xmlNode = xmldoc.CreateNode(XmlNodeType.Element, null, "property", null);
-                        xmldoc.DocumentElement.SetAttribute("xmlns", "");
-                        XmlAttribute nameAttr = xmldoc.CreateAttribute("name");
-                        string propertyName = columnDetail.ColumnName.GetFormattedText();
-                        nameAttr.Value = propertyName.MakeFirstCharLowerCase();
-                        XmlAttribute colAttr = xmldoc.CreateAttribute("column");
-                        colAttr.Value = columnDetail.ColumnName;
-                        XmlAttribute accessAttr = xmldoc.CreateAttribute("access");
-                        accessAttr.Value = "field";
-                        xmlNode.Attributes.Append(nameAttr);
-                        xmlNode.Attributes.Append(colAttr);
-                        xmlNode.Attributes.Append(accessAttr);
-                        classNode.AppendChild(xmlNode);
-                    }
-                    xmldoc.Save(fs);
-                }
+                AddGenerator(xmldoc, idElement);
+
+
+                AddAllProperties(xmldoc, classElement);
+                xmldoc.Save(fs);
             }
+
             var sr = new StreamReader(fileName);
             string generatedXML;
             using (sr)
@@ -63,6 +58,22 @@ namespace NMG.Core
             {
                 writer.Write(generatedXML);
                 writer.Flush();
+            }
+        }
+
+        protected abstract void AddGenerator(XmlDocument xmldoc, XmlElement idElement);
+
+        private void AddAllProperties(XmlDocument xmldoc, XmlNode classElement)
+        {
+            foreach (var columnDetail in columnDetails)
+            {
+                if(columnDetail.IsPrimaryKey)
+                    continue;
+                var xmlNode = xmldoc.CreateElement("property");
+                xmlNode.SetAttribute("name", columnDetail.ColumnName.GetFormattedText().MakeFirstCharLowerCase());
+                xmlNode.SetAttribute("column", columnDetail.ColumnName);
+                xmlNode.SetAttribute("access", "field");
+                classElement.AppendChild(xmlNode);
             }
         }
     }

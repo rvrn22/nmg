@@ -30,6 +30,7 @@ namespace NMG.Service
                         columnDetails.Add(new ColumnDetail(columnName, dataType));
                     }
             }
+            columnDetails.Sort((x, y) => x.ColumnName.CompareTo(y.ColumnName));
             return columnDetails;
         }
 
@@ -50,6 +51,7 @@ namespace NMG.Service
                         tables.Add(tableName);
                     }
             }
+            tables.Sort((x, y) => x.CompareTo(y));
             return tables;
         }
 

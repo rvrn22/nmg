@@ -18,17 +18,36 @@ namespace NMG.Service
             conn.Open();
             using (conn)
             {
-
-                OracleCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "select column_name, data_type from user_tab_cols where table_name = '" + selectedTableName + "'";
-                OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (oracleDataReader.Read())
+                using (var tableCommand = conn.CreateCommand())
                 {
-                    string columnName = oracleDataReader.GetString(0);
-                    string dataType = oracleDataReader.GetString(1);
-                    columnDetails.Add(new ColumnDetail(columnName, dataType));
+                    tableCommand.CommandText = "select column_name, data_type from user_tab_cols where table_name = '" + selectedTableName + "'";
+                    using (var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
+                    {
+                        while (oracleDataReader.Read())
+                        {
+                            var columnName = oracleDataReader.GetString(0);
+                            var dataType = oracleDataReader.GetString(1);
+                            columnDetails.Add(new ColumnDetail(columnName, dataType));
+                        }
+                    }
+                }
+                using(var constraintCommand = conn.CreateCommand())
+                {
+                    constraintCommand.CommandText = "select constraint_name from user_constraints where table_name = '" + selectedTableName + "' and constraint_type = 'P'";
+                    var constraintName = (OracleString) constraintCommand.ExecuteOracleScalar();
+                    using(var pkColumnCommand = conn.CreateCommand())
+                    {
+                        pkColumnCommand.CommandText = "select column_name from user_cons_columns where table_name = '" + selectedTableName+ "' and constraint_name = '"+ constraintName.Value +"'";
+                        var pkColumnName = (OracleString)pkColumnCommand.ExecuteOracleScalar();
+                        if(!string.IsNullOrEmpty(pkColumnName.Value))
+                        {
+                            var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName.Value));
+                            columnDetail.IsPrimaryKey = true;
+                        }
+                    }
                 }
             }
+            columnDetails.Sort((x, y) => x.ColumnName.CompareTo(y.ColumnName));
             return columnDetails;
         }
 
@@ -48,6 +67,7 @@ namespace NMG.Service
                     tables.Add(tableName);
                 }
             }
+            tables.Sort((x,y) => x.CompareTo(y));
             return tables;
         }
 
