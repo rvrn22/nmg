@@ -11,50 +11,17 @@ namespace NMG.Core
         {
         }
 
+        protected abstract void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement);
+
         public override void Generate()
         {
             foreach (var tableName in tableNames)
             {
                 string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
-                var fs = new FileStream(fileName, FileMode.Create);
-
-                using (fs)
-                {
-                    var xmldoc = new XmlDocument();
-                    var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
-                    xmldoc.AppendChild(xmlDeclaration);
-                    var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
-                    root.SetAttribute("assembly", assemblyName);
-                    xmldoc.AppendChild(root);
-
-                    var classElement = xmldoc.CreateElement("class");
-                    classElement.SetAttribute("name", nameSpace + "." + tableName.GetFormattedText() + ", " + assemblyName);
-                    classElement.SetAttribute("table", tableName);
-                    classElement.SetAttribute("lazy", "true");
-                    root.AppendChild(classElement);
-                    var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
-                    var idElement = xmldoc.CreateElement("id");
-                    idElement.SetAttribute("name", "id");
-                    var mapper = new DataTypeMapper();
-                    idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
-                    idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
-                    idElement.SetAttribute("access", "field");
-                    classElement.AppendChild(idElement);
-
-                    AddGenerator(xmldoc, idElement);
-
-
-                    AddAllProperties(xmldoc, classElement);
-                    xmldoc.Save(fs);
-                }
-
-                var sr = new StreamReader(fileName);
-                string generatedXML;
-                using (sr)
-                {
-                    generatedXML = sr.ReadToEnd();
-                    generatedXML = generatedXML.Replace("xmlns=\"\"", "");
-                }
+                var ss = new StringWriter();
+                var xmldoc = CreateMappingDocument(tableName);
+                xmldoc.Save(ss);
+                string generatedXML = RemoveEmptyNamespaces(ss.ToString());
 
                 var writer = new StreamWriter(fileName);
                 using (writer)
@@ -63,10 +30,42 @@ namespace NMG.Core
                     writer.Flush();
                 }
             }
-
         }
 
-        protected abstract void AddGenerator(XmlDocument xmldoc, XmlElement idElement);
+        private static string RemoveEmptyNamespaces(string mappingContent)
+        {
+            return mappingContent.Replace("xmlns=\"\"", "");
+        }
+
+        private XmlDocument CreateMappingDocument(string tableName)
+        {
+            var xmldoc = new XmlDocument();
+            var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
+            xmldoc.AppendChild(xmlDeclaration);
+            var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
+            root.SetAttribute("assembly", assemblyName);
+            xmldoc.AppendChild(root);
+
+            var classElement = xmldoc.CreateElement("class");
+            classElement.SetAttribute("name", nameSpace + "." + tableName.GetFormattedText() + ", " + assemblyName);
+            classElement.SetAttribute("table", tableName);
+            classElement.SetAttribute("lazy", "true");
+            root.AppendChild(classElement);
+            var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
+            var idElement = xmldoc.CreateElement("id");
+            idElement.SetAttribute("name", "id");
+            var mapper = new DataTypeMapper();
+            idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
+            idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
+            idElement.SetAttribute("access", "field");
+            classElement.AppendChild(idElement);
+
+            AddIdGenerator(xmldoc, idElement);
+
+
+            AddAllProperties(xmldoc, classElement);
+            return xmldoc;
+        }
 
         private void AddAllProperties(XmlDocument xmldoc, XmlNode classElement)
         {

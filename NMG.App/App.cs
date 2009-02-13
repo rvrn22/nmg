@@ -206,7 +206,7 @@ namespace NHibernateMappingGenerator
                 }
                 var serverType = (ServerType)serverTypeComboBox.SelectedItem;
                 var controller = new MappingController(serverType, folderTextBox.Text, tableNames, nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, (ColumnDetails)dbTableDetailsGridView.DataSource);
-                controller.Generate();
+                controller.Generate(Language.CSharp);
                 errorLabel.Text = "Generated all files successfully.";
             }
             finally

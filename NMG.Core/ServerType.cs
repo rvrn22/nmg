@@ -8,6 +8,12 @@ namespace NMG.Core
         SqlServer
     }
 
+    public enum Language
+    {
+        CSharp,
+        VB
+    }
+
     public class DotNetTypes : List<string>
     {
         public DotNetTypes()

@@ -1,17 +1,20 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.CSharp;
+using Microsoft.VisualBasic;
 
 namespace NMG.Core
 {
     public class CodeGenerator : BaseCodeGenerator
     {
-        public CodeGenerator(string filePath, List<string> tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails)
+        private readonly Language language;
+
+        public CodeGenerator(string filePath, List<string> tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails, Language language)
             : base(filePath, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
         {
+            this.language = language;
         }
 
         public override void Generate()
@@ -20,8 +23,7 @@ namespace NMG.Core
             {
                 var compileUnit = new CodeCompileUnit();
                 var codeNamespace = new CodeNamespace(nameSpace);
-                var firstimport = new CodeNamespaceImport("System");
-                codeNamespace.Imports.Add(firstimport);
+                
                 var mapper = new DataTypeMapper();
                 var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
                 foreach (ColumnDetail columnDetail in columnDetails)
@@ -31,41 +33,75 @@ namespace NMG.Core
                     newType.Members.Add(field);
                 }
                 var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
-                var constructorexp = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("System.Console"), "WriteLine", new CodePrimitiveExpression("Inside Constructor ..."));
-                constructor.Statements.Add(constructorexp);
                 newType.Members.Add(constructor);
 
                 codeNamespace.Types.Add(newType);
                 compileUnit.Namespaces.Add(codeNamespace);
 
-                WriteToFile(compileUnit, tableName.GetFormattedText(), filePath);
+                WriteToFile(compileUnit, tableName.GetFormattedText());
             }
         }
 
-        private static void WriteToFile(CodeCompileUnit compileUnit, string className, string filePath)
+        private void WriteToFile(CodeCompileUnit compileUnit, string className)
         {
-            String sourceFile;
-
-            var csharpcodeprovider = new CSharpCodeProvider();
-
-            if (csharpcodeprovider.FileExtension[0] == '.')
+            var provider = GetCodeDomProvider();
+            string sourceFile = GetCompleteFilePath(provider, className);
+            using (provider)
             {
-                sourceFile = filePath + className + csharpcodeprovider.FileExtension;
-            }
-            else
-            {
-                sourceFile = filePath + className + "." + csharpcodeprovider.FileExtension;
-            }
-
-            var streamWriter = new StreamWriter(sourceFile, false);
-            var textWriter = new IndentedTextWriter(streamWriter, "    ");
-            using (textWriter)
-            {
-                using (streamWriter)
+                var streamWriter = new StreamWriter(sourceFile);
+                var textWriter = new IndentedTextWriter(streamWriter, "    ");
+                using (textWriter)
                 {
-                    csharpcodeprovider.GenerateCodeFromCompileUnit(compileUnit, textWriter, new CodeGeneratorOptions());
+                    using (streamWriter)
+                    {
+                        var options = new CodeGeneratorOptions {BlankLinesBetweenMembers = false};
+                        provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
+                    }
                 }
             }
+            CleanupGeneratedFile(sourceFile);
+        }
+
+        private static void CleanupGeneratedFile(string sourceFile)
+        {
+            string entireContent;
+            using (var reader = new StreamReader(sourceFile))
+            {
+                entireContent = reader.ReadToEnd();
+            }
+            entireContent = RemoveComments(entireContent);
+            entireContent = AddStandardHeader(entireContent);
+            using(var writer = new StreamWriter(sourceFile))
+            {
+                writer.Write(entireContent);
+            }
+
+        }
+
+        private static string AddStandardHeader(string entireContent)
+        {
+            entireContent = "using System; \n" + entireContent;
+            entireContent = "using System.Collections.Generic; \n" + entireContent;
+            entireContent = "using System.Text; \n" + entireContent;
+            return entireContent;
+        }
+
+        private static string RemoveComments(string entireContent)
+        {
+            int end = entireContent.LastIndexOf("----------");
+            entireContent = entireContent.Remove(0, end + 10);
+            return entireContent;
+        }
+
+        private string GetCompleteFilePath(CodeDomProvider provider, string className)
+        {
+            var fileName = filePath + className;
+            return provider.FileExtension[0] == '.' ? fileName + provider.FileExtension : fileName + "." + provider.FileExtension;
+        }
+
+        private CodeDomProvider GetCodeDomProvider()
+        {
+            return language == Language.CSharp ? (CodeDomProvider) new CSharpCodeProvider() : new VBCodeProvider();
         }
     }
 }

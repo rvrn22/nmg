@@ -24,12 +24,17 @@ namespace NMG.Service
             this.columnDetails = columnDetails;
         }
 
-        public void Generate()
+        public void Generate(Language language)
         {
-            if (!folderPath.EndsWith("\\"))
-            {
-                folderPath += "\\";
-            }
+            AddSlashToFolderPath();
+            BaseMappingGenerator generator = GetGenerator();
+            var codeGenerator = new CodeGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails, language);                
+            generator.Generate();
+            codeGenerator.Generate();
+        }
+
+        private BaseMappingGenerator GetGenerator()
+        {
             BaseMappingGenerator generator;
             if(serverType == ServerType.Oracle)
             {
@@ -38,9 +43,15 @@ namespace NMG.Service
             {
                 generator = new SqlMappingGenerator(folderPath, tableNames, nameSpace, assemblyName, columnDetails);
             }
-            var codeGenerator = new CodeGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails);                
-            generator.Generate();
-            codeGenerator.Generate();
+            return generator;
+        }
+
+        private void AddSlashToFolderPath()
+        {
+            if (!folderPath.EndsWith("\\"))
+            {
+                folderPath += "\\";
+            }
         }
     }
 }
