@@ -260,7 +260,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDE7CC136B1A460E98DC5385B6B9FFAA"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\Lib\\Icons\\Aeon\\Applications.ico"
+            "SourcePath" = "8:..\\NMG.App\\Applications.ico"
             "TargetName" = "8:Applications.ico"
             "Tag" = "8:"
             "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
