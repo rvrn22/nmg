@@ -47,6 +47,7 @@ namespace NHibernateMappingGenerator
             serverTypeComboBox.SelectedIndex = 0;
 
             columnName.DataPropertyName = "ColumnName";
+            isPrimaryKey.DataPropertyName = "IsPrimaryKey";
             columnDataType.DataPropertyName = "DataType";
             cSharpType.DataPropertyName = "MappedType";
             cSharpType.DataSource = new DotNetTypes();

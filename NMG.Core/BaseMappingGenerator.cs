@@ -18,16 +18,17 @@ namespace NMG.Core
             foreach (var tableName in tableNames)
             {
                 string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
-                var ss = new StringWriter();
-                var xmldoc = CreateMappingDocument(tableName);
-                xmldoc.Save(ss);
-                string generatedXML = RemoveEmptyNamespaces(ss.ToString());
-
-                var writer = new StreamWriter(fileName);
-                using (writer)
+                using (var stringWriter = new StringWriter())
                 {
-                    writer.Write(generatedXML);
-                    writer.Flush();
+                    var xmldoc = CreateMappingDocument(tableName);
+                    xmldoc.Save(stringWriter);
+                    string generatedXML = RemoveEmptyNamespaces(stringWriter.ToString());
+
+                    using (var writer = new StreamWriter(fileName))
+                    {
+                        writer.Write(generatedXML);
+                        writer.Flush();
+                    }
                 }
             }
         }
@@ -52,15 +53,17 @@ namespace NMG.Core
             classElement.SetAttribute("lazy", "true");
             root.AppendChild(classElement);
             var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
-            var idElement = xmldoc.CreateElement("id");
-            idElement.SetAttribute("name", "id");
-            var mapper = new DataTypeMapper();
-            idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
-            idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
-            idElement.SetAttribute("access", "field");
-            classElement.AppendChild(idElement);
-
-            AddIdGenerator(xmldoc, idElement);
+            if (primaryKeyColumn != null)
+            {
+                var idElement = xmldoc.CreateElement("id");
+                idElement.SetAttribute("name", "id");
+                var mapper = new DataTypeMapper();
+                idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
+                idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
+                idElement.SetAttribute("access", "field");
+                classElement.AppendChild(idElement);
+                AddIdGenerator(xmldoc, idElement);
+            }
 
 
             AddAllProperties(xmldoc, classElement);

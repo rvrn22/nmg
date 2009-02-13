@@ -75,14 +75,13 @@ namespace NMG.Core
             {
                 writer.Write(entireContent);
             }
-
         }
 
         private static string AddStandardHeader(string entireContent)
         {
-            entireContent = "using System; \n" + entireContent;
-            entireContent = "using System.Collections.Generic; \n" + entireContent;
             entireContent = "using System.Text; \n" + entireContent;
+            entireContent = "using System.Collections.Generic; \n" + entireContent;
+            entireContent = "using System; \n" + entireContent;
             return entireContent;
         }
 

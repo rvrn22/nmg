@@ -14,6 +14,10 @@ namespace NMG.Core
             {
                 return typeof(long);
             }
+            if (dataType == "int")
+            {
+                return typeof(int);
+            }
             return typeof(string);
         }
     }

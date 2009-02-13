@@ -38,9 +38,6 @@ namespace NHibernateMappingGenerator
             this.tablesComboBox = new System.Windows.Forms.ComboBox();
             this.sequencesComboBox = new System.Windows.Forms.ComboBox();
             this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.errorLabel = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderTextBox = new System.Windows.Forms.TextBox();
@@ -55,6 +52,10 @@ namespace NHibernateMappingGenerator
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.generateAllBtn = new System.Windows.Forms.Button();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -112,31 +113,13 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnName,
             this.columnDataType,
-            this.cSharpType});
+            this.cSharpType,
+            this.isPrimaryKey});
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(16, 110);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
             this.dbTableDetailsGridView.Size = new System.Drawing.Size(962, 281);
             this.dbTableDetailsGridView.TabIndex = 5;
-            // 
-            // columnName
-            // 
-            this.columnName.HeaderText = "Column Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
-            // 
-            // columnDataType
-            // 
-            this.columnDataType.HeaderText = "Data Type";
-            this.columnDataType.Name = "columnDataType";
-            this.columnDataType.ReadOnly = true;
-            // 
-            // cSharpType
-            // 
-            this.cSharpType.HeaderText = "C# Type";
-            this.cSharpType.Name = "cSharpType";
-            this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // errorLabel
             // 
@@ -256,6 +239,31 @@ namespace NHibernateMappingGenerator
             this.generateAllBtn.UseVisualStyleBackColor = true;
             this.generateAllBtn.Click += new System.EventHandler(this.generateAllBtn_Click);
             // 
+            // columnName
+            // 
+            this.columnName.HeaderText = "Column Name";
+            this.columnName.Name = "columnName";
+            this.columnName.ReadOnly = true;
+            // 
+            // columnDataType
+            // 
+            this.columnDataType.HeaderText = "Data Type";
+            this.columnDataType.Name = "columnDataType";
+            this.columnDataType.ReadOnly = true;
+            // 
+            // cSharpType
+            // 
+            this.cSharpType.HeaderText = "C# Type";
+            this.cSharpType.Name = "cSharpType";
+            this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // isPrimaryKey
+            // 
+            this.isPrimaryKey.HeaderText = "Primary Key";
+            this.isPrimaryKey.Name = "isPrimaryKey";
+            this.isPrimaryKey.ReadOnly = true;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -308,12 +316,13 @@ namespace NHibernateMappingGenerator
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox assemblyNameTextBox;
         private System.Windows.Forms.ComboBox serverTypeComboBox;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnDataType;
-        private System.Windows.Forms.DataGridViewComboBoxColumn cSharpType;
         private Label label4;
         private Label label5;
         private Button generateAllBtn;
+        private DataGridViewTextBoxColumn columnName;
+        private DataGridViewTextBoxColumn columnDataType;
+        private DataGridViewComboBoxColumn cSharpType;
+        private DataGridViewCheckBoxColumn isPrimaryKey;
     }
 }
 
