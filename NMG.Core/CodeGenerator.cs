@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
+using NMG.Core.Domain;
+using NMG.Core.Util;
 
 namespace NMG.Core
 {
-    public class CodeGenerator : BaseCodeGenerator
+    public class CodeGenerator : Generator
     {
         private readonly Language language;
 

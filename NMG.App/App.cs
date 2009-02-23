@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using NMG.Core;
+using NMG.Core.Domain;
+using NMG.Core.Util;
 using NMG.Service;
 
 namespace NHibernateMappingGenerator
@@ -38,7 +39,6 @@ namespace NHibernateMappingGenerator
         {
             bool isOracleSelected = ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle);
             connStrTextBox.Text = isOracleSelected ? StringConstants.ORACLE_CONN_STR_TEMPLATE : StringConstants.SQL_CONN_STR_TEMPLATE;
-            sequencesComboBox.Enabled = isOracleSelected;
         }
 
         private void BindData()

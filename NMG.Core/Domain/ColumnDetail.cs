@@ -1,11 +1,5 @@
-using System.Collections.Generic;
-
-namespace NMG.Core
+namespace NMG.Core.Domain
 {
-    public class ColumnDetails : List<ColumnDetail>
-    {
-    }
-
     public class ColumnDetail
     {
         public ColumnDetail(string columnName, string dataType)

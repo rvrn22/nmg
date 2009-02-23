@@ -1,19 +1,7 @@
 using System.Collections.Generic;
 
-namespace NMG.Core
+namespace NMG.Core.Domain
 {
-    public enum ServerType
-    {
-        Oracle,
-        SqlServer
-    }
-
-    public enum Language
-    {
-        CSharp,
-        VB
-    }
-
     public class DotNetTypes : List<string>
     {
         public DotNetTypes()

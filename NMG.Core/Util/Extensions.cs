@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Threading;
 
-namespace NMG.Core
+namespace NMG.Core.Util
 {
     public static class Extensions
     {

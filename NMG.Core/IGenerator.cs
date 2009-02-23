@@ -1,6 +1,6 @@
 namespace NMG.Core
 {
-    public interface IMappingGenerator
+    public interface IGenerator
     {
         void Generate();
     }

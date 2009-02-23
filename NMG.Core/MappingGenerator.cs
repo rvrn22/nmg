@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using NMG.Core.Domain;
+using NMG.Core.Util;
 
 namespace NMG.Core
 {
-    public abstract class BaseMappingGenerator : BaseGenerator
+    public abstract class MappingGenerator : Generator
     {
-        protected BaseMappingGenerator(string path, List<string> tableNames, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails)
+        protected MappingGenerator(string path, List<string> tableNames, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails)
             : base(path, tableNames, nameSpace, assemblyName, sequenceName, columnDetails)
         {
         }
@@ -38,7 +40,7 @@ namespace NMG.Core
             return mappingContent.Replace("xmlns=\"\"", "");
         }
 
-        private XmlDocument CreateMappingDocument(string tableName)
+        public XmlDocument CreateMappingDocument(string tableName)
         {
             var xmldoc = new XmlDocument();
             var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
@@ -64,7 +66,6 @@ namespace NMG.Core
                 classElement.AppendChild(idElement);
                 AddIdGenerator(xmldoc, idElement);
             }
-
 
             AddAllProperties(xmldoc, classElement);
             return xmldoc;

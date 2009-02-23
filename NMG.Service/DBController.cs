@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NMG.Core;
+using NMG.Core.Domain;
 
 namespace NMG.Service
 {

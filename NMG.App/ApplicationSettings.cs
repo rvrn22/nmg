@@ -1,7 +1,7 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using NMG.Core;
+using NMG.Core.Domain;
 
 namespace NHibernateMappingGenerator
 {

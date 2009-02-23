@@ -49,8 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ColumnDetailsTest.cs" />
     <Compile Include="OracleMappingGeneratorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlMappingGeneratorTest.cs" />
+    <Compile Include="Util\StringExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Castle.Core.dll" />

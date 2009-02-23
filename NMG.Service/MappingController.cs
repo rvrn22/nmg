@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NMG.Core;
+using NMG.Core.Domain;
 
 namespace NMG.Service
 {
@@ -27,15 +28,15 @@ namespace NMG.Service
         public void Generate(Language language)
         {
             AddSlashToFolderPath();
-            BaseMappingGenerator generator = GetGenerator();
+            MappingGenerator generator = GetGenerator();
             var codeGenerator = new CodeGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails, language);                
             generator.Generate();
             codeGenerator.Generate();
         }
 
-        private BaseMappingGenerator GetGenerator()
+        private MappingGenerator GetGenerator()
         {
-            BaseMappingGenerator generator;
+            MappingGenerator generator;
             if(serverType == ServerType.Oracle)
             {
                 generator = new OracleMappingGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails);

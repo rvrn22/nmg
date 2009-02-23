@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Xml;
+using NMG.Core.Domain;
 
 namespace NMG.Core
 {
-    public class OracleMappingGenerator : BaseMappingGenerator 
+    public class OracleMappingGenerator : MappingGenerator 
     {
         public OracleMappingGenerator(string path, List<string> tableName, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails) : base(path, tableName, nameSpace, assemblyName, sequenceName, columnDetails)
         {
