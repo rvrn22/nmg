@@ -25,28 +25,30 @@ namespace NMG.Tests.Core
         public void Map()
         {
             var mapper = new DataTypeMapper();
-            Assert.AreEqual(typeof(int), mapper.MapFromDBType("int", null, null, null));
-            Assert.AreEqual(typeof(int), mapper.MapFromDBType("INTERVAL YEAR TO MONTH", null, null, null));
-            Assert.AreEqual(typeof(int), mapper.MapFromDBType("BINARY_INTEGER", null, null, null));
-            Assert.AreEqual(typeof(DateTime), mapper.MapFromDBType("DATE", null, null, null));
-            Assert.AreEqual(typeof(DateTime), mapper.MapFromDBType("datetime", null, null, null));
-            Assert.AreEqual(typeof(DateTime), mapper.MapFromDBType("TIMESTAMP", null, null, null));
-            Assert.AreEqual(typeof(DateTime), mapper.MapFromDBType("TIMESTAMP WITH TIME ZONE", null, null, null));
-            Assert.AreEqual(typeof(DateTime), mapper.MapFromDBType("TIMESTAMP WITH LOCAL TIME ZONE", null, null, null));
+            
+            AssertMappedTypes(mapper, typeof(int), "int", "INTERVAL YEAR TO MONTH", "BINARY_INTEGER");
+            AssertMappedTypes(mapper, typeof(DateTime), "DATE", "datetime", "TIMESTAMP", "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH LOCAL TIME ZONE", "smalldatetime");
+            AssertMappedTypes(mapper, typeof(long), "NUMBER", "nchar", "LONG", "bigint");
+            AssertMappedTypes(mapper, typeof(double), "BINARY_DOUBLE", "float");
+            AssertMappedTypes(mapper, typeof(float), "BINARY_FLOAT", "FLOAT");
+            AssertMappedTypes(mapper, typeof(decimal), "decimal", "money", "smallmoney");
+            AssertMappedTypes(mapper, typeof(byte[]), "BLOB", "BFILE *", "LONG RAW", "binary", "varbinary", "image", "timestamp");
 
-            Assert.AreEqual(typeof(long), mapper.MapFromDBType("NUMBER", null, null, null));
-            Assert.AreEqual(typeof(long), mapper.MapFromDBType("nchar", null, null, null));
-            Assert.AreEqual(typeof(long), mapper.MapFromDBType("LONG", null, null, null));
-
-            Assert.AreEqual(typeof(double), mapper.MapFromDBType("BINARY_DOUBLE", null, null, null));
-            Assert.AreEqual(typeof(float), mapper.MapFromDBType("BINARY_FLOAT", null, null, null));
-            Assert.AreEqual(typeof(float), mapper.MapFromDBType("FLOAT", null, null, null));
-
-            Assert.AreEqual(typeof(byte[]), mapper.MapFromDBType("BLOB", null, null, null));
-            Assert.AreEqual(typeof(byte[]), mapper.MapFromDBType("BFILE *", null, null, null));
-            Assert.AreEqual(typeof(byte[]), mapper.MapFromDBType("LONG RAW", null, null, null));
 
             Assert.AreEqual(typeof(TimeSpan), mapper.MapFromDBType("INTERVAL DAY TO SECOND", null, null, null));
+            Assert.AreEqual(typeof(Boolean), mapper.MapFromDBType("bit", null, null, null));
+            Assert.AreEqual(typeof(Single), mapper.MapFromDBType("real", null, null, null));
+            Assert.AreEqual(typeof(Int16), mapper.MapFromDBType("smallint", null, null, null));
+            Assert.AreEqual(typeof(Guid), mapper.MapFromDBType("uniqueidentifier", null, null, null));
+            Assert.AreEqual(typeof(Byte), mapper.MapFromDBType("tinyint", null, null, null));
+        }
+
+        private static void AssertMappedTypes(DataTypeMapper mapper, Type expectedType, params string[] dataTypes)
+        {
+            foreach (var dataType in dataTypes)
+            {
+                Assert.AreEqual(expectedType, mapper.MapFromDBType(dataType, null, null, null));
+            }
         }
     }
 }
