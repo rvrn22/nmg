@@ -20,7 +20,7 @@ namespace NMG.Service
             {
                 using (var tableDetailsCommand = conn.CreateCommand())
                 {
-                    tableDetailsCommand.CommandText = "select column_name, data_type, character_maximum_length from information_schema.columns where table_name = '" + selectedTableName + "'";
+                    tableDetailsCommand.CommandText = "select column_name, data_type, character_maximum_length, NUMERIC_PRECISION, NUMERIC_PRECISION_RADIX, NUMERIC_SCALE, IS_NULLABLE from information_schema.columns where table_name = '" + selectedTableName + "'";
                     using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         if (sqlDataReader != null)
@@ -29,7 +29,11 @@ namespace NMG.Service
                             {
                                 var columnName = sqlDataReader.GetString(0);
                                 var dataType = sqlDataReader.GetString(1);
-                                columnDetails.Add(new ColumnDetail(columnName, dataType));
+                                var dataLength = sqlDataReader.GetInt32(2);
+                                var dataPrecision = sqlDataReader.GetInt32(3);
+                                var dataScale = sqlDataReader.GetInt32(4);
+                                var isNullable = sqlDataReader.GetBoolean(5);
+                                columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, dataScale, isNullable));
                             }
                         }
                     }

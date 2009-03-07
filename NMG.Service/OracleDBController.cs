@@ -20,14 +20,18 @@ namespace NMG.Service
             {
                 using (var tableCommand = conn.CreateCommand())
                 {
-                    tableCommand.CommandText = "select column_name, data_type from user_tab_cols where table_name = '" + selectedTableName + "'";
+                    tableCommand.CommandText = "select column_name, data_type, data_length, data_precision, data_scale from user_tab_cols where table_name = '" + selectedTableName + "'";
                     using (var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         while (oracleDataReader.Read())
                         {
                             var columnName = oracleDataReader.GetString(0);
                             var dataType = oracleDataReader.GetString(1);
-                            columnDetails.Add(new ColumnDetail(columnName, dataType));
+                            var dataLength = oracleDataReader.GetInt32(2);
+                            var dataPrecision = oracleDataReader.GetInt32(3);
+                            var dataScale = oracleDataReader.GetInt32(4);
+                            var isNullable = oracleDataReader.GetBoolean(5);
+                            columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, dataScale, isNullable));
                         }
                     }
                 }

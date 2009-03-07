@@ -60,7 +60,7 @@ namespace NMG.Core
                 var idElement = xmldoc.CreateElement("id");
                 idElement.SetAttribute("name", "id");
                 var mapper = new DataTypeMapper();
-                idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType).Name);
+                idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale).Name);
                 idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
                 idElement.SetAttribute("access", "field");
                 classElement.AppendChild(idElement);

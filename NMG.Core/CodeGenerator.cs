@@ -31,7 +31,7 @@ namespace NMG.Core
                 foreach (ColumnDetail columnDetail in columnDetails)
                 {
                     string propertyName = columnDetail.ColumnName.GetFormattedText();
-                    var field = new CodeMemberField(mapper.MapFromDBType(columnDetail.DataType), propertyName.MakeFirstCharLowerCase());
+                    var field = new CodeMemberField(mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale), propertyName.MakeFirstCharLowerCase());
                     newType.Members.Add(field);
                 }
                 var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
