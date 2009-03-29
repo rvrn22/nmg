@@ -1,6 +1,5 @@
 ﻿using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
@@ -13,7 +12,8 @@ namespace NMG.Core
     {
         private readonly Language language;
 
-        public CodeGenerator(string filePath, List<string> tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails, Language language)
+        public CodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber,
+                             ColumnDetails columnDetails, Language language)
             : base(filePath, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
         {
             this.language = language;
@@ -21,27 +21,27 @@ namespace NMG.Core
 
         public override void Generate()
         {
-            foreach (var tableName in tableNames)
+            var compileUnit = new CodeCompileUnit();
+            var codeNamespace = new CodeNamespace(nameSpace);
+
+            var mapper = new DataTypeMapper();
+            var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
+            foreach (ColumnDetail columnDetail in columnDetails)
             {
-                var compileUnit = new CodeCompileUnit();
-                var codeNamespace = new CodeNamespace(nameSpace);
-                
-                var mapper = new DataTypeMapper();
-                var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
-                foreach (ColumnDetail columnDetail in columnDetails)
-                {
-                    string propertyName = columnDetail.ColumnName.GetFormattedText();
-                    var field = new CodeMemberField(mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale), propertyName.MakeFirstCharLowerCase());
-                    newType.Members.Add(field);
-                }
-                var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
-                newType.Members.Add(constructor);
-
-                codeNamespace.Types.Add(newType);
-                compileUnit.Namespaces.Add(codeNamespace);
-
-                WriteToFile(compileUnit, tableName.GetFormattedText());
+                string propertyName = columnDetail.ColumnName.GetFormattedText();
+                var field =
+                    new CodeMemberField(
+                        mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale),
+                        propertyName.MakeFirstCharLowerCase());
+                newType.Members.Add(field);
             }
+            var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
+            newType.Members.Add(constructor);
+
+            codeNamespace.Types.Add(newType);
+            compileUnit.Namespaces.Add(codeNamespace);
+
+            WriteToFile(compileUnit, tableName.GetFormattedText());
         }
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
@@ -73,7 +73,7 @@ namespace NMG.Core
             }
             entireContent = RemoveComments(entireContent);
             entireContent = AddStandardHeader(entireContent);
-            using(var writer = new StreamWriter(sourceFile))
+            using (var writer = new StreamWriter(sourceFile))
             {
                 writer.Write(entireContent);
             }

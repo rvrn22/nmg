@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OracleClient;
@@ -20,17 +21,33 @@ namespace NMG.Service
             {
                 using (var tableCommand = conn.CreateCommand())
                 {
-                    tableCommand.CommandText = "select column_name, data_type, data_length, data_precision, data_scale from user_tab_cols where table_name = '" + selectedTableName + "'";
+                    tableCommand.CommandText = "select column_name, data_type, data_length, data_precision, data_scale, nullable from user_tab_cols where table_name = '" + selectedTableName + "'";
                     using (var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         while (oracleDataReader.Read())
                         {
                             var columnName = oracleDataReader.GetString(0);
                             var dataType = oracleDataReader.GetString(1);
-                            var dataLength = oracleDataReader.GetInt32(2);
-                            var dataPrecision = oracleDataReader.GetInt32(3);
-                            var dataScale = oracleDataReader.GetInt32(4);
-                            var isNullable = oracleDataReader.GetBoolean(5);
+                            int dataLength = 0;
+                            int dataPrecision = 0;
+                            int dataScale = 0;
+                            string isNullableStr = "N";
+                            try
+                            {
+                                dataLength = oracleDataReader.GetInt32(2);
+                                dataPrecision = oracleDataReader.GetInt32(3);
+                                dataScale = oracleDataReader.GetInt32(4);
+                                isNullableStr = oracleDataReader.GetString(5);
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                
+                            }
+                            bool isNullable = false;
+                            if (isNullableStr.Equals("Y", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                isNullable = true;
+                            }
                             columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, dataScale, isNullable));
                         }
                     }

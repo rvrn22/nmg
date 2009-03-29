@@ -12,14 +12,15 @@ namespace NHibernateMappingGenerator
     {
         public App()
         {
-            InitializeComponent();            
+            InitializeComponent();
             tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
+            dbTableDetailsGridView.DataError += DataError;
             BindData();
             tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
             Closing += App_Closing;
-            var applicationSettings = ApplicationSettings.Load();
+            ApplicationSettings applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
                 connStrTextBox.Text = applicationSettings.ConnectionString;
@@ -29,21 +30,27 @@ namespace NHibernateMappingGenerator
             }
         }
 
+        private void DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            errorLabel.Text = "Error in column " + e.ColumnIndex + ". Detail : " + e.Exception.Message;
+        }
+
         private void App_Closing(object sender, CancelEventArgs e)
         {
-            var applicationSettings = new ApplicationSettings(connStrTextBox.Text, (ServerType) serverTypeComboBox.SelectedItem, nameSpaceTextBox.Text, assemblyNameTextBox.Text);
+            var applicationSettings = new ApplicationSettings(connStrTextBox.Text, (ServerType) serverTypeComboBox.SelectedItem, nameSpaceTextBox.Text,
+                                                              assemblyNameTextBox.Text);
             applicationSettings.Save();
         }
 
         private void ServerTypeSelected(object sender, EventArgs e)
         {
-            bool isOracleSelected = ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle);
+            bool isOracleSelected = ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle);
             connStrTextBox.Text = isOracleSelected ? StringConstants.ORACLE_CONN_STR_TEMPLATE : StringConstants.SQL_CONN_STR_TEMPLATE;
         }
 
         private void BindData()
         {
-            serverTypeComboBox.DataSource = Enum.GetValues(typeof(ServerType));
+            serverTypeComboBox.DataSource = Enum.GetValues(typeof (ServerType));
             serverTypeComboBox.SelectedIndex = 0;
 
             columnName.DataPropertyName = "ColumnName";
@@ -72,7 +79,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var dbController = GetDbController();
+                DBController dbController = GetDbController();
                 dbTableDetailsGridView.DataSource = dbController.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -94,7 +101,6 @@ namespace NHibernateMappingGenerator
             {
                 Cursor.Current = Cursors.Default;
             }
-
         }
 
         private DBController GetDbController()
@@ -115,7 +121,7 @@ namespace NHibernateMappingGenerator
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var dbController = GetDbController();
+            DBController dbController = GetDbController();
             try
             {
                 tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
@@ -149,22 +155,29 @@ namespace NHibernateMappingGenerator
         private void generateButton_Click(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
-            if(tablesComboBox.SelectedItem == null || dbTableDetailsGridView.DataSource == null)
+            object selectedItem = tablesComboBox.SelectedItem;
+            if (selectedItem == null || dbTableDetailsGridView.DataSource == null)
             {
                 errorLabel.Text = "Please select a table above to generate the mapping files.";
                 return;
             }
             try
             {
-                errorLabel.Text = "Generating " + tablesComboBox.SelectedItem + " mapping file ...";
-                
-                var tableNames = new List<string>();
- 
-                if(tablesComboBox.SelectedItem != null)
+                errorLabel.Text = "Generating " + selectedItem + " mapping file ...";
+
+                string sequence = string.Empty;
+                if (sequencesComboBox.SelectedItem != null)
                 {
-                    tableNames.Add(tablesComboBox.SelectedItem.ToString());
+                    sequence = sequencesComboBox.SelectedItem.ToString();
                 }
-                Generate(tableNames);
+                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
+
+                string tableName = selectedItem.ToString();
+                var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
+                var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
+                                                       sequence, columnDetails);
+                controller.Generate(Language.CSharp);
+                errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
             {
@@ -183,9 +196,9 @@ namespace NHibernateMappingGenerator
             try
             {
                 var tableNames = new List<string>();
-                foreach (var item in tablesComboBox.Items)
+                foreach (object item in tablesComboBox.Items)
                 {
-                    tableNames.Add(item.ToString()); 
+                    tableNames.Add(item.ToString());
                 }
                 Generate(tableNames);
             }
@@ -195,7 +208,7 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void Generate(List<string> tableNames)
+        private void Generate(IEnumerable<string> tableNames)
         {
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -205,9 +218,16 @@ namespace NHibernateMappingGenerator
                 {
                     sequence = sequencesComboBox.SelectedItem.ToString();
                 }
-                var serverType = (ServerType)serverTypeComboBox.SelectedItem;
-                var controller = new MappingController(serverType, folderTextBox.Text, tableNames, nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, (ColumnDetails)dbTableDetailsGridView.DataSource);
-                controller.Generate(Language.CSharp);
+                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
+
+                foreach (string tableName in tableNames)
+                {
+                    DBController dbController = GetDbController();
+                    ColumnDetails columnDetails = dbController.GetTableDetails(tableName);
+                    var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
+                                                           sequence, columnDetails);
+                    controller.Generate(Language.CSharp);
+                }
                 errorLabel.Text = "Generated all files successfully.";
             }
             finally

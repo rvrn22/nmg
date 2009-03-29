@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using NMG.Core.Domain;
@@ -8,8 +7,8 @@ namespace NMG.Core
 {
     public abstract class MappingGenerator : Generator
     {
-        protected MappingGenerator(string path, List<string> tableNames, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails)
-            : base(path, tableNames, nameSpace, assemblyName, sequenceName, columnDetails)
+        protected MappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceName,
+                                   ColumnDetails columnDetails) : base(path, tableName, nameSpace, assemblyName, sequenceName, columnDetails)
         {
         }
 
@@ -17,20 +16,17 @@ namespace NMG.Core
 
         public override void Generate()
         {
-            foreach (var tableName in tableNames)
+            string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
+            using (var stringWriter = new StringWriter())
             {
-                string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
-                using (var stringWriter = new StringWriter())
-                {
-                    var xmldoc = CreateMappingDocument(tableName);
-                    xmldoc.Save(stringWriter);
-                    string generatedXML = RemoveEmptyNamespaces(stringWriter.ToString());
+                var xmldoc = CreateMappingDocument();
+                xmldoc.Save(stringWriter);
+                string generatedXML = RemoveEmptyNamespaces(stringWriter.ToString());
 
-                    using (var writer = new StreamWriter(fileName))
-                    {
-                        writer.Write(generatedXML);
-                        writer.Flush();
-                    }
+                using (var writer = new StreamWriter(fileName))
+                {
+                    writer.Write(generatedXML);
+                    writer.Flush();
                 }
             }
         }
@@ -40,7 +36,7 @@ namespace NMG.Core
             return mappingContent.Replace("xmlns=\"\"", "");
         }
 
-        public XmlDocument CreateMappingDocument(string tableName)
+        public XmlDocument CreateMappingDocument()
         {
             var xmldoc = new XmlDocument();
             var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
@@ -60,7 +56,9 @@ namespace NMG.Core
                 var idElement = xmldoc.CreateElement("id");
                 idElement.SetAttribute("name", "id");
                 var mapper = new DataTypeMapper();
-                idElement.SetAttribute("type", mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale).Name);
+                idElement.SetAttribute("type",
+                                       mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision,
+                                                            primaryKeyColumn.DataScale).Name);
                 idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
                 idElement.SetAttribute("access", "field");
                 classElement.AppendChild(idElement);
@@ -75,7 +73,7 @@ namespace NMG.Core
         {
             foreach (var columnDetail in columnDetails)
             {
-                if(columnDetail.IsPrimaryKey)
+                if (columnDetail.IsPrimaryKey)
                     continue;
                 var xmlNode = xmldoc.CreateElement("property");
                 xmlNode.SetAttribute("name", columnDetail.ColumnName.GetFormattedText().MakeFirstCharLowerCase());

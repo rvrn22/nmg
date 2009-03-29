@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NMG.Core;
+﻿using NMG.Core;
 using NMG.Core.Domain;
 
 namespace NMG.Service
@@ -8,17 +7,17 @@ namespace NMG.Service
     {
         private readonly ServerType serverType;
         private string folderPath;
-        private readonly List<string> tableNames;
+        private readonly string tableName;
         private readonly string nameSpace;
         private readonly string assemblyName;
         private readonly string sequence;
         private readonly ColumnDetails columnDetails;
 
-        public MappingController(ServerType serverType, string folderPath, List<string> tableNames, string nameSpace, string assemblyName, string sequence, ColumnDetails columnDetails)
+        public MappingController(ServerType serverType, string folderPath, string tableName, string nameSpace, string assemblyName, string sequence, ColumnDetails columnDetails)
         {
             this.serverType = serverType;
             this.folderPath = folderPath;
-            this.tableNames = tableNames;
+            this.tableName = tableName;
             this.nameSpace = nameSpace;
             this.assemblyName = assemblyName;
             this.sequence = sequence;
@@ -29,7 +28,7 @@ namespace NMG.Service
         {
             AddSlashToFolderPath();
             MappingGenerator generator = GetGenerator();
-            var codeGenerator = new CodeGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails, language);                
+            var codeGenerator = new CodeGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, language);                
             generator.Generate();
             codeGenerator.Generate();
         }
@@ -39,10 +38,10 @@ namespace NMG.Service
             MappingGenerator generator;
             if(serverType == ServerType.Oracle)
             {
-                generator = new OracleMappingGenerator(folderPath, tableNames, nameSpace, assemblyName, sequence, columnDetails);
+                generator = new OracleMappingGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails);
             }else
             {
-                generator = new SqlMappingGenerator(folderPath, tableNames, nameSpace, assemblyName, columnDetails);
+                generator = new SqlMappingGenerator(folderPath, tableName, nameSpace, assemblyName, columnDetails);
             }
             return generator;
         }

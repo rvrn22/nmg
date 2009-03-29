@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -29,10 +30,21 @@ namespace NMG.Service
                             {
                                 var columnName = sqlDataReader.GetString(0);
                                 var dataType = sqlDataReader.GetString(1);
-                                var dataLength = sqlDataReader.GetInt32(2);
-                                var dataPrecision = sqlDataReader.GetInt32(3);
-                                var dataScale = sqlDataReader.GetInt32(4);
-                                var isNullable = sqlDataReader.GetBoolean(5);
+                                int dataLength = 0;
+                                int dataPrecision = 0;
+                                int dataScale = 0;
+                                bool isNullable = false;
+                                try
+                                {
+                                    dataLength = sqlDataReader.GetInt32(2);
+                                    dataPrecision = sqlDataReader.GetInt32(3);
+                                    dataScale = sqlDataReader.GetInt32(4);
+                                    isNullable = sqlDataReader.GetBoolean(5);
+                                }catch(Exception)
+                                {
+                                    
+                                }
+                                
                                 columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, dataScale, isNullable));
                             }
                         }
