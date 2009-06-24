@@ -51,6 +51,7 @@
     <Compile Include="MappingGenerator.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />
+    <Compile Include="Preferences.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="Generator.cs" />

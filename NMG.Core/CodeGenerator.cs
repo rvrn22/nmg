@@ -11,12 +11,13 @@ namespace NMG.Core
     public class CodeGenerator : Generator
     {
         private readonly Language language;
+        private readonly Preferences preferences;
 
-        public CodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber,
-                             ColumnDetails columnDetails, Language language)
+        public CodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails, Language language, Preferences preferences)
             : base(filePath, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
         {
             this.language = language;
+            this.preferences = preferences;
         }
 
         public override void Generate()
@@ -28,11 +29,11 @@ namespace NMG.Core
             var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
             foreach (ColumnDetail columnDetail in columnDetails)
             {
-                string propertyName = columnDetail.ColumnName.GetFormattedText();
+                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(preferences);
                 var field =
                     new CodeMemberField(
                         mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale),
-                        propertyName.MakeFirstCharLowerCase());
+                        propertyName);
                 newType.Members.Add(field);
             }
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};

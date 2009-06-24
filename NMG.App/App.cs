@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Util;
 using NMG.Service;
@@ -28,6 +29,9 @@ namespace NHibernateMappingGenerator
                 nameSpaceTextBox.Text = applicationSettings.NameSpace;
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
             }
+            sameAsDBRadioButton.Checked = true;
+            prefixLabel.Visible = prefixTextBox.Visible = false;
+            cSharpRadioButton.Checked = true;
         }
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -176,7 +180,7 @@ namespace NHibernateMappingGenerator
                 var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
                 var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
                                                        sequence, columnDetails);
-                controller.Generate(Language.CSharp);
+                controller.Generate(GetLanguage(), GetPreferences());
                 errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
@@ -226,7 +230,7 @@ namespace NHibernateMappingGenerator
                     ColumnDetails columnDetails = dbController.GetTableDetails(tableName);
                     var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
                                                            sequence, columnDetails);
-                    controller.Generate(Language.CSharp);
+                    controller.Generate(GetLanguage(), GetPreferences());
                 }
                 errorLabel.Text = "Generated all files successfully.";
             }
@@ -234,6 +238,26 @@ namespace NHibernateMappingGenerator
             {
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private Language GetLanguage()
+        {
+            return vbRadioButton.Checked ? Language.VB : Language.CSharp;
+        }
+
+        private void prefixCheckChanged(object sender, EventArgs e)
+        {
+            prefixLabel.Visible = prefixTextBox.Visible = prefixRadioButton.Checked;
+        }
+
+        private Preferences GetPreferences()
+        {
+            var convention = FieldNamingConvention.SameAsDatabase;
+            if(prefixRadioButton.Checked)
+                convention = FieldNamingConvention.Prefixed;
+            if(camelCasedRadioButton.Checked)
+                convention = FieldNamingConvention.CamelCase;
+            return new Preferences(convention, prefixTextBox.Text);
         }
     }
 }

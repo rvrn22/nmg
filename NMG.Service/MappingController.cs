@@ -24,24 +24,24 @@ namespace NMG.Service
             this.columnDetails = columnDetails;
         }
 
-        public void Generate(Language language)
+        public void Generate(Language language, Preferences preferences)
         {
             AddSlashToFolderPath();
-            MappingGenerator generator = GetGenerator();
-            var codeGenerator = new CodeGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, language);                
-            generator.Generate();
+            var mappingGenerator = GetMappingGenerator(preferences);
+            mappingGenerator.Generate();
+            var codeGenerator = new CodeGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, language, preferences);
             codeGenerator.Generate();
         }
 
-        private MappingGenerator GetGenerator()
+        private MappingGenerator GetMappingGenerator(Preferences preferences)
         {
             MappingGenerator generator;
             if(serverType == ServerType.Oracle)
             {
-                generator = new OracleMappingGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails);
+                generator = new OracleMappingGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, preferences);
             }else
             {
-                generator = new SqlMappingGenerator(folderPath, tableName, nameSpace, assemblyName, columnDetails);
+                generator = new SqlMappingGenerator(folderPath, tableName, nameSpace, assemblyName, columnDetails, preferences);
             }
             return generator;
         }
