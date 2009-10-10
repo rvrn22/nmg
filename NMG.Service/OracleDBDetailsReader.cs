@@ -6,9 +6,9 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class OracleDBController : DBController
+    public class OracleDBDetailsReader : DBDetailsReader
     {
-        public OracleDBController(string connectionStr) : base(connectionStr)
+        public OracleDBDetailsReader(string connectionStr) : base(connectionStr)
         {
         }
 

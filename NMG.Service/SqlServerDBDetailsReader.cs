@@ -6,9 +6,9 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class SqlServerDBController : DBController
+    public class SqlServerDBDetailsReader : DBDetailsReader
     {
-        public SqlServerDBController(string connectionStr) : base(connectionStr)
+        public SqlServerDBDetailsReader(string connectionStr) : base(connectionStr)
         {
         }
 
@@ -40,7 +40,7 @@ namespace NMG.Service
                                     dataPrecision = sqlDataReader.GetInt32(3);
                                     dataScale = sqlDataReader.GetInt32(4);
                                     isNullable = sqlDataReader.GetBoolean(5);
-                                }catch(Exception)
+                                }catch (Exception)
                                 {
                                     
                                 }

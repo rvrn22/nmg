@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CE0F8E0F-0392-4910-A728-D980F4043904}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -46,11 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DBController.cs" />
+    <Compile Include="DBDetailsReader.cs" />
     <Compile Include="MappingController.cs" />
-    <Compile Include="OracleDBController.cs" />
+    <Compile Include="OracleDBDetailsReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlServerDBController.cs" />
+    <Compile Include="SqlServerDBDetailsReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NMG.Core\NMG.Core.csproj">

@@ -32,6 +32,7 @@ namespace NHibernateMappingGenerator
             sameAsDBRadioButton.Checked = true;
             prefixLabel.Visible = prefixTextBox.Visible = false;
             cSharpRadioButton.Checked = true;
+            hbmMappingOption.Checked = true;
         }
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -83,7 +84,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                DBController dbController = GetDbController();
+                var dbController = GetDbController();
                 dbTableDetailsGridView.DataSource = dbController.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -92,7 +93,7 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void connectBtn_Click(object sender, EventArgs e)
+        private void connectBtnClicked(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -107,25 +108,25 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private DBController GetDbController()
+        private DBDetailsReader GetDbController()
         {
             string connectionStr = connStrTextBox.Text;
-            DBController dbController;
+            DBDetailsReader dbDetailsReader;
             if ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle)
             {
-                dbController = new OracleDBController(connectionStr);
+                dbDetailsReader = new OracleDBDetailsReader(connectionStr);
             }
             else
             {
-                dbController = new SqlServerDBController(connectionStr);
+                dbDetailsReader = new SqlServerDBDetailsReader(connectionStr);
             }
-            return dbController;
+            return dbDetailsReader;
         }
 
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            DBController dbController = GetDbController();
+            var dbController = GetDbController();
             try
             {
                 tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
@@ -180,7 +181,7 @@ namespace NHibernateMappingGenerator
                 var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
                 var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
                                                        sequence, columnDetails);
-                controller.Generate(GetLanguage(), GetPreferences());
+                controller.Generate(LanguageSelected, GetPreferences());
                 errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
@@ -226,11 +227,11 @@ namespace NHibernateMappingGenerator
 
                 foreach (string tableName in tableNames)
                 {
-                    DBController dbController = GetDbController();
-                    ColumnDetails columnDetails = dbController.GetTableDetails(tableName);
+                    var dbController = GetDbController();
+                    var columnDetails = dbController.GetTableDetails(tableName);
                     var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
                                                            sequence, columnDetails);
-                    controller.Generate(GetLanguage(), GetPreferences());
+                    controller.Generate(LanguageSelected, GetPreferences());
                 }
                 errorLabel.Text = "Generated all files successfully.";
             }
@@ -240,9 +241,14 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private Language GetLanguage()
+        private Language LanguageSelected
         {
-            return vbRadioButton.Checked ? Language.VB : Language.CSharp;
+            get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
+        }
+
+        public bool IsFluent
+        {
+            get { return fluentMappingOption.Checked ? true : false; }
         }
 
         private void prefixCheckChanged(object sender, EventArgs e)
