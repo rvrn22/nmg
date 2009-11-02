@@ -55,7 +55,6 @@
     <Compile Include="Generator\MappingGenerator.cs" />
     <Compile Include="Generator\CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />
-    <Compile Include="MappingController.cs" />
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="Preferences.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />

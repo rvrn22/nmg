@@ -206,10 +206,8 @@ namespace NHibernateMappingGenerator
                 sequence = sequencesComboBox.SelectedItem.ToString();
             }
             var serverType = (ServerType)serverTypeComboBox.SelectedItem;
-
-            var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
-                                                   sequence, columnDetails);
-            controller.Generate(LanguageSelected, GetPreferences());
+            var applicationController = new ApplicationController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, columnDetails, GetPreferences(), LanguageSelected);
+            applicationController.Generate();
         }
 
         private Language LanguageSelected
