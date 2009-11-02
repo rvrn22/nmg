@@ -204,7 +204,7 @@ namespace NHibernateMappingGenerator
             this.generateButton.TabIndex = 8;
             this.generateButton.Text = "&Generate";
             this.generateButton.UseVisualStyleBackColor = true;
-            this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
+            this.generateButton.Click += new System.EventHandler(this.GenerateClicked);
             // 
             // folderSelectButton
             // 
@@ -294,7 +294,7 @@ namespace NHibernateMappingGenerator
             this.generateAllBtn.TabIndex = 18;
             this.generateAllBtn.Text = "Generate &All";
             this.generateAllBtn.UseVisualStyleBackColor = true;
-            this.generateAllBtn.Click += new System.EventHandler(this.generateAllBtn_Click);
+            this.generateAllBtn.Click += new System.EventHandler(this.GenerateAllClicked);
             // 
             // mainTabControl
             // 

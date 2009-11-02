@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using NMG.Core;
@@ -21,7 +20,7 @@ namespace NHibernateMappingGenerator
             tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
             Closing += App_Closing;
-            ApplicationSettings applicationSettings = ApplicationSettings.Load();
+            var applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
                 connStrTextBox.Text = applicationSettings.ConnectionString;
@@ -84,7 +83,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var metadataReader = GetMetadataReader();
+                var metadataReader = GetMetadataReader((ServerType) serverTypeComboBox.SelectedItem, connStrTextBox.Text);
                 dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -108,11 +107,10 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private MetadataReader GetMetadataReader()
+        private MetadataReader GetMetadataReader(ServerType serverType, string connectionStr)
         {
-            string connectionStr = connStrTextBox.Text;
             MetadataReader metadataReader;
-            if ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle)
+            if (serverType == ServerType.Oracle)
             {
                 metadataReader = new OracleMetadataReader(connectionStr);
             }
@@ -126,7 +124,7 @@ namespace NHibernateMappingGenerator
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var metadataReader = GetMetadataReader();
+            var metadataReader = GetMetadataReader((ServerType) serverTypeComboBox.SelectedItem, connStrTextBox.Text);
             try
             {
                 tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
@@ -157,7 +155,7 @@ namespace NHibernateMappingGenerator
             folderTextBox.Text = folderBrowserDialog.SelectedPath;
         }
 
-        private void generateButton_Click(object sender, EventArgs e)
+        private void GenerateClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
             object selectedItem = tablesComboBox.SelectedItem;
@@ -169,19 +167,9 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = "Generating " + selectedItem + " mapping file ...";
-
-                string sequence = string.Empty;
-                if (sequencesComboBox.SelectedItem != null)
-                {
-                    sequence = sequencesComboBox.SelectedItem.ToString();
-                }
-                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
-
                 string tableName = selectedItem.ToString();
                 var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
-                var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
-                                                       sequence, columnDetails);
-                controller.Generate(LanguageSelected, GetPreferences());
+                Generate(tableName, columnDetails);
                 errorLabel.Text = "Generated all files successfully.";
             }
             catch (Exception ex)
@@ -190,7 +178,7 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void generateAllBtn_Click(object sender, EventArgs e)
+        private void GenerateAllClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
             if (tablesComboBox.Items == null || tablesComboBox.Items.Count == 0)
@@ -200,12 +188,24 @@ namespace NHibernateMappingGenerator
             }
             try
             {
-                var tableNames = new List<string>();
-                foreach (object item in tablesComboBox.Items)
+                Cursor.Current = Cursors.WaitCursor;
+                try
                 {
-                    tableNames.Add(item.ToString());
+                    var serverType = (ServerType) serverTypeComboBox.SelectedItem;
+
+                    foreach (object item in tablesComboBox.Items)
+                    {
+                        string tableName = item.ToString();
+                        var metadataReader = GetMetadataReader(serverType, connStrTextBox.Text);
+                        var columnDetails = metadataReader.GetTableDetails(tableName);
+                        Generate(tableName, columnDetails);
+                    }
+                    errorLabel.Text = "Generated all files successfully.";
                 }
-                Generate(tableNames);
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
+                }
             }
             catch (Exception ex)
             {
@@ -213,32 +213,18 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void Generate(IEnumerable<string> tableNames)
+        private void Generate(string tableName, ColumnDetails columnDetails)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            try
+            string sequence = string.Empty;
+            if (sequencesComboBox.SelectedItem != null)
             {
-                string sequence = string.Empty;
-                if (sequencesComboBox.SelectedItem != null)
-                {
-                    sequence = sequencesComboBox.SelectedItem.ToString();
-                }
-                var serverType = (ServerType) serverTypeComboBox.SelectedItem;
+                sequence = sequencesComboBox.SelectedItem.ToString();
+            }
+            var serverType = (ServerType)serverTypeComboBox.SelectedItem;
 
-                foreach (string tableName in tableNames)
-                {
-                    var metadataReader = GetMetadataReader();
-                    var columnDetails = metadataReader.GetTableDetails(tableName);
-                    var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
-                                                           sequence, columnDetails);
-                    controller.Generate(LanguageSelected, GetPreferences());
-                }
-                errorLabel.Text = "Generated all files successfully.";
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
-            }
+            var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
+                                                   sequence, columnDetails);
+            controller.Generate(LanguageSelected, GetPreferences());
         }
 
         private Language LanguageSelected
