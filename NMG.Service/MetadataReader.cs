@@ -3,11 +3,11 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public abstract class DBDetailsReader
+    public abstract class MetadataReader
     {
         protected readonly string connectionStr;
 
-        protected DBDetailsReader(string connectionStr)
+        protected MetadataReader(string connectionStr)
         {
             this.connectionStr = connectionStr;
         }

@@ -6,9 +6,9 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class OracleDBDetailsReader : DBDetailsReader
+    public class OracleMetadataReader : MetadataReader
     {
-        public OracleDBDetailsReader(string connectionStr) : base(connectionStr)
+        public OracleMetadataReader(string connectionStr) : base(connectionStr)
         {
         }
 

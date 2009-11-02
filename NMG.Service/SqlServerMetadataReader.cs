@@ -6,9 +6,9 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class SqlServerDBDetailsReader : DBDetailsReader
+    public class SqlServerMetadataReader : MetadataReader
     {
-        public SqlServerDBDetailsReader(string connectionStr) : base(connectionStr)
+        public SqlServerMetadataReader(string connectionStr) : base(connectionStr)
         {
         }
 

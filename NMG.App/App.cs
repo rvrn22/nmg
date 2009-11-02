@@ -84,8 +84,8 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var dbController = GetDbController();
-                dbTableDetailsGridView.DataSource = dbController.GetTableDetails(selectedTableName);
+                var metadataReader = GetMetadataReader();
+                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
             {
@@ -108,28 +108,28 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private DBDetailsReader GetDbController()
+        private MetadataReader GetMetadataReader()
         {
             string connectionStr = connStrTextBox.Text;
-            DBDetailsReader dbDetailsReader;
+            MetadataReader metadataReader;
             if ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle)
             {
-                dbDetailsReader = new OracleDBDetailsReader(connectionStr);
+                metadataReader = new OracleMetadataReader(connectionStr);
             }
             else
             {
-                dbDetailsReader = new SqlServerDBDetailsReader(connectionStr);
+                metadataReader = new SqlServerMetadataReader(connectionStr);
             }
-            return dbDetailsReader;
+            return metadataReader;
         }
 
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var dbController = GetDbController();
+            var metadataReader = GetMetadataReader();
             try
             {
-                tablesComboBox.Items.AddRange(dbController.GetTables().ToArray());
+                tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
                 bool hasTables = tablesComboBox.Items.Count > 0;
                 tablesComboBox.Enabled = hasTables;
                 if (hasTables)
@@ -137,7 +137,7 @@ namespace NHibernateMappingGenerator
                     tablesComboBox.SelectedIndex = 0;
                 }
 
-                sequencesComboBox.Items.AddRange(dbController.GetSequences().ToArray());
+                sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
                 bool hasSequences = sequencesComboBox.Items.Count > 0;
                 sequencesComboBox.Enabled = hasSequences;
                 if (hasSequences)
@@ -227,8 +227,8 @@ namespace NHibernateMappingGenerator
 
                 foreach (string tableName in tableNames)
                 {
-                    var dbController = GetDbController();
-                    var columnDetails = dbController.GetTableDetails(tableName);
+                    var metadataReader = GetMetadataReader();
+                    var columnDetails = metadataReader.GetTableDetails(tableName);
                     var controller = new MappingController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text,
                                                            sequence, columnDetails);
                     controller.Generate(LanguageSelected, GetPreferences());
