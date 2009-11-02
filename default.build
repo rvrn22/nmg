@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://nant.sf.net/release/0.85-rc4/nant.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nant.sf.net/release/0.85-rc4/nant.xsd nant.xsd" name="NMG"
+	default="compile" basedir=".">
+
+  <target name="compile">
+    <exec basedir="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE" program="devenv.com" failonerror="true" >
+      <arg value="NMG.sln" />
+      <arg value="/build" />
+    </exec>
+  </target>
+
+  <target name="clean">
+    <exec basedir="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE" program="devenv.com" failonerror="true" >
+      <arg value="NMG.sln" />
+      <arg value="/clean" />
+    </exec>
+  </target>
+
+  <target name="test">
+    <exec basedir="Lib\NUnit" program="nunit-console.exe" failonerror="true" >
+      <arg value="NMG.Tests\bin\Debug\NMG.Tests.dll" />
+    </exec>
+  </target>
+
+</project>
