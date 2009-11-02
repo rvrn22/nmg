@@ -1,7 +1,7 @@
 ﻿using NMG.Core.Domain;
 using NMG.Core.Reader;
 
-namespace NMG.Service
+namespace NMG.Core
 {
     public class MetadataFactory
     {

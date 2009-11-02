@@ -49,6 +49,7 @@
     <Compile Include="Domain\ColumnDetail.cs" />
     <Compile Include="Domain\DotNetTypes.cs" />
     <Compile Include="Domain\Language.cs" />
+    <Compile Include="FieldNamingConvention.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />
     <Compile Include="Fluent\Constants.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />

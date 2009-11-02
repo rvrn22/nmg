@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Util;
-using NMG.Service;
 
 namespace NHibernateMappingGenerator
 {

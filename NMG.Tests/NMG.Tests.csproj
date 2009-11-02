@@ -50,10 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ColumnDetailsTest.cs" />
+    <Compile Include="DataTypeMapperTest.cs" />
     <Compile Include="Fluent\DBColumnMapperTest.cs" />
-    <Compile Include="OracleMappingGeneratorTest.cs" />
+    <Compile Include="Generator\OracleMappingGeneratorTest.cs" />
+    <Compile Include="MappingControllerTest.cs" />
+    <Compile Include="MetadataFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlMappingGeneratorTest.cs" />
+    <Compile Include="Generator\SqlMappingGeneratorTest.cs" />
     <Compile Include="Util\StringExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
