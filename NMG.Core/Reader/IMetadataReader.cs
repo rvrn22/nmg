@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NMG.Core.Domain;
 
-namespace NMG.Service
+namespace NMG.Core.Reader
 {
     public interface IMetadataReader
     {

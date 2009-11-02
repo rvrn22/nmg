@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using NMG.Core;
 using NMG.Core.Domain;
+using NMG.Core.Generator;
 using NUnit.Framework;
 
 namespace NMG.Tests

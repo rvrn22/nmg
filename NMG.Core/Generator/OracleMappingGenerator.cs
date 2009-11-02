@@ -1,7 +1,7 @@
 using System.Xml;
 using NMG.Core.Domain;
 
-namespace NMG.Core
+namespace NMG.Core.Generator
 {
     public class OracleMappingGenerator : MappingGenerator
     {

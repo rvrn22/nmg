@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using NMG.Core.Domain;
 
-namespace NMG.Service
+namespace NMG.Core.Reader
 {
     public class SqlServerMetadataReader : IMetadataReader
     {

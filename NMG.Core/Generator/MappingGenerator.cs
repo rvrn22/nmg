@@ -3,9 +3,9 @@ using System.Xml;
 using NMG.Core.Domain;
 using NMG.Core.Util;
 
-namespace NMG.Core
+namespace NMG.Core.Generator
 {
-    public abstract class MappingGenerator : Generator
+    public abstract class MappingGenerator : AbstractGenerator
     {
         private readonly Preferences preferences;
 

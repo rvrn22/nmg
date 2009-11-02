@@ -1,4 +1,4 @@
-namespace NMG.Core
+namespace NMG.Core.Generator
 {
     public interface IGenerator
     {

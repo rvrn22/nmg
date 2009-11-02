@@ -21,37 +21,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9671A640E3900322C4B6682CB9E12CF4"
+        "MsmKey" = "8:_283C43CADA7A83BD2826F1E42149A7E3"
         "OwnerKey" = "8:_0F3DE3075403403DA2AE5CB05CF6A69E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
+        "MsmKey" = "8:_283C43CADA7A83BD2826F1E42149A7E3"
+        "OwnerKey" = "8:_466F192AB7688F50AA62CC2288437EC6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_466F192AB7688F50AA62CC2288437EC6"
         "OwnerKey" = "8:_0F3DE3075403403DA2AE5CB05CF6A69E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
-        "OwnerKey" = "8:_EC64A15E86CF4ECCAA0850AFBE218670"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
-        "OwnerKey" = "8:_9671A640E3900322C4B6682CB9E12CF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_BF96A7FECE9F48AF8FD458803BA0D1F5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EC64A15E86CF4ECCAA0850AFBE218670"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -70,25 +58,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EC64A15E86CF4ECCAA0850AFBE218670"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BF96A7FECE9F48AF8FD458803BA0D1F5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9671A640E3900322C4B6682CB9E12CF4"
+        "OwnerKey" = "8:_466F192AB7688F50AA62CC2288437EC6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9C2B91B35478C42F0C32F199839EC160"
+        "OwnerKey" = "8:_283C43CADA7A83BD2826F1E42149A7E3"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -196,20 +178,20 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9671A640E3900322C4B6682CB9E12CF4"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_283C43CADA7A83BD2826F1E42149A7E3"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NMG.Service, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:NMG.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_9671A640E3900322C4B6682CB9E12CF4"
+                    "_283C43CADA7A83BD2826F1E42149A7E3"
                     {
-                    "Name" = "8:NMG.Service.dll"
+                    "Name" = "8:NMG.Core.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:NMG.Service.dll"
+            "SourcePath" = "8:NMG.Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
@@ -227,20 +209,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9C2B91B35478C42F0C32F199839EC160"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_466F192AB7688F50AA62CC2288437EC6"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NMG.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:NMG.Service, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_9C2B91B35478C42F0C32F199839EC160"
+                    "_466F192AB7688F50AA62CC2288437EC6"
                     {
-                    "Name" = "8:NMG.Core.dll"
+                    "Name" = "8:NMG.Service.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:NMG.Core.dll"
+            "SourcePath" = "8:NMG.Service.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
@@ -962,34 +944,6 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_47992B7E5CAD413A882A951544F3ABB3"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:XmlSerializer"
-            "OutputProjectGuid" = "8:{CE0F8E0F-0392-4910-A728-D980F4043904}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7F7AEE84645D4F9BBB68E4393CECF1DE"
             {
             "SourcePath" = "8:"
@@ -1130,34 +1084,6 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_ABFA082E63F840468D5B948A9F93171B"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Documentation"
-            "OutputProjectGuid" = "8:{CE0F8E0F-0392-4910-A728-D980F4043904}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_BF96A7FECE9F48AF8FD458803BA0D1F5"
             {
             "SourcePath" = "8:..\\NMG.Core\\obj\\Debug\\NMG.Core.dll"
@@ -1209,90 +1135,6 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:LocalizedResourceDlls"
             "OutputProjectGuid" = "8:{A15F2280-C07B-4BBA-B822-6D06C464A582}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E2EF9B11BC594F6CB75F0364DECF0A44"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:LocalizedResourceDlls"
-            "OutputProjectGuid" = "8:{CE0F8E0F-0392-4910-A728-D980F4043904}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EC64A15E86CF4ECCAA0850AFBE218670"
-            {
-            "SourcePath" = "8:..\\NMG.Service\\obj\\Debug\\NMG.Service.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{CE0F8E0F-0392-4910-A728-D980F4043904}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EE07B5A57F844437A6B696694406324D"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C126F22353114CA7A67E5376421B75F1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:ContentFiles"
-            "OutputProjectGuid" = "8:{CE0F8E0F-0392-4910-A728-D980F4043904}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

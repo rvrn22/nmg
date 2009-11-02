@@ -35,13 +35,14 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -50,17 +51,22 @@
     <Compile Include="Domain\Language.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />
     <Compile Include="Fluent\Constants.cs" />
-    <Compile Include="MappingGenerator.cs" />
-    <Compile Include="CodeGenerator.cs" />
+    <Compile Include="Generator\MappingGenerator.cs" />
+    <Compile Include="Generator\CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />
+    <Compile Include="MappingController.cs" />
+    <Compile Include="MetadataFactory.cs" />
     <Compile Include="Preferences.cs" />
+    <Compile Include="Reader\IMetadataReader.cs" />
+    <Compile Include="Reader\OracleMetadataReader.cs" />
+    <Compile Include="Reader\SqlServerMetadataReader.cs" />
     <Compile Include="Util\Extensions.cs" />
-    <Compile Include="IGenerator.cs" />
-    <Compile Include="Generator.cs" />
-    <Compile Include="OracleMappingGenerator.cs" />
+    <Compile Include="Generator\IGenerator.cs" />
+    <Compile Include="Generator\AbstractGenerator.cs" />
+    <Compile Include="Generator\OracleMappingGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\ServerType.cs" />
-    <Compile Include="SqlMappingGenerator.cs" />
+    <Compile Include="Generator\SqlMappingGenerator.cs" />
     <Compile Include="Util\StringConstants.cs" />
     <Compile Include="Domain\ColumnDetails.cs" />
   </ItemGroup>

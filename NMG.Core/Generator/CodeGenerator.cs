@@ -6,9 +6,9 @@ using Microsoft.VisualBasic;
 using NMG.Core.Domain;
 using NMG.Core.Util;
 
-namespace NMG.Core
+namespace NMG.Core.Generator
 {
-    public class CodeGenerator : Generator
+    public class CodeGenerator : AbstractGenerator
     {
         private readonly Language language;
         private readonly Preferences preferences;

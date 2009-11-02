@@ -1,7 +1,7 @@
-﻿using NMG.Core;
-using NMG.Core.Domain;
+﻿using NMG.Core.Domain;
+using NMG.Core.Generator;
 
-namespace NMG.Service
+namespace NMG.Core
 {
     public class MappingController
     {
@@ -33,7 +33,7 @@ namespace NMG.Service
             codeGenerator.Generate();
         }
 
-        private MappingGenerator GetMappingGenerator(Preferences preferences)
+        private IGenerator GetMappingGenerator(Preferences preferences)
         {
             MappingGenerator generator;
             if(serverType == ServerType.Oracle)

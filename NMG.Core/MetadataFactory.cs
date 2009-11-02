@@ -1,4 +1,5 @@
 ﻿using NMG.Core.Domain;
+using NMG.Core.Reader;
 
 namespace NMG.Service
 {
