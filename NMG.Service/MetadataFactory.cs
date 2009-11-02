@@ -4,7 +4,7 @@ namespace NMG.Service
 {
     public class MetadataFactory
     {
-        public IMetadataReader GetReader(ServerType serverType, string connectionStr)
+        public static IMetadataReader GetReader(ServerType serverType, string connectionStr)
         {
             IMetadataReader metadataReader;
             if (serverType == ServerType.Oracle)

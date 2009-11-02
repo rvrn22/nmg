@@ -83,7 +83,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var metadataReader = new MetadataFactory().GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+                var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
                 dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -110,7 +110,7 @@ namespace NHibernateMappingGenerator
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var metadataReader = new MetadataFactory().GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+            var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
             try
             {
                 tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
@@ -182,7 +182,7 @@ namespace NHibernateMappingGenerator
                     foreach (object item in tablesComboBox.Items)
                     {
                         string tableName = item.ToString();
-                        var metadataReader = new MetadataFactory().GetReader(serverType, connStrTextBox.Text);
+                        var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
                         var columnDetails = metadataReader.GetTableDetails(tableName);
                         Generate(tableName, columnDetails);
                     }

@@ -26,12 +26,11 @@ namespace NHibernateMappingGenerator
 
         public void Save()
         {
-            StreamWriter streamWriter = null;
+            var streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);
             XmlSerializer xmlSerializer;
             using (streamWriter)
             {
                 xmlSerializer = new XmlSerializer(typeof (ApplicationSettings));
-                streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);
                 xmlSerializer.Serialize(streamWriter, this);
             }
         }
