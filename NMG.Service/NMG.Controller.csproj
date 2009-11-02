@@ -46,7 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MetadataReader.cs" />
+    <Compile Include="MetadataFactory.cs" />
+    <Compile Include="IMetadataReader.cs" />
     <Compile Include="MappingController.cs" />
     <Compile Include="OracleMetadataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

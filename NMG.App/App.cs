@@ -83,7 +83,7 @@ namespace NHibernateMappingGenerator
             var selectedTableName = (string) tablesComboBox.SelectedItem;
             try
             {
-                var metadataReader = GetMetadataReader((ServerType) serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+                var metadataReader = new MetadataFactory().GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
                 dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTableName);
             }
             catch (Exception ex)
@@ -107,24 +107,10 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private MetadataReader GetMetadataReader(ServerType serverType, string connectionStr)
-        {
-            MetadataReader metadataReader;
-            if (serverType == ServerType.Oracle)
-            {
-                metadataReader = new OracleMetadataReader(connectionStr);
-            }
-            else
-            {
-                metadataReader = new SqlServerMetadataReader(connectionStr);
-            }
-            return metadataReader;
-        }
-
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var metadataReader = GetMetadataReader((ServerType) serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+            var metadataReader = new MetadataFactory().GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
             try
             {
                 tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
@@ -196,7 +182,7 @@ namespace NHibernateMappingGenerator
                     foreach (object item in tablesComboBox.Items)
                     {
                         string tableName = item.ToString();
-                        var metadataReader = GetMetadataReader(serverType, connStrTextBox.Text);
+                        var metadataReader = new MetadataFactory().GetReader(serverType, connStrTextBox.Text);
                         var columnDetails = metadataReader.GetTableDetails(tableName);
                         Generate(tableName, columnDetails);
                     }

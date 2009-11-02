@@ -6,13 +6,16 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class OracleMetadataReader : MetadataReader
+    public class OracleMetadataReader : IMetadataReader
     {
-        public OracleMetadataReader(string connectionStr) : base(connectionStr)
+        private readonly string connectionStr;
+
+        public OracleMetadataReader(string connectionStr)
         {
+            this.connectionStr = connectionStr;
         }
 
-        public override ColumnDetails GetTableDetails(string selectedTableName)
+        public ColumnDetails GetTableDetails(string selectedTableName)
         {
             var columnDetails = new ColumnDetails();
             var conn = new OracleConnection(connectionStr);
@@ -77,7 +80,7 @@ namespace NMG.Service
             return columnDetails;
         }
 
-        public override List<string> GetTables()
+        public List<string> GetTables()
         {
             var tables = new List<string>();
             var conn = new OracleConnection(connectionStr);
@@ -97,7 +100,7 @@ namespace NMG.Service
             return tables;
         }
 
-        public override List<string> GetSequences()
+        public List<string> GetSequences()
         {
             var sequences = new List<string>();
             var conn = new OracleConnection(connectionStr);

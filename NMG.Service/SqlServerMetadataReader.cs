@@ -6,13 +6,16 @@ using NMG.Core.Domain;
 
 namespace NMG.Service
 {
-    public class SqlServerMetadataReader : MetadataReader
+    public class SqlServerMetadataReader : IMetadataReader
     {
-        public SqlServerMetadataReader(string connectionStr) : base(connectionStr)
+        private readonly string connectionStr;
+
+        public SqlServerMetadataReader(string connectionStr)
         {
+            this.connectionStr = connectionStr;
         }
 
-        public override ColumnDetails GetTableDetails(string selectedTableName)
+        public ColumnDetails GetTableDetails(string selectedTableName)
         {
             var columnDetails = new ColumnDetails();
             var conn = new SqlConnection(connectionStr);
@@ -76,7 +79,7 @@ namespace NMG.Service
             return columnDetails;
         }
 
-        public override List<string> GetTables()
+        public List<string> GetTables()
         {
             var tables = new List<string>();
             var conn = new SqlConnection(connectionStr);
@@ -97,7 +100,7 @@ namespace NMG.Service
             return tables;
         }
 
-        public override List<string> GetSequences()
+        public List<string> GetSequences()
         {
             return new List<string>();
         }
