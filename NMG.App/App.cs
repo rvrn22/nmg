@@ -200,13 +200,8 @@ namespace NHibernateMappingGenerator
 
         private void Generate(string tableName, ColumnDetails columnDetails)
         {
-            string sequence = string.Empty;
-            if (sequencesComboBox.SelectedItem != null)
-            {
-                sequence = sequencesComboBox.SelectedItem.ToString();
-            }
-            var serverType = (ServerType)serverTypeComboBox.SelectedItem;
-            var applicationController = new ApplicationController(serverType, folderTextBox.Text, tableName, nameSpaceTextBox.Text, assemblyNameTextBox.Text, sequence, columnDetails, GetPreferences(), LanguageSelected);
+            var applicationPreferences = GetApplicationPreferences(tableName);
+            var applicationController = new ApplicationController(applicationPreferences, columnDetails);
             applicationController.Generate();
         }
 
@@ -225,14 +220,49 @@ namespace NHibernateMappingGenerator
             prefixLabel.Visible = prefixTextBox.Visible = prefixRadioButton.Checked;
         }
 
-        private Preferences GetPreferences()
+        private ApplicationPreferences GetApplicationPreferences(string tableName)
+        {
+            var sequence = string.Empty;
+            if (sequencesComboBox.SelectedItem != null)
+            {
+                sequence = sequencesComboBox.SelectedItem.ToString();
+            }
+            var serverType = (ServerType)serverTypeComboBox.SelectedItem;
+
+            var applicationPreferences = new ApplicationPreferences
+                                             {
+                                                 ServerType = serverType,
+                                                 FolderPath = folderTextBox.Text,
+                                                 TableName = tableName,
+                                                 NameSpace = nameSpaceTextBox.Text,
+                                                 AssemblyName = assemblyNameTextBox.Text,
+                                                 Sequence = sequence,
+                                                 Language = LanguageSelected,
+                                                 FieldNamingConvention = GetFieldNamingConvention(),
+                                                 FieldGenerationConvention = GetFieldGenerationConvention()
+                                             };
+
+            return applicationPreferences;
+        }
+
+        private FieldGenerationConvention GetFieldGenerationConvention()
+        {
+            var convention = FieldGenerationConvention.Field;
+            if (autoPropertyRadioBtn.Checked)
+                convention = FieldGenerationConvention.AutoProperty;
+            if (propertyRadioBtn.Checked)
+                convention = FieldGenerationConvention.Property;
+            return convention;
+        }
+
+        private FieldNamingConvention GetFieldNamingConvention()
         {
             var convention = FieldNamingConvention.SameAsDatabase;
-            if(prefixRadioButton.Checked)
+            if (prefixRadioButton.Checked)
                 convention = FieldNamingConvention.Prefixed;
-            if(camelCasedRadioButton.Checked)
+            if (camelCasedRadioButton.Checked)
                 convention = FieldNamingConvention.CamelCase;
-            return new Preferences(convention, prefixTextBox.Text);
+            return convention;
         }
     }
 }

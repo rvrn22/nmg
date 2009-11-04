@@ -56,7 +56,7 @@
     <Compile Include="Generator\CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />
     <Compile Include="MetadataFactory.cs" />
-    <Compile Include="Preferences.cs" />
+    <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
     <Compile Include="Reader\OracleMetadataReader.cs" />
     <Compile Include="Reader\SqlServerMetadataReader.cs" />

@@ -7,13 +7,12 @@ namespace NMG.Core.Generator
 {
     public abstract class MappingGenerator : AbstractGenerator
     {
-        private readonly Preferences preferences;
+        private readonly ApplicationPreferences applicationPreferences;
 
-        protected MappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceName,
-                                   ColumnDetails columnDetails, Preferences preferences)
-            : base(path, tableName, nameSpace, assemblyName, sequenceName, columnDetails)
+        protected MappingGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
+            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
         {
-            this.preferences = preferences;
+            this.applicationPreferences = applicationPreferences;
         }
 
         protected abstract void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement);
@@ -80,7 +79,7 @@ namespace NMG.Core.Generator
                 if (columnDetail.IsPrimaryKey)
                     continue;
                 var xmlNode = xmldoc.CreateElement("property");
-                xmlNode.SetAttribute("name", columnDetail.ColumnName.GetPreferenceFormattedText(preferences));
+                xmlNode.SetAttribute("name", columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences));
                 xmlNode.SetAttribute("column", columnDetail.ColumnName);
                 xmlNode.SetAttribute("access", "field");
                 classElement.AppendChild(xmlNode);

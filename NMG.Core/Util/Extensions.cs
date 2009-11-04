@@ -13,16 +13,16 @@ namespace NMG.Core.Util
             return formattedText;
         }
         
-        public static string GetPreferenceFormattedText(this string text, Preferences preferences)
+        public static string GetPreferenceFormattedText(this string text, ApplicationPreferences applicationPreferences)
         {
-            if (preferences.FieldNamingConvention.Equals(FieldNamingConvention.SameAsDatabase))
+            if (applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.SameAsDatabase))
                 return text;
             string formattedText = text.Replace('_', ' ');
             formattedText = formattedText.MakeTitleCase();
             formattedText = formattedText.Replace(" ", "");
-            if (preferences.FieldNamingConvention.Equals(FieldNamingConvention.Prefixed))
-                return preferences.Prefix + formattedText;
-            return preferences.FieldNamingConvention.Equals(FieldNamingConvention.CamelCase) ? formattedText.MakeFirstCharLowerCase() : formattedText;
+            if (applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.Prefixed))
+                return applicationPreferences.Prefix + formattedText;
+            return applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.CamelCase) ? formattedText.MakeFirstCharLowerCase() : formattedText;
         }
 
         public static string MakeFirstCharLowerCase(this string text)

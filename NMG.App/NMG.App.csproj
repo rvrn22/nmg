@@ -56,7 +56,6 @@
       <DependentUpon>App.cs</DependentUpon>
     </Compile>
     <Compile Include="ApplicationController.cs" />
-    <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

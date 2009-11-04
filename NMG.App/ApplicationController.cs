@@ -1,4 +1,3 @@
-using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Generator;
 
@@ -9,18 +8,18 @@ namespace NHibernateMappingGenerator
         private readonly MappingGenerator mappingGenerator;
         private readonly CodeGenerator codeGenerator;
 
-        public ApplicationController(ServerType serverType, string folderPath, string tableName, string nameSpace, string assemblyName, string sequence, ColumnDetails columnDetails, Preferences preferences, Language language)
+        public ApplicationController(NMG.Core.ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
         {
-            folderPath = AddSlashToFolderPath(folderPath);
-            codeGenerator = new CodeGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, language, preferences);
+            applicationPreferences.FolderPath = AddSlashToFolderPath(applicationPreferences.FolderPath);
+            codeGenerator = new CodeGenerator(applicationPreferences, columnDetails);
 
-            if (serverType == ServerType.Oracle)
+            if (applicationPreferences.ServerType == ServerType.Oracle)
             {
-                mappingGenerator = new OracleMappingGenerator(folderPath, tableName, nameSpace, assemblyName, sequence, columnDetails, preferences);
+                mappingGenerator = new OracleMappingGenerator(applicationPreferences, columnDetails);
             }
             else
             {
-                mappingGenerator = new SqlMappingGenerator(folderPath, tableName, nameSpace, assemblyName, columnDetails, preferences);
+                mappingGenerator = new SqlMappingGenerator(applicationPreferences, columnDetails);
             }
         }
 

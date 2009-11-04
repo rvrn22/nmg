@@ -10,14 +10,14 @@ namespace NMG.Core.Generator
 {
     public class CodeGenerator : AbstractGenerator
     {
+        private readonly ApplicationPreferences applicationPreferences;
         private readonly Language language;
-        private readonly Preferences preferences;
 
-        public CodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceNumber, ColumnDetails columnDetails, Language language, Preferences preferences)
-            : base(filePath, tableName, nameSpace, assemblyName, sequenceNumber, columnDetails)
+        public CodeGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
+            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
         {
-            this.language = language;
-            this.preferences = preferences;
+            this.applicationPreferences = applicationPreferences;
+            language = applicationPreferences.Language;
         }
 
         public override void Generate()
@@ -27,9 +27,9 @@ namespace NMG.Core.Generator
 
             var mapper = new DataTypeMapper();
             var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
-            foreach (ColumnDetail columnDetail in columnDetails)
+            foreach (var columnDetail in columnDetails)
             {
-                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(preferences);
+                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
                 var field =
                     new CodeMemberField(
                         mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale),

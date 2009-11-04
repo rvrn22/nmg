@@ -5,9 +5,7 @@ namespace NMG.Core.Generator
 {
     public class OracleMappingGenerator : MappingGenerator
     {
-        public OracleMappingGenerator(string path, string tableName, string nameSpace, string assemblyName, string sequenceName,
-                                      ColumnDetails columnDetails, Preferences preferences)
-            : base(path, tableName, nameSpace, assemblyName, sequenceName, columnDetails, preferences)
+        public OracleMappingGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails) : base(applicationPreferences, columnDetails)
         {
         }
 

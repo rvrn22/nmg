@@ -6,4 +6,11 @@
         CamelCase,
         Prefixed
     }
+
+    public enum FieldGenerationConvention
+    {
+        Field,
+        Property,
+        AutoProperty
+    }
 }
