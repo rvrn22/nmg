@@ -227,11 +227,10 @@ namespace NHibernateMappingGenerator
             {
                 sequence = sequencesComboBox.SelectedItem.ToString();
             }
-            var serverType = (ServerType)serverTypeComboBox.SelectedItem;
 
             var applicationPreferences = new ApplicationPreferences
                                              {
-                                                 ServerType = serverType,
+                                                 ServerType = (ServerType)serverTypeComboBox.SelectedItem,
                                                  FolderPath = folderTextBox.Text,
                                                  TableName = tableName,
                                                  NameSpace = nameSpaceTextBox.Text,
@@ -239,7 +238,8 @@ namespace NHibernateMappingGenerator
                                                  Sequence = sequence,
                                                  Language = LanguageSelected,
                                                  FieldNamingConvention = GetFieldNamingConvention(),
-                                                 FieldGenerationConvention = GetFieldGenerationConvention()
+                                                 FieldGenerationConvention = GetFieldGenerationConvention(),
+                                                 Prefix = prefixTextBox.Text
                                              };
 
             return applicationPreferences;

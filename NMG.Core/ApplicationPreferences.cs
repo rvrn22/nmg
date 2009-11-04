@@ -20,13 +20,8 @@ namespace NMG.Core
         public ApplicationPreferences()
         {
             FieldNamingConvention = FieldNamingConvention.SameAsDatabase;
+            FieldGenerationConvention = FieldGenerationConvention.Field;
             Prefix = string.Empty;
-        }
-
-        public ApplicationPreferences(FieldNamingConvention fieldNamingConvention, string prefix)
-        {
-            FieldNamingConvention = fieldNamingConvention;
-            Prefix = prefix;
         }
     }
 }

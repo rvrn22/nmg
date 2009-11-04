@@ -52,6 +52,7 @@
     <Compile Include="FieldNamingConvention.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />
     <Compile Include="Fluent\Constants.cs" />
+    <Compile Include="Generator\CodeGenerationHelper.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />
     <Compile Include="Generator\CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />

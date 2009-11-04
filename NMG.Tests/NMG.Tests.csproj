@@ -52,6 +52,7 @@
     <Compile Include="Core\ColumnDetailsTest.cs" />
     <Compile Include="DataTypeMapperTest.cs" />
     <Compile Include="Fluent\DBColumnMapperTest.cs" />
+    <Compile Include="Generator\CodeGenerationHelperTest.cs" />
     <Compile Include="Generator\OracleMappingGeneratorTest.cs" />
     <Compile Include="MetadataFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

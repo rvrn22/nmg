@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using Microsoft.CSharp;
@@ -14,7 +15,9 @@ namespace NMG.Core.Generator
         private readonly Language language;
 
         public CodeGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
-            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
+            : base(
+                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
+                applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
         {
             this.applicationPreferences = applicationPreferences;
             language = applicationPreferences.Language;
@@ -29,12 +32,24 @@ namespace NMG.Core.Generator
             var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
             foreach (var columnDetail in columnDetails)
             {
+                var codeGenerationHelper = new CodeGenerationHelper();
                 string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-                var field =
-                    new CodeMemberField(
-                        mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale),
-                        propertyName);
-                newType.Members.Add(field);
+                Type mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale);
+
+                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+                {
+                   newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, propertyName));
+                   newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName.MakeFirstCharLowerCase()));
+                }
+                else if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.AutoProperty)
+                {
+                    var codeMemberProperty = codeGenerationHelper.CreateProperty(mapFromDbType, propertyName);
+                    newType.Members.Add(codeMemberProperty);
+                }
+                else
+                {
+                    newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName));
+                }
             }
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             newType.Members.Add(constructor);
@@ -98,7 +113,9 @@ namespace NMG.Core.Generator
         private string GetCompleteFilePath(CodeDomProvider provider, string className)
         {
             var fileName = filePath + className;
-            return provider.FileExtension[0] == '.' ? fileName + provider.FileExtension : fileName + "." + provider.FileExtension;
+            return provider.FileExtension[0] == '.'
+                       ? fileName + provider.FileExtension
+                       : fileName + "." + provider.FileExtension;
         }
 
         private CodeDomProvider GetCodeDomProvider()
