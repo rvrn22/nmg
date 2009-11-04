@@ -25,39 +25,42 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-            var compileUnit = new CodeCompileUnit();
-            var codeNamespace = new CodeNamespace(nameSpace);
+            var compileUnit = GetCompileUnit();
+            WriteToFile(compileUnit, tableName.GetFormattedText());
+        }
+
+        public CodeCompileUnit GetCompileUnit()
+        {
+            var codeGenerationHelper = new CodeGenerationHelper();
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, tableName);
 
             var mapper = new DataTypeMapper();
             var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
             foreach (var columnDetail in columnDetails)
             {
-                var codeGenerationHelper = new CodeGenerationHelper();
                 string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
                 Type mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale);
 
-                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+                switch (applicationPreferences.FieldGenerationConvention)
                 {
-                   newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, propertyName));
-                   newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName.MakeFirstCharLowerCase()));
-                }
-                else if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.AutoProperty)
-                {
-                    var codeMemberProperty = codeGenerationHelper.CreateProperty(mapFromDbType, propertyName);
-                    newType.Members.Add(codeMemberProperty);
-                }
-                else
-                {
-                    newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName));
+                    case FieldGenerationConvention.Property:
+                        newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, propertyName.MakeFirstCharUpperCase()));
+                        newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName.MakeFirstCharLowerCase()));
+                        break;
+                    case FieldGenerationConvention.AutoProperty:
+                        var codeMemberProperty = codeGenerationHelper.CreateAutoProperty(mapFromDbType, propertyName);
+                        newType.Members.Add(codeMemberProperty);
+                        break;
+                    default:
+                        newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, propertyName));
+                        break;
                 }
             }
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             newType.Members.Add(constructor);
 
-            codeNamespace.Types.Add(newType);
-            compileUnit.Namespaces.Add(codeNamespace);
-
-            WriteToFile(compileUnit, tableName.GetFormattedText());
+            compileUnit.Namespaces[0].Types.Add(newType);
+            return compileUnit;
         }
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)

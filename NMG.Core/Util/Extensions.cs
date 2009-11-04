@@ -32,6 +32,14 @@ namespace NMG.Core.Util
             text = lower + text;
             return text;
         }
+
+        public static string MakeFirstCharUpperCase(this string text)
+        {
+            char upper = char.ToUpper(text[0]);
+            text = text.Remove(0, 1);
+            text = upper + text;
+            return text;
+        }
         
         public static string MakeTitleCase(this string text)
         {

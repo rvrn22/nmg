@@ -21,6 +21,13 @@ namespace NMG.Tests.Util
         }
         
         [Test]
+        public void FirstCharAsUpper()
+        {
+            const string name = "hitMan";
+            Assert.AreEqual("HitMan", name.MakeFirstCharUpperCase());
+        }
+        
+        [Test]
         public void FormattedString()
         {
             const string name = "the_name_is_BOND_james_bond";
