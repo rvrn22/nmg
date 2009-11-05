@@ -35,7 +35,7 @@ namespace NMG.Core.Generator
             var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, tableName);
 
             var mapper = new DataTypeMapper();
-            var newType = new CodeTypeDeclaration(tableName) {Attributes = MemberAttributes.Public};
+            var newType = compileUnit.Namespaces[0].Types[0];
             foreach (var columnDetail in columnDetails)
             {
                 string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
@@ -58,8 +58,6 @@ namespace NMG.Core.Generator
             }
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             newType.Members.Add(constructor);
-
-            compileUnit.Namespaces[0].Types.Add(newType);
             return compileUnit;
         }
 
@@ -92,10 +90,21 @@ namespace NMG.Core.Generator
             }
             entireContent = RemoveComments(entireContent);
             entireContent = AddStandardHeader(entireContent);
+            entireContent = FixAutoProperties(entireContent);
             using (var writer = new StreamWriter(sourceFile))
             {
                 writer.Write(entireContent);
             }
+        }
+
+        // Hack : Auto property generator is not there in CodeDom.
+        private static string FixAutoProperties(string entireContent)
+        {
+            entireContent = entireContent.Replace(@"get {
+            }", "get;");
+            entireContent = entireContent.Replace(@"set {
+            }", "set;");
+            return entireContent;
         }
 
         private static string AddStandardHeader(string entireContent)

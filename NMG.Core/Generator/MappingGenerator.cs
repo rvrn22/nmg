@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Xml;
 using NMG.Core.Domain;
@@ -36,13 +37,14 @@ namespace NMG.Core.Generator
 
         private static string RemoveEmptyNamespaces(string mappingContent)
         {
+            mappingContent = mappingContent.Replace("utf-16", "utf-8");
             return mappingContent.Replace("xmlns=\"\"", "");
         }
 
         public XmlDocument CreateMappingDocument()
         {
             var xmldoc = new XmlDocument();
-            var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "utf-8", "");
+            var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", string.Empty, string.Empty);
             xmldoc.AppendChild(xmlDeclaration);
             var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
             root.SetAttribute("assembly", assemblyName);
@@ -59,9 +61,8 @@ namespace NMG.Core.Generator
                 var idElement = xmldoc.CreateElement("id");
                 idElement.SetAttribute("name", "id");
                 var mapper = new DataTypeMapper();
-                idElement.SetAttribute("type",
-                                       mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision,
-                                                            primaryKeyColumn.DataScale).Name);
+                Type mapFromDbType = mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale);
+                idElement.SetAttribute("type", mapFromDbType.Name);
                 idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
                 idElement.SetAttribute("access", "field");
                 classElement.AppendChild(idElement);

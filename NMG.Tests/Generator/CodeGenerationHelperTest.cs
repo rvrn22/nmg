@@ -10,13 +10,21 @@ namespace NMG.Tests.Generator
     [TestFixture]
     public class CodeGenerationHelperTest
     {
+        private CSharpCodeProvider cSharpCodeProvider;
+        private StringBuilder stringBuilder;
+
+        [SetUp]
+        public void SetUp()
+        {
+            cSharpCodeProvider = new CSharpCodeProvider();
+            stringBuilder = new StringBuilder();
+        }
+
         [Test]
         public void ShouldGenerateField()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
             var codeMemberField = codeGenerationHelper.CreateField(typeof (string), "name");
-            var cSharpCodeProvider = new CSharpCodeProvider();
-            var stringBuilder = new StringBuilder();
             var codeCompileUnit = codeGenerationHelper.GetCodeCompileUnit("someNamespace", "someType");
             codeCompileUnit.Namespaces[0].Types[0].Members.Add(codeMemberField);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder), new CodeGeneratorOptions());
@@ -27,11 +35,9 @@ namespace NMG.Tests.Generator
         public void ShouldGenerateProperty()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            var codeMemberField = codeGenerationHelper.CreateProperty(typeof(string), "Name");
-            var cSharpCodeProvider = new CSharpCodeProvider();
-            var stringBuilder = new StringBuilder();
+            var memberProperty = codeGenerationHelper.CreateProperty(typeof(string), "Name");
             var codeCompileUnit = codeGenerationHelper.GetCodeCompileUnit("someNamespace", "someType");
-            codeCompileUnit.Namespaces[0].Types[0].Members.Add(codeMemberField);
+            codeCompileUnit.Namespaces[0].Types[0].Members.Add(memberProperty);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder), new CodeGeneratorOptions());
             Assert.IsTrue(stringBuilder.ToString().Contains(@"public virtual string Name {
             get {
@@ -47,13 +53,16 @@ namespace NMG.Tests.Generator
         public void ShouldGenerateAutoProperty()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            var codeMemberField = codeGenerationHelper.CreateAutoProperty(typeof(string), "Name");
-            var cSharpCodeProvider = new CSharpCodeProvider();
-            var stringBuilder = new StringBuilder();
+            var autoProperty = codeGenerationHelper.CreateAutoProperty(typeof(string), "Name");
             var codeCompileUnit = codeGenerationHelper.GetCodeCompileUnit("someNamespace", "someType");
-            codeCompileUnit.Namespaces[0].Types[0].Members.Add(codeMemberField);
+            codeCompileUnit.Namespaces[0].Types[0].Members.Add(autoProperty);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder), new CodeGeneratorOptions());
-            Assert.IsTrue(stringBuilder.ToString().Contains(@"public virtual string Name { get ; set; }"));
+            Assert.IsTrue(stringBuilder.ToString().Contains(@"public virtual string Name {
+            get {
+            }
+            set {
+            }
+        }"));
         }
     }
 }
