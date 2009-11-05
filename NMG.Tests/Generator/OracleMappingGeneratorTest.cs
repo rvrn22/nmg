@@ -12,7 +12,7 @@ namespace NMG.Tests.Generator
         [Test]
         public void ShouldGenerateMappingForOracleTable()
         {
-            const string generatedXML = "<?xml version=\"1.0\" encoding=\"utf-8\"?><hibernate-mapping assembly=\"myAssemblyName\" xmlns=\"urn:nhibernate-mapping-2.2\"><class name=\"myNameSpace.Customer, myAssemblyName\" table=\"Customer\" lazy=\"true\" xmlns=\"\" /></hibernate-mapping>";
+            const string generatedXML = "<?xml version=\"1.0\" ?><hibernate-mapping assembly=\"myAssemblyName\" xmlns=\"urn:nhibernate-mapping-2.2\"><class name=\"myNameSpace.Customer, myAssemblyName\" table=\"Customer\" lazy=\"true\" xmlns=\"\" /></hibernate-mapping>";
             var preferences = new ApplicationPreferences
                                   {
                                       FolderPath = "\\",
