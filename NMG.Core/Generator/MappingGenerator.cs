@@ -59,12 +59,22 @@ namespace NMG.Core.Generator
             if (primaryKeyColumn != null)
             {
                 var idElement = xmldoc.CreateElement("id");
-                idElement.SetAttribute("name", "id");
+                string propertyName = primaryKeyColumn.ColumnName.GetPreferenceFormattedText(applicationPreferences);
+                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+                {
+                    idElement.SetAttribute("name", propertyName.MakeFirstCharLowerCase());
+                }else
+                {
+                    idElement.SetAttribute("name", propertyName);
+                }
                 var mapper = new DataTypeMapper();
                 Type mapFromDbType = mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale);
                 idElement.SetAttribute("type", mapFromDbType.Name);
                 idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
-                idElement.SetAttribute("access", "field");
+                if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
+                {
+                    idElement.SetAttribute("access", "field");
+                }
                 classElement.AppendChild(idElement);
                 AddIdGenerator(xmldoc, idElement);
             }
@@ -80,9 +90,20 @@ namespace NMG.Core.Generator
                 if (columnDetail.IsPrimaryKey)
                     continue;
                 var xmlNode = xmldoc.CreateElement("property");
-                xmlNode.SetAttribute("name", columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences));
+                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
+                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+                {
+                    xmlNode.SetAttribute("name", propertyName.MakeFirstCharLowerCase());    
+                }else
+                {
+                    xmlNode.SetAttribute("name", propertyName);
+                }
+                
                 xmlNode.SetAttribute("column", columnDetail.ColumnName);
-                xmlNode.SetAttribute("access", "field");
+                if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
+                {
+                    xmlNode.SetAttribute("access", "field");
+                }
                 classElement.AppendChild(xmlNode);
             }
         }
