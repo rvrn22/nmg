@@ -230,7 +230,7 @@ namespace NHibernateMappingGenerator
 
             var applicationPreferences = new ApplicationPreferences
                                              {
-                                                 ServerType = (ServerType)serverTypeComboBox.SelectedItem,
+                                                 ServerType = (ServerType) serverTypeComboBox.SelectedItem,
                                                  FolderPath = folderTextBox.Text,
                                                  TableName = tableName,
                                                  NameSpace = nameSpaceTextBox.Text,
@@ -239,7 +239,8 @@ namespace NHibernateMappingGenerator
                                                  Language = LanguageSelected,
                                                  FieldNamingConvention = GetFieldNamingConvention(),
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
-                                                 Prefix = prefixTextBox.Text
+                                                 Prefix = prefixTextBox.Text,
+                                                 IsFluent = IsFluent
                                              };
 
             return applicationPreferences;

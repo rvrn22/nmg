@@ -443,7 +443,7 @@ namespace NHibernateMappingGenerator
             // fluentMappingOption
             // 
             this.fluentMappingOption.AutoSize = true;
-            this.fluentMappingOption.Enabled = false;
+            this.fluentMappingOption.Enabled = true;
             this.fluentMappingOption.Location = new System.Drawing.Point(6, 42);
             this.fluentMappingOption.Name = "fluentMappingOption";
             this.fluentMappingOption.Size = new System.Drawing.Size(98, 17);

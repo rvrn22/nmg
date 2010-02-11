@@ -1,4 +1,5 @@
-﻿using NMG.Core.Domain;
+﻿using System.Text;
+using NMG.Core.Domain;
 
 namespace NMG.Core.Fluent
 {
@@ -6,18 +7,19 @@ namespace NMG.Core.Fluent
     {
         public string Map(ColumnDetail columnDetail)
         {
-            var mappedStr = string.Format("Map(x => x.{0})", columnDetail.ColumnName);
+            var mappedStrBuilder = new StringBuilder(string.Format("Map(x => x.{0})", columnDetail.ColumnName));
             if (columnDetail.DataLength > 0)
             {
-                mappedStr += Constants.Dot;
-                mappedStr += "Length(" + columnDetail.DataLength + ")";
+                mappedStrBuilder.Append(Constants.Dot);
+                mappedStrBuilder.Append("Length(" + columnDetail.DataLength + ")");
             }
             if(!columnDetail.IsNullable)
             {
-                mappedStr += Constants.Dot;
-                mappedStr += "Not.Nullable()";
+                mappedStrBuilder.Append(Constants.Dot);
+                mappedStrBuilder.Append("Not.Nullable()");
             }
-            return mappedStr + Constants.SemiColon;
+            mappedStrBuilder.Append(Constants.SemiColon);
+            return mappedStrBuilder.ToString();
         }
     }
 }
