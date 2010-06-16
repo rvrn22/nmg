@@ -51,7 +51,7 @@ namespace NMG.Core.Reader
                             {
                                 isNullable = true;
                             }
-                            columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, dataScale, isNullable));
+                            columnDetails.Add(new ColumnDetail(columnName, dataType, dataLength, dataPrecision, 0, dataScale, isNullable));
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMG.App", "NMG.App\NMG.App.csproj", "{63E6330D-8291-44DD-A032-B7FBF844AC5D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMG.Core", "NMG.Core\NMG.Core.csproj", "{A15F2280-C07B-4BBA-B822-6D06C464A582}"

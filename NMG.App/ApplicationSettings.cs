@@ -1,6 +1,8 @@
+using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using NMG.Core;
 using NMG.Core.Domain;
 
 namespace NHibernateMappingGenerator
@@ -11,18 +13,10 @@ namespace NHibernateMappingGenerator
         public ServerType ServerType { get; set; }
         public string NameSpace { get; set; }
         public string AssemblyName { get; set; }
-
-        public ApplicationSettings()
-        {
-        }
-
-        public ApplicationSettings(string connectionString, ServerType serverType, string nameSpace, string assemblyName)
-        {
-            ConnectionString = connectionString;
-            ServerType = serverType;
-            NameSpace = nameSpace;
-            AssemblyName = assemblyName;
-        }
+        public Language Language { get; set; }
+        public bool IsFluent { get; set; }
+        public CodeGenerationOptions CodeGenerationOptions { get; set; }
+        public FieldGenerationConvention FieldGenerationConvention { get; set; }
 
         public void Save()
         {
@@ -42,7 +36,7 @@ namespace NHibernateMappingGenerator
             var fi = new FileInfo(Application.LocalUserAppDataPath + @"\nmg.config");
             if (fi.Exists)
             {
-                using (FileStream fileStream = fi.OpenRead())
+                using (var fileStream = fi.OpenRead())
                 {
                     appSettings = (ApplicationSettings) xmlSerializer.Deserialize(fileStream);
                 }

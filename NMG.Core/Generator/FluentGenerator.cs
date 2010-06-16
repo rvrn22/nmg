@@ -1,48 +1,82 @@
-﻿using System.CodeDom.Compiler;
-using System.IO;
-using Microsoft.CSharp;
-using Microsoft.VisualBasic;
+﻿using System.CodeDom;
 using NMG.Core.Domain;
+using NMG.Core.Fluent;
 using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
-    public class FluentGenerator : AbstractGenerator
+    public class FluentGenerator : AbstractCodeGenerator
     {
         private readonly ApplicationPreferences applicationPreferences;
-        private readonly Language language;
+        private readonly string entityName;
+        private const string TABS = "\t\t\t";
 
         public FluentGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
             : base(
-                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
+                applicationPreferences.FolderPath, applicationPreferences.TableName,
+                applicationPreferences.NameSpace,
                 applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
         {
             this.applicationPreferences = applicationPreferences;
             language = this.applicationPreferences.Language;
+            entityName = applicationPreferences.EntityName;
         }
 
         public override void Generate()
         {
-            string entityName = tableName.GetFormattedText();
-            string className = entityName + "Map";
-            string completeFilePath = GetCompleteFilePath(GetCodeDomProvider(), className);
-            const string template = "public class {0} : ClassMap<{1}>";
-            string contents = string.Format(template, className, entityName);
-            contents += "{ \n \n }";
-            File.WriteAllText(completeFilePath, contents);
+            string className = tableName.GetFormattedText() + "Map";
+            var compileUnit = GetCompleteCompileUnit(className);
+            var generateCode = GenerateCode(compileUnit, className);
+            WriteToFile(generateCode, className);
         }
 
-        private string GetCompleteFilePath(CodeDomProvider provider, string className)
+        public CodeCompileUnit GetCompleteCompileUnit(string className)
         {
-            var fileName = filePath + className;
-            return provider.FileExtension[0] == '.'
-                       ? fileName + provider.FileExtension
-                       : fileName + "." + provider.FileExtension;
+            var codeGenerationHelper = new CodeGenerationHelper();
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);
+
+            var newType = compileUnit.Namespaces[0].Types[0];
+
+            newType.BaseTypes.Add("ClassMap<" + tableName.GetFormattedText() + ">");
+
+            var constructor = new CodeConstructor { Attributes = MemberAttributes.Public };
+            newType.Members.Add(constructor);
+            constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + tableName + "\");"));
+            constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
+            constructor.Statements.Add(GetIdMapCodeSnippetStatement(entityName));
+
+            foreach (var columnDetail in columnDetails)
+            {
+                if (columnDetail.IsPrimaryKey || AlreadyMappedColumnNames.Contains(columnDetail.ColumnName)) continue;
+                if (columnDetail.IsForeignKey)
+                {
+                    var notNullable = "Nullable()";
+                    if (!columnDetail.IsNullable)
+                    {
+                        notNullable = "Not.Nullable()";
+                    }
+                    constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\").{2}.Cascade.None();", columnDetail.ForeignKeyEntity, columnDetail.ColumnName, notNullable)));
+                }
+                else
+                {
+                    var columnMapping = new DBColumnMapper().Map(columnDetail);
+                    constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
+                }
+            }
+            constructor.Statements.Add(new CodeSnippetStatement(TABS + "AddCommonReferenceDataColumns();"));
+            return compileUnit;
         }
 
-        private CodeDomProvider GetCodeDomProvider()
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string entityName)
         {
-            return language == Language.CSharp ? (CodeDomProvider)new CSharpCodeProvider() : new VBCodeProvider();
+            const string genStr = ").GeneratedBy.HiLo(\"EntityUniqueKey\", \"next_hi\", \"1\", builder => builder.AddParam(\"where\", \"entityType = '";
+            return new CodeSnippetStatement("\t\t\t" + "Id(x => x.Id, \"" + entityName + "Id" + "\"" + genStr + entityName + "'\"));");
+        }
+
+        protected override string AddStandardHeader(string entireContent)
+        {
+            entireContent = "using ConstituentService.Domain.ReferenceData; \n" + entireContent;
+            return base.AddStandardHeader(entireContent);
         }
     }
 }

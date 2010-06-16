@@ -78,10 +78,12 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.fluentRadioButton = new System.Windows.Forms.RadioButton();
+            this.hbmRadioButton = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.label6 = new System.Windows.Forms.Label();
+            this.entityNameTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -155,7 +157,7 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(3, 16);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
-            this.dbTableDetailsGridView.Size = new System.Drawing.Size(1038, 294);
+            this.dbTableDetailsGridView.Size = new System.Drawing.Size(1057, 331);
             this.dbTableDetailsGridView.TabIndex = 5;
             // 
             // columnName
@@ -203,7 +205,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateButton
             // 
-            this.generateButton.Location = new System.Drawing.Point(14, 147);
+            this.generateButton.Location = new System.Drawing.Point(14, 177);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(106, 23);
             this.generateButton.TabIndex = 8;
@@ -233,7 +235,7 @@ namespace NHibernateMappingGenerator
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 73);
+            this.label2.Location = new System.Drawing.Point(14, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(72, 13);
             this.label2.TabIndex = 11;
@@ -241,7 +243,7 @@ namespace NHibernateMappingGenerator
             // 
             // nameSpaceTextBox
             // 
-            this.nameSpaceTextBox.Location = new System.Drawing.Point(105, 69);
+            this.nameSpaceTextBox.Location = new System.Drawing.Point(105, 99);
             this.nameSpaceTextBox.Name = "nameSpaceTextBox";
             this.nameSpaceTextBox.Size = new System.Drawing.Size(514, 20);
             this.nameSpaceTextBox.TabIndex = 12;
@@ -250,7 +252,7 @@ namespace NHibernateMappingGenerator
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 109);
+            this.label3.Location = new System.Drawing.Point(14, 139);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 13);
             this.label3.TabIndex = 13;
@@ -258,7 +260,7 @@ namespace NHibernateMappingGenerator
             // 
             // assemblyNameTextBox
             // 
-            this.assemblyNameTextBox.Location = new System.Drawing.Point(105, 105);
+            this.assemblyNameTextBox.Location = new System.Drawing.Point(105, 135);
             this.assemblyNameTextBox.Name = "assemblyNameTextBox";
             this.assemblyNameTextBox.Size = new System.Drawing.Size(514, 20);
             this.assemblyNameTextBox.TabIndex = 14;
@@ -293,7 +295,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateAllBtn
             // 
-            this.generateAllBtn.Location = new System.Drawing.Point(513, 147);
+            this.generateAllBtn.Location = new System.Drawing.Point(513, 177);
             this.generateAllBtn.Name = "generateAllBtn";
             this.generateAllBtn.Size = new System.Drawing.Size(106, 23);
             this.generateAllBtn.TabIndex = 18;
@@ -309,7 +311,7 @@ namespace NHibernateMappingGenerator
             this.mainTabControl.Location = new System.Drawing.Point(0, 0);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(1058, 645);
+            this.mainTabControl.Size = new System.Drawing.Size(1077, 723);
             this.mainTabControl.TabIndex = 19;
             // 
             // basicSettingsTabPage
@@ -320,7 +322,7 @@ namespace NHibernateMappingGenerator
             this.basicSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.basicSettingsTabPage.Name = "basicSettingsTabPage";
             this.basicSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.basicSettingsTabPage.Size = new System.Drawing.Size(1050, 619);
+            this.basicSettingsTabPage.Size = new System.Drawing.Size(1069, 697);
             this.basicSettingsTabPage.TabIndex = 1;
             this.basicSettingsTabPage.Text = "Basic";
             this.basicSettingsTabPage.UseVisualStyleBackColor = true;
@@ -331,12 +333,14 @@ namespace NHibernateMappingGenerator
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(3, 106);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(1044, 313);
+            this.groupBox6.Size = new System.Drawing.Size(1063, 350);
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label6);
+            this.groupBox5.Controls.Add(this.entityNameTextBox);
             this.groupBox5.Controls.Add(this.folderTextBox);
             this.groupBox5.Controls.Add(this.label1);
             this.groupBox5.Controls.Add(this.generateAllBtn);
@@ -348,9 +352,9 @@ namespace NHibernateMappingGenerator
             this.groupBox5.Controls.Add(this.nameSpaceTextBox);
             this.groupBox5.Controls.Add(this.errorLabel);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox5.Location = new System.Drawing.Point(3, 419);
+            this.groupBox5.Location = new System.Drawing.Point(3, 456);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1044, 197);
+            this.groupBox5.Size = new System.Drawing.Size(1063, 238);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             // 
@@ -367,7 +371,7 @@ namespace NHibernateMappingGenerator
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(1044, 103);
+            this.groupBox4.Size = new System.Drawing.Size(1063, 103);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
             // 
@@ -443,7 +447,6 @@ namespace NHibernateMappingGenerator
             // fluentMappingOption
             // 
             this.fluentMappingOption.AutoSize = true;
-            this.fluentMappingOption.Enabled = true;
             this.fluentMappingOption.Location = new System.Drawing.Point(6, 42);
             this.fluentMappingOption.Name = "fluentMappingOption";
             this.fluentMappingOption.Size = new System.Drawing.Size(98, 17);
@@ -560,27 +563,27 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // fluentRadioButton
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(6, 42);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(98, 17);
-            this.radioButton1.TabIndex = 5;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Fluent Mapping";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.fluentRadioButton.AutoSize = true;
+            this.fluentRadioButton.Location = new System.Drawing.Point(6, 42);
+            this.fluentRadioButton.Name = "fluentRadioButton";
+            this.fluentRadioButton.Size = new System.Drawing.Size(98, 17);
+            this.fluentRadioButton.TabIndex = 5;
+            this.fluentRadioButton.TabStop = true;
+            this.fluentRadioButton.Text = "Fluent Mapping";
+            this.fluentRadioButton.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // hbmRadioButton
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(6, 19);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(82, 17);
-            this.radioButton2.TabIndex = 4;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = ".hbm.xml file";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.hbmRadioButton.AutoSize = true;
+            this.hbmRadioButton.Location = new System.Drawing.Point(6, 19);
+            this.hbmRadioButton.Name = "hbmRadioButton";
+            this.hbmRadioButton.Size = new System.Drawing.Size(82, 17);
+            this.hbmRadioButton.TabIndex = 4;
+            this.hbmRadioButton.TabStop = true;
+            this.hbmRadioButton.Text = ".hbm.xml file";
+            this.hbmRadioButton.UseVisualStyleBackColor = true;
             // 
             // radioButton3
             // 
@@ -604,11 +607,27 @@ namespace NHibernateMappingGenerator
             this.radioButton4.Text = ".hbm.xml file";
             this.radioButton4.UseVisualStyleBackColor = true;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(14, 74);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Entity Name :";
+            // 
+            // entityNameTextBox
+            // 
+            this.entityNameTextBox.Location = new System.Drawing.Point(105, 70);
+            this.entityNameTextBox.Name = "entityNameTextBox";
+            this.entityNameTextBox.Size = new System.Drawing.Size(514, 20);
+            this.entityNameTextBox.TabIndex = 20;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1058, 645);
+            this.ClientSize = new System.Drawing.Size(1077, 723);
             this.Controls.Add(this.mainTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "App";
@@ -677,8 +696,8 @@ namespace NHibernateMappingGenerator
         private RadioButton fluentMappingOption;
         private RadioButton hbmMappingOption;
         private GroupBox groupBox4;
-        private RadioButton radioButton1;
-        private RadioButton radioButton2;
+        private RadioButton fluentRadioButton;
+        private RadioButton hbmRadioButton;
         private GroupBox groupBox5;
         private GroupBox groupBox6;
         private RadioButton radioButton3;
@@ -687,6 +706,8 @@ namespace NHibernateMappingGenerator
         private RadioButton propertyRadioBtn;
         private RadioButton fieldRadioBtn;
         private RadioButton autoPropertyRadioBtn;
+        private Label label6;
+        private TextBox entityNameTextBox;
     }
 }
 

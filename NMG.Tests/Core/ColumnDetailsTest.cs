@@ -10,7 +10,7 @@ namespace NMG.Tests.Core
         [Test]
         public void ShouldMapDBTypesToDotNetTypes()
         {
-            var columnDetail = new ColumnDetail("Id", "DATE", 10, 8, 10, true);
+            var columnDetail = new ColumnDetail("Id", "DATE", 10, 8, 0, 10, true);
             Assert.AreEqual(typeof(DateTime).Name, columnDetail.MappedType);
             Assert.AreEqual("DATE", columnDetail.DataType);
             Assert.AreEqual("Id", columnDetail.ColumnName);

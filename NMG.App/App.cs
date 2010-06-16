@@ -22,10 +22,12 @@ namespace NHibernateMappingGenerator
             var applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
-                connStrTextBox.Text = applicationSettings.ConnectionString;
                 serverTypeComboBox.SelectedItem = applicationSettings.ServerType;
+                connStrTextBox.Text = applicationSettings.ConnectionString;
                 nameSpaceTextBox.Text = applicationSettings.NameSpace;
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
+                fluentRadioButton.Checked = applicationSettings.IsFluent;
+                cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
             }
             sameAsDBRadioButton.Checked = true;
             prefixLabel.Visible = prefixTextBox.Visible = false;
@@ -35,13 +37,21 @@ namespace NHibernateMappingGenerator
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            errorLabel.Text = "Error in column " + e.ColumnIndex + ". Detail : " + e.Exception.Message;
+            errorLabel.Text = string.Format("Error in column {0}. Detail : {1}", e.ColumnIndex, e.Exception.Message);
         }
 
         private void App_Closing(object sender, CancelEventArgs e)
         {
-            var applicationSettings = new ApplicationSettings(connStrTextBox.Text, (ServerType) serverTypeComboBox.SelectedItem, nameSpaceTextBox.Text,
-                                                              assemblyNameTextBox.Text);
+            var applicationSettings = new ApplicationSettings
+                                          {
+                                              ConnectionString = connStrTextBox.Text,
+                                              ServerType = (ServerType) serverTypeComboBox.SelectedItem,
+                                              NameSpace = nameSpaceTextBox.Text,
+                                              AssemblyName = assemblyNameTextBox.Text,
+                                              Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
+                                              IsFluent = fluentRadioButton.Checked
+                                          };
+
             applicationSettings.Save();
         }
 
@@ -66,6 +76,7 @@ namespace NHibernateMappingGenerator
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
             try
             {
                 PopulateTableDetails();
@@ -146,16 +157,16 @@ namespace NHibernateMappingGenerator
             object selectedItem = tablesComboBox.SelectedItem;
             if (selectedItem == null || dbTableDetailsGridView.DataSource == null)
             {
-                errorLabel.Text = "Please select a table above to generate the mapping files.";
+                errorLabel.Text = @"Please select a table above to generate the mapping files.";
                 return;
             }
             try
             {
-                errorLabel.Text = "Generating " + selectedItem + " mapping file ...";
+                errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
                 string tableName = selectedItem.ToString();
                 var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
                 Generate(tableName, columnDetails);
-                errorLabel.Text = "Generated all files successfully.";
+                errorLabel.Text = @"Generated all files successfully.";
             }
             catch (Exception ex)
             {
@@ -168,7 +179,7 @@ namespace NHibernateMappingGenerator
             errorLabel.Text = string.Empty;
             if (tablesComboBox.Items == null || tablesComboBox.Items.Count == 0)
             {
-                errorLabel.Text = "Please connect to a database to populate the tables first.";
+                errorLabel.Text = @"Please connect to a database to populate the tables first.";
                 return;
             }
             try
@@ -185,7 +196,7 @@ namespace NHibernateMappingGenerator
                         var columnDetails = metadataReader.GetTableDetails(tableName);
                         Generate(tableName, columnDetails);
                     }
-                    errorLabel.Text = "Generated all files successfully.";
+                    errorLabel.Text = @"Generated all files successfully.";
                 }
                 finally
                 {
