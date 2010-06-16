@@ -1,4 +1,3 @@
-using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -15,6 +14,7 @@ namespace NHibernateMappingGenerator
         public string AssemblyName { get; set; }
         public Language Language { get; set; }
         public bool IsFluent { get; set; }
+        public bool IsAutoProperty { get; set; }
         public CodeGenerationOptions CodeGenerationOptions { get; set; }
         public FieldGenerationConvention FieldGenerationConvention { get; set; }
 

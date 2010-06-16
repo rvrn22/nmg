@@ -8,5 +8,6 @@ namespace NMG.Core.Reader
         ColumnDetails GetTableDetails(string selectedTableName);
         List<string> GetTables();
         List<string> GetSequences();
+        List<string> GetForeignKeyTables(string columnName);
     }
 }

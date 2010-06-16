@@ -45,10 +45,19 @@ namespace NMG.Core.Generator
                                              Attributes = MemberAttributes.Public,
                                              Type = new CodeTypeReference(type) 
                                          };
-//            var returnStatement = new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), propertyName));
-//            codeMemberProperty.GetStatements.Add(returnStatement);
-//            var assignStatement = new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), propertyName), new CodePropertySetValueReferenceExpression());
-//            codeMemberProperty.SetStatements.Add(assignStatement);
+            return codeMemberProperty;
+        }
+
+        public CodeMemberProperty CreateAutoProperty(string typeName, string propertyName)
+        {
+            var codeMemberProperty = new CodeMemberProperty
+                                         {
+                                             Name = propertyName,
+                                             HasGet = true,
+                                             HasSet = true,
+                                             Attributes = MemberAttributes.Public,
+                                             Type = new CodeTypeReference(typeName) 
+                                         };
             return codeMemberProperty;
         }
 

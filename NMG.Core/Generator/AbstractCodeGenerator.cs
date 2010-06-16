@@ -12,7 +12,6 @@ namespace NMG.Core.Generator
     public abstract class AbstractCodeGenerator : AbstractGenerator
     {
         protected Language language;
-        protected readonly List<string> AlreadyMappedColumnNames = new List<string> { "Description", "Inactive", "CreatedDate", "CreatedBy", "UpdatedDate", "UpdatedBy" };
 
         protected AbstractCodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
                                         string sequenceName, ColumnDetails columnDetails)

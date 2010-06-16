@@ -19,6 +19,10 @@ namespace NHibernateMappingGenerator
             tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
             Closing += App_Closing;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
             var applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
@@ -26,13 +30,21 @@ namespace NHibernateMappingGenerator
                 connStrTextBox.Text = applicationSettings.ConnectionString;
                 nameSpaceTextBox.Text = applicationSettings.NameSpace;
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
-                fluentRadioButton.Checked = applicationSettings.IsFluent;
+                fluentMappingOption.Checked = applicationSettings.IsFluent;
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
+                autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
             }
-            sameAsDBRadioButton.Checked = true;
-            prefixLabel.Visible = prefixTextBox.Visible = false;
-            cSharpRadioButton.Checked = true;
-            hbmMappingOption.Checked = true;
+            else
+            {
+                autoPropertyRadioBtn.Checked = true;
+                sameAsDBRadioButton.Checked = true;
+                cSharpRadioButton.Checked = true;
+                fluentMappingOption.Checked = true;
+            }
+            if (!prefixRadioButton.Checked)
+            {
+                prefixLabel.Visible = prefixTextBox.Visible = false;
+            }
         }
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -49,7 +61,8 @@ namespace NHibernateMappingGenerator
                                               NameSpace = nameSpaceTextBox.Text,
                                               AssemblyName = assemblyNameTextBox.Text,
                                               Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
-                                              IsFluent = fluentRadioButton.Checked
+                                              IsFluent = fluentMappingOption.Checked,
+                                              IsAutoProperty = autoPropertyRadioBtn.Checked
                                           };
 
             applicationSettings.Save();
@@ -177,7 +190,7 @@ namespace NHibernateMappingGenerator
         private void GenerateAllClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
-            if (tablesComboBox.Items == null || tablesComboBox.Items.Count == 0)
+            if (tablesComboBox.Items.Count == 0)
             {
                 errorLabel.Text = @"Please connect to a database to populate the tables first.";
                 return;
@@ -251,7 +264,8 @@ namespace NHibernateMappingGenerator
                                                  FieldNamingConvention = GetFieldNamingConvention(),
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
                                                  Prefix = prefixTextBox.Text,
-                                                 IsFluent = IsFluent
+                                                 IsFluent = IsFluent,
+                                                 ConnectionString = connStrTextBox.Text
                                              };
 
             return applicationPreferences;

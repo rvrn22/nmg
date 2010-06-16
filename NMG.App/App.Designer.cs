@@ -78,10 +78,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.fluentRadioButton = new System.Windows.Forms.RadioButton();
-            this.hbmRadioButton = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.label6 = new System.Windows.Forms.Label();
             this.entityNameTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
@@ -190,7 +186,7 @@ namespace NHibernateMappingGenerator
             this.errorLabel.AutoSize = true;
             this.errorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.errorLabel.ForeColor = System.Drawing.Color.Crimson;
-            this.errorLabel.Location = new System.Drawing.Point(13, 177);
+            this.errorLabel.Location = new System.Drawing.Point(13, 200);
             this.errorLabel.Name = "errorLabel";
             this.errorLabel.Size = new System.Drawing.Size(0, 20);
             this.errorLabel.TabIndex = 6;
@@ -563,50 +559,6 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // fluentRadioButton
-            // 
-            this.fluentRadioButton.AutoSize = true;
-            this.fluentRadioButton.Location = new System.Drawing.Point(6, 42);
-            this.fluentRadioButton.Name = "fluentRadioButton";
-            this.fluentRadioButton.Size = new System.Drawing.Size(98, 17);
-            this.fluentRadioButton.TabIndex = 5;
-            this.fluentRadioButton.TabStop = true;
-            this.fluentRadioButton.Text = "Fluent Mapping";
-            this.fluentRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // hbmRadioButton
-            // 
-            this.hbmRadioButton.AutoSize = true;
-            this.hbmRadioButton.Location = new System.Drawing.Point(6, 19);
-            this.hbmRadioButton.Name = "hbmRadioButton";
-            this.hbmRadioButton.Size = new System.Drawing.Size(82, 17);
-            this.hbmRadioButton.TabIndex = 4;
-            this.hbmRadioButton.TabStop = true;
-            this.hbmRadioButton.Text = ".hbm.xml file";
-            this.hbmRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(6, 42);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(98, 17);
-            this.radioButton3.TabIndex = 5;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Fluent Mapping";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            // 
-            // radioButton4
-            // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(6, 19);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(82, 17);
-            this.radioButton4.TabIndex = 4;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = ".hbm.xml file";
-            this.radioButton4.UseVisualStyleBackColor = true;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -696,12 +648,8 @@ namespace NHibernateMappingGenerator
         private RadioButton fluentMappingOption;
         private RadioButton hbmMappingOption;
         private GroupBox groupBox4;
-        private RadioButton fluentRadioButton;
-        private RadioButton hbmRadioButton;
         private GroupBox groupBox5;
         private GroupBox groupBox6;
-        private RadioButton radioButton3;
-        private RadioButton radioButton4;
         private GroupBox groupBox7;
         private RadioButton propertyRadioBtn;
         private RadioButton fieldRadioBtn;

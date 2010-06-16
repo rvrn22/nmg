@@ -41,6 +41,16 @@ namespace NMG.Core.Generator
                 string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
                 Type mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale);
 
+                if (columnDetail.IsPrimaryKey)
+                {
+                    var metadataReader = MetadataFactory.GetReader(applicationPreferences.ServerType, applicationPreferences.ConnectionString);
+                    var foreignKeyTables = metadataReader.GetForeignKeyTables(columnDetail.ColumnName);
+                        foreach (var foreignKeyTable in foreignKeyTables)
+                        {
+                            newType.Members.Add(codeGenerationHelper.CreateAutoProperty("IList<" + foreignKeyTable + ">", foreignKeyTable));
+                        }
+                }
+
                 switch (applicationPreferences.FieldGenerationConvention)
                 {
                     case FieldGenerationConvention.Property:

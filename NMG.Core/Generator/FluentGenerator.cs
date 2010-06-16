@@ -8,7 +8,6 @@ namespace NMG.Core.Generator
     public class FluentGenerator : AbstractCodeGenerator
     {
         private readonly ApplicationPreferences applicationPreferences;
-        private readonly string entityName;
         private const string TABS = "\t\t\t";
 
         public FluentGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
@@ -19,7 +18,6 @@ namespace NMG.Core.Generator
         {
             this.applicationPreferences = applicationPreferences;
             language = this.applicationPreferences.Language;
-            entityName = applicationPreferences.EntityName;
         }
 
         public override void Generate()
@@ -43,11 +41,15 @@ namespace NMG.Core.Generator
             newType.Members.Add(constructor);
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + tableName + "\");"));
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
-            constructor.Statements.Add(GetIdMapCodeSnippetStatement(entityName));
+            
 
             foreach (var columnDetail in columnDetails)
             {
-                if (columnDetail.IsPrimaryKey || AlreadyMappedColumnNames.Contains(columnDetail.ColumnName)) continue;
+                if (columnDetail.IsPrimaryKey)
+                {
+                    constructor.Statements.Add(GetIdMapCodeSnippetStatement(columnDetail.ColumnName));
+                    continue;
+                }
                 if (columnDetail.IsForeignKey)
                 {
                     var notNullable = "Nullable()";
@@ -63,20 +65,12 @@ namespace NMG.Core.Generator
                     constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
                 }
             }
-            constructor.Statements.Add(new CodeSnippetStatement(TABS + "AddCommonReferenceDataColumns();"));
             return compileUnit;
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string entityName)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName)
         {
-            const string genStr = ").GeneratedBy.HiLo(\"EntityUniqueKey\", \"next_hi\", \"1\", builder => builder.AddParam(\"where\", \"entityType = '";
-            return new CodeSnippetStatement("\t\t\t" + "Id(x => x.Id, \"" + entityName + "Id" + "\"" + genStr + entityName + "'\"));");
-        }
-
-        protected override string AddStandardHeader(string entireContent)
-        {
-            entireContent = "using ConstituentService.Domain.ReferenceData; \n" + entireContent;
-            return base.AddStandardHeader(entireContent);
+            return new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).GeneratedBy.Identity()'\"));", pkColumnName));
         }
     }
 }

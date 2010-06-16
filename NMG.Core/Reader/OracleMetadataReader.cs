@@ -118,5 +118,10 @@ namespace NMG.Core.Reader
             }
             return sequences;
         }
+
+        public List<string> GetForeignKeyTables(string columnName)
+        {
+            return new List<string>();
+        }
     }
 }

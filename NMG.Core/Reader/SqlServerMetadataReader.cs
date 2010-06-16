@@ -24,7 +24,7 @@ namespace NMG.Core.Reader
             {
                 using (var tableDetailsCommand = conn.CreateCommand())
                 {
-                    tableDetailsCommand.CommandText = "select column_name, data_type, character_maximum_length, NUMERIC_PRECISION, NUMERIC_PRECISION_RADIX, NUMERIC_SCALE, IS_NULLABLE from information_schema.columns where table_name = '" + selectedTableName + "'";
+                    tableDetailsCommand.CommandText = string.Format("select column_name, data_type, character_maximum_length, NUMERIC_PRECISION, NUMERIC_PRECISION_RADIX, NUMERIC_SCALE, IS_NULLABLE from information_schema.columns where table_name = '{0}'", selectedTableName);
                     using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         if (sqlDataReader != null)
@@ -76,21 +76,21 @@ namespace NMG.Core.Reader
             {
                 using (var constraintCommand = conn.CreateCommand())
                 {
-                    constraintCommand.CommandText = "select constraint_name from information_schema.TABLE_CONSTRAINTS where table_name = '" + selectedTableName + "' and constraint_type = 'PRIMARY KEY'";
+                    constraintCommand.CommandText = string.Format("select constraint_name from information_schema.TABLE_CONSTRAINTS where table_name = '{0}' and constraint_type = 'PRIMARY KEY'", selectedTableName);
                     var value = constraintCommand.ExecuteScalar();
-                    if (value != null)
+                    
+                    if (value == null) return;
+
+                    var constraintName = (string)value;
+                    using (var pkColumnCommand = conn.CreateCommand())
                     {
-                        var constraintName = (string)value;
-                        using (var pkColumnCommand = conn.CreateCommand())
+                        pkColumnCommand.CommandText = string.Format("select column_name from information_schema.CONSTRAINT_COLUMN_USAGE where table_name = '{0}' and constraint_name = '{1}'", selectedTableName, constraintName);
+                        var colName = pkColumnCommand.ExecuteScalar();
+                        if (colName != null)
                         {
-                            pkColumnCommand.CommandText = "select column_name from information_schema.CONSTRAINT_COLUMN_USAGE where table_name = '" + selectedTableName + "' and constraint_name = '" + constraintName + "'";
-                            var colName = pkColumnCommand.ExecuteScalar();
-                            if (colName != null)
-                            {
-                                var pkColumnName = (string)colName;
-                                var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName));
-                                columnDetail.IsPrimaryKey = true;
-                            }
+                            var pkColumnName = (string)colName;
+                            var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName));
+                            columnDetail.IsPrimaryKey = true;
                         }
                     }
                 }
@@ -105,14 +105,14 @@ namespace NMG.Core.Reader
             {
                 using (var constraintCommand = conn.CreateCommand())
                 {
-                    constraintCommand.CommandText = "select constraint_name from information_schema.TABLE_CONSTRAINTS where table_name = '" + selectedTableName + "' and constraint_type = 'FOREIGN KEY'";
+                    constraintCommand.CommandText = string.Format("SELECT constraint_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE table_name = '{0}' and constraint_type = 'FOREIGN KEY'", selectedTableName);
                     var value = constraintCommand.ExecuteScalar();
                     if (value != null)
                     {
                         var constraintName = (string)value;
                         using (var fkColumnCommand = conn.CreateCommand())
                         {
-                            fkColumnCommand.CommandText = "select column_name from information_schema.CONSTRAINT_COLUMN_USAGE where table_name = '" + selectedTableName + "' and constraint_name = '" + constraintName + "'";
+                            fkColumnCommand.CommandText = string.Format("SELECT column_name FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE WHERE table_name = '{0}' and constraint_name = '{1}'", selectedTableName, constraintName);
                             var colName = fkColumnCommand.ExecuteScalar();
                             if (colName != null)
                             {
@@ -190,6 +190,31 @@ namespace NMG.Core.Reader
         public List<string> GetSequences()
         {
             return new List<string>();
+        }
+
+        public List<string> GetForeignKeyTables(string primaryKeyColumnName)
+        {
+            var foreignKeyTables = new List<string>();
+            var conn = new SqlConnection(connectionStr);
+            conn.Open();
+            using (conn)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = string.Format(@"SELECT KCU.TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS  TC JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU
+                                        ON TC.CONSTRAINT_NAME = KCU.CONSTRAINT_NAME AND TC.CONSTRAINT_SCHEMA = KCU.CONSTRAINT_SCHEMA
+                                        WHERE TC.CONSTRAINT_TYPE = 'FOREIGN KEY' AND KCU.COLUMN_NAME = '{0}'", primaryKeyColumnName);
+                    var dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                    if (dataReader != null)
+                    {
+                        while (dataReader.Read())
+                        {
+                            foreignKeyTables.Add(dataReader.GetString(0));
+                        }
+                    }
+                }
+            }
+            return foreignKeyTables;
         }
     }
 }

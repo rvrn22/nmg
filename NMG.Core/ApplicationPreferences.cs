@@ -7,14 +7,13 @@ namespace NMG.Core
         public string TableName { get; set; }
 
         public string FolderPath { get; set; }
-        public string MapFolderPath { get; set; }
 
         public string NameSpace { get; set; }
-        public string MapNameSpace { get; set; }
 
         public string AssemblyName { get; set; }
-        public string MapAssemblyName { get; set; }
+
         public ServerType ServerType { get; set; }
+        public string ConnectionString { get; set; }
 
         public string Sequence { get; set; }
         public bool IsFluent { get; set; }
