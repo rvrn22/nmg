@@ -1,5 +1,4 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using Microsoft.CSharp;
@@ -38,17 +37,17 @@ namespace NMG.Core.Generator
             var newType = compileUnit.Namespaces[0].Types[0];
             foreach (var columnDetail in columnDetails)
             {
-                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-                Type mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale);
+                var propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
+                var mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, columnDetail.DataPrecision, columnDetail.DataScale);
 
                 if (columnDetail.IsPrimaryKey)
                 {
                     var metadataReader = MetadataFactory.GetReader(applicationPreferences.ServerType, applicationPreferences.ConnectionString);
                     var foreignKeyTables = metadataReader.GetForeignKeyTables(columnDetail.ColumnName);
-                        foreach (var foreignKeyTable in foreignKeyTables)
-                        {
-                            newType.Members.Add(codeGenerationHelper.CreateAutoProperty("IList<" + foreignKeyTable + ">", foreignKeyTable));
-                        }
+                    foreach (var foreignKeyTable in foreignKeyTables)
+                    {
+                        newType.Members.Add(codeGenerationHelper.CreateAutoProperty("IList<" + foreignKeyTable + ">", foreignKeyTable));
+                    }
                 }
 
                 switch (applicationPreferences.FieldGenerationConvention)

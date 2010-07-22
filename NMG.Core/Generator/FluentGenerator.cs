@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using NMG.Core.Domain;
 using NMG.Core.Fluent;
 using NMG.Core.Util;
@@ -41,23 +42,23 @@ namespace NMG.Core.Generator
             newType.Members.Add(constructor);
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + tableName + "\");"));
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
-            
 
             foreach (var columnDetail in columnDetails)
             {
                 if (columnDetail.IsPrimaryKey)
                 {
                     constructor.Statements.Add(GetIdMapCodeSnippetStatement(columnDetail.ColumnName));
+                    var metadataReader = MetadataFactory.GetReader(applicationPreferences.ServerType, applicationPreferences.ConnectionString);
+                    var foreignKeyTables = metadataReader.GetForeignKeyTables(columnDetail.ColumnName);
+                    foreach (var foreignKeyTable in foreignKeyTables)
+                    {
+                        constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", foreignKeyTable, foreignKeyTable)));
+                    } 
                     continue;
                 }
                 if (columnDetail.IsForeignKey)
                 {
-                    var notNullable = "Nullable()";
-                    if (!columnDetail.IsNullable)
-                    {
-                        notNullable = "Not.Nullable()";
-                    }
-                    constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\").{2}.Cascade.None();", columnDetail.ForeignKeyEntity, columnDetail.ColumnName, notNullable)));
+                    constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", columnDetail.ColumnName, columnDetail.ColumnName)));
                 }
                 else
                 {
@@ -68,9 +69,15 @@ namespace NMG.Core.Generator
             return compileUnit;
         }
 
+        protected override string AddStandardHeader(string entireContent)
+        {
+            entireContent = "using FluentNHibernate.Mapping;" + entireContent;
+            return base.AddStandardHeader(entireContent);
+        }
+
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName)
         {
-            return new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).GeneratedBy.Identity()'\"));", pkColumnName));
+            return new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).GeneratedBy.Identity();", pkColumnName));
         }
     }
 }

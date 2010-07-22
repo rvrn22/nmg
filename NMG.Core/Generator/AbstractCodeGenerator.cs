@@ -1,6 +1,5 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.CSharp;
@@ -34,13 +33,10 @@ namespace NMG.Core.Generator
         protected void WriteToFile(string content, string fileName)
         {
             var provider = GetCodeDomProvider();
-            string sourceFile = GetCompleteFilePath(provider, fileName);
+            var sourceFile = GetCompleteFilePath(provider, fileName);
             using (provider)
             {
-                if (!File.Exists(sourceFile))
-                {
-                    File.WriteAllText(sourceFile, content);
-                }
+                File.WriteAllText(sourceFile, content);
             }
         }
 
