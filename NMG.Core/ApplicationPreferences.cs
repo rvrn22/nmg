@@ -17,6 +17,7 @@ namespace NMG.Core
 
         public string Sequence { get; set; }
         public bool IsFluent { get; set; }
+        public bool IsCastle { get; set; }
         public string Prefix { get; set; }
 
         public Language Language { get; set; }

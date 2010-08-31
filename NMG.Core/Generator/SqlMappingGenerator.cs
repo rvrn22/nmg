@@ -5,7 +5,8 @@ namespace NMG.Core.Generator
 {
     public class SqlMappingGenerator : MappingGenerator
     {
-        public SqlMappingGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails) : base(applicationPreferences, columnDetails)
+        public SqlMappingGenerator(ApplicationPreferences applicationPreferences, Table table)
+            : base(applicationPreferences, table)
         {
         }
 

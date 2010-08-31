@@ -60,6 +60,8 @@ namespace NHibernateMappingGenerator
             this.basicSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.entityNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
@@ -78,8 +80,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.label6 = new System.Windows.Forms.Label();
-            this.entityNameTextBox = new System.Windows.Forms.TextBox();
+            this.castleMappingOption = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -158,6 +159,7 @@ namespace NHibernateMappingGenerator
             // 
             // columnName
             // 
+            this.columnName.DataPropertyName = "Name";
             this.columnName.HeaderText = "Column Name";
             this.columnName.Name = "columnName";
             this.columnName.ReadOnly = true;
@@ -197,7 +199,7 @@ namespace NHibernateMappingGenerator
             this.folderTextBox.Name = "folderTextBox";
             this.folderTextBox.Size = new System.Drawing.Size(605, 20);
             this.folderTextBox.TabIndex = 7;
-            this.folderTextBox.Text = "D:\\Temp\\";
+            this.folderTextBox.Text = "c:\\NHibernate Mapping File Generator";
             // 
             // generateButton
             // 
@@ -354,6 +356,22 @@ namespace NHibernateMappingGenerator
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(14, 74);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Entity Name :";
+            // 
+            // entityNameTextBox
+            // 
+            this.entityNameTextBox.Location = new System.Drawing.Point(105, 70);
+            this.entityNameTextBox.Name = "entityNameTextBox";
+            this.entityNameTextBox.Size = new System.Drawing.Size(514, 20);
+            this.entityNameTextBox.TabIndex = 20;
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.label4);
@@ -380,7 +398,7 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.advanceSettingsTabPage.Name = "advanceSettingsTabPage";
             this.advanceSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1050, 619);
+            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1069, 697);
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
@@ -431,6 +449,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
             this.groupBox3.Location = new System.Drawing.Point(439, 6);
@@ -559,21 +578,16 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // castleMappingOption
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(14, 74);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(70, 13);
-            this.label6.TabIndex = 19;
-            this.label6.Text = "Entity Name :";
-            // 
-            // entityNameTextBox
-            // 
-            this.entityNameTextBox.Location = new System.Drawing.Point(105, 70);
-            this.entityNameTextBox.Name = "entityNameTextBox";
-            this.entityNameTextBox.Size = new System.Drawing.Size(514, 20);
-            this.entityNameTextBox.TabIndex = 20;
+            this.castleMappingOption.AutoSize = true;
+            this.castleMappingOption.Location = new System.Drawing.Point(6, 65);
+            this.castleMappingOption.Name = "castleMappingOption";
+            this.castleMappingOption.Size = new System.Drawing.Size(125, 17);
+            this.castleMappingOption.TabIndex = 8;
+            this.castleMappingOption.TabStop = true;
+            this.castleMappingOption.Text = "Castle Active Record";
+            this.castleMappingOption.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -628,10 +642,6 @@ namespace NHibernateMappingGenerator
         private Label label4;
         private Label label5;
         private Button generateAllBtn;
-        private DataGridViewTextBoxColumn columnName;
-        private DataGridViewTextBoxColumn columnDataType;
-        private DataGridViewComboBoxColumn cSharpType;
-        private DataGridViewCheckBoxColumn isPrimaryKey;
         private TabControl mainTabControl;
         private TabPage basicSettingsTabPage;
         private TabPage advanceSettingsTabPage;
@@ -656,6 +666,11 @@ namespace NHibernateMappingGenerator
         private RadioButton autoPropertyRadioBtn;
         private Label label6;
         private TextBox entityNameTextBox;
+        private DataGridViewTextBoxColumn columnName;
+        private DataGridViewTextBoxColumn columnDataType;
+        private DataGridViewComboBoxColumn cSharpType;
+        private DataGridViewCheckBoxColumn isPrimaryKey;
+        private RadioButton castleMappingOption;
     }
 }
 

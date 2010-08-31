@@ -10,20 +10,22 @@ namespace NHibernateMappingGenerator
         private readonly MappingGenerator mappingGenerator;
         private readonly CodeGenerator codeGenerator;
         private readonly FluentGenerator fluentGenerator;
+        private readonly CastleGenerator castleGenerator;
 
-        public ApplicationController(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
+        public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
             this.applicationPreferences = applicationPreferences;
             applicationPreferences.FolderPath = AddSlashToFolderPath(applicationPreferences.FolderPath);
-            codeGenerator = new CodeGenerator(applicationPreferences, columnDetails);
-            fluentGenerator = new FluentGenerator(applicationPreferences, columnDetails);
+            codeGenerator = new CodeGenerator(applicationPreferences, table);
+            fluentGenerator = new FluentGenerator(applicationPreferences, table);
+            castleGenerator = new CastleGenerator(applicationPreferences, table);
             if (applicationPreferences.ServerType == ServerType.Oracle)
             {
-                mappingGenerator = new OracleMappingGenerator(applicationPreferences, columnDetails);
+                mappingGenerator = new OracleMappingGenerator(applicationPreferences, table);
             }
             else
             {
-                mappingGenerator = new SqlMappingGenerator(applicationPreferences, columnDetails);
+                mappingGenerator = new SqlMappingGenerator(applicationPreferences, table);
             }
         }
 
@@ -33,7 +35,12 @@ namespace NHibernateMappingGenerator
             if(applicationPreferences.IsFluent)
             {
                 fluentGenerator.Generate();
-            }else
+            } 
+            else if(applicationPreferences.IsCastle)
+            {
+                castleGenerator.Generate(); 
+            }
+            else
             {
                 mappingGenerator.Generate(); 
             }

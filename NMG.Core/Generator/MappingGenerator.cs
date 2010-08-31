@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using NMG.Core.Domain;
+using NMG.Core.Fluent;
 using NMG.Core.Util;
+using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {
@@ -10,8 +13,8 @@ namespace NMG.Core.Generator
     {
         private readonly ApplicationPreferences applicationPreferences;
 
-        protected MappingGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails)
-            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, columnDetails)
+        protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table)
+            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
         {
             this.applicationPreferences = applicationPreferences;
         }
@@ -20,7 +23,7 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-            string fileName = filePath + tableName.GetFormattedText() + ".hbm.xml";
+            string fileName = filePath + tableName.GetFormattedText().MakeSingular() + ".hbm.xml";
             using (var stringWriter = new StringWriter())
             {
                 var xmldoc = CreateMappingDocument();
@@ -48,64 +51,109 @@ namespace NMG.Core.Generator
             xmldoc.AppendChild(xmlDeclaration);
             var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
             root.SetAttribute("assembly", assemblyName);
+            root.SetAttribute("namespace", nameSpace);
             xmldoc.AppendChild(root);
 
             var classElement = xmldoc.CreateElement("class");
-            classElement.SetAttribute("name", nameSpace + "." + tableName.GetFormattedText() + ", " + assemblyName);
+            classElement.SetAttribute("name", tableName.GetFormattedText().MakeSingular());
             classElement.SetAttribute("table", tableName);
             classElement.SetAttribute("lazy", "true");
             root.AppendChild(classElement);
-            var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
-            if (primaryKeyColumn != null)
+            var primaryKey = Table.PrimaryKey;
+
+            if(primaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
                 var idElement = xmldoc.CreateElement("id");
-                string propertyName = primaryKeyColumn.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
-                {
-                    idElement.SetAttribute("name", propertyName.MakeFirstCharLowerCase());
-                }else
-                {
-                    idElement.SetAttribute("name", propertyName);
-                }
-                var mapper = new DataTypeMapper();
-                Type mapFromDbType = mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale);
-                idElement.SetAttribute("type", mapFromDbType.Name);
-                idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
-                if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
-                {
-                    idElement.SetAttribute("access", "field");
-                }
+                idElement.SetAttribute("name", primaryKey.Columns[0].Name.GetFormattedText());
+                idElement.SetAttribute("column", primaryKey.Columns[0].Name);
+
                 classElement.AppendChild(idElement);
-                AddIdGenerator(xmldoc, idElement);
+            }
+            else if(primaryKey.Type == PrimaryKeyType.CompositeKey)
+            {
+                var idElement = xmldoc.CreateElement("composite-id");
+                foreach(var key in primaryKey.Columns)
+                {
+                    var keyProperty = xmldoc.CreateElement("key-property");
+                    keyProperty.SetAttribute("name", key.Name.GetFormattedText());
+                    keyProperty.SetAttribute("column", key.Name);
+
+                    idElement.AppendChild(keyProperty);
+
+                    classElement.AppendChild(idElement);
+                }
             }
 
-            AddAllProperties(xmldoc, classElement);
+            foreach(var foreignKey in Table.ForeignKeys)
+            {
+                var fkProperty = xmldoc.CreateElement("many-to-one");
+                fkProperty.SetAttribute("name", foreignKey.References.GetFormattedText().MakeSingular());
+                fkProperty.SetAttribute("column", foreignKey.Name);
+
+                classElement.AppendChild(fkProperty);
+            }
+
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            {
+                string columnMapping = new DBColumnMapper().Map(column);
+                var property = xmldoc.CreateElement("property");
+                property.SetAttribute("name", column.Name.GetFormattedText());
+                property.SetAttribute("column", column.Name);
+
+                classElement.AppendChild(property);
+            }
+
+            //var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
+            //if (primaryKeyColumn != null)
+            //{
+            //    var idElement = xmldoc.CreateElement("id");
+            //    string propertyName = primaryKeyColumn.ColumnName.GetPreferenceFormattedText(applicationPreferences);
+            //    if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+            //    {
+            //        idElement.SetAttribute("name", propertyName.MakeFirstCharLowerCase());
+            //    }else
+            //    {
+            //        idElement.SetAttribute("name", propertyName);
+            //    }
+            //    var mapper = new DataTypeMapper();
+            //    Type mapFromDbType = mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale);
+            //    idElement.SetAttribute("type", mapFromDbType.Name);
+            //    idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
+            //    if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
+            //    {
+            //        idElement.SetAttribute("access", "field");
+            //    }
+            //    classElement.AppendChild(idElement);
+            //    AddIdGenerator(xmldoc, idElement);
+            //}
+
+            //AddAllProperties(xmldoc, classElement);
             return xmldoc;
         }
 
         private void AddAllProperties(XmlDocument xmldoc, XmlNode classElement)
         {
-            foreach (var columnDetail in columnDetails)
-            {
-                if (columnDetail.IsPrimaryKey)
-                    continue;
-                var xmlNode = xmldoc.CreateElement("property");
-                string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-                if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
-                {
-                    xmlNode.SetAttribute("name", propertyName.MakeFirstCharLowerCase());    
-                }else
-                {
-                    xmlNode.SetAttribute("name", propertyName);
-                }
+            //foreach (var columnDetail in columnDetails)
+            //{
+            //    if (columnDetail.IsPrimaryKey)
+            //        continue;
+            //    var xmlNode = xmldoc.CreateElement("property");
+            //    string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
+            //    if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
+            //    {
+            //        xmlNode.SetAttribute("name", propertyName.MakeFirstCharLowerCase());    
+            //    }else
+            //    {
+            //        xmlNode.SetAttribute("name", propertyName);
+            //    }
                 
-                xmlNode.SetAttribute("column", columnDetail.ColumnName);
-                if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
-                {
-                    xmlNode.SetAttribute("access", "field");
-                }
-                classElement.AppendChild(xmlNode);
-            }
+            //    xmlNode.SetAttribute("column", columnDetail.ColumnName);
+            //    if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
+            //    {
+            //        xmlNode.SetAttribute("access", "field");
+            //    }
+            //    classElement.AppendChild(xmlNode);
+            //}
         }
     }
 }

@@ -12,7 +12,7 @@ namespace NMG.Core.Util
             formattedText = formattedText.Replace(" ", "");
             return formattedText;
         }
-        
+
         public static string GetPreferenceFormattedText(this string text, ApplicationPreferences applicationPreferences)
         {
             if (applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.SameAsDatabase))

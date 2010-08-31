@@ -9,16 +9,16 @@ namespace NMG.Core.Generator
         protected string nameSpace;
         protected string assemblyName;
         protected string sequenceName;
-        protected ColumnDetails columnDetails;
+        protected Table Table;
 
-        protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceName, ColumnDetails columnDetails)
+        protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table)
         {
             this.filePath = filePath;
             this.tableName = tableName;
             this.nameSpace = nameSpace;
             this.assemblyName = assemblyName;
             this.sequenceName = sequenceName;
-            this.columnDetails = columnDetails;
+            this.Table = table;
         } 
 
         public abstract void Generate();

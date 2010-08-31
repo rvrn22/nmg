@@ -79,7 +79,7 @@ namespace NHibernateMappingGenerator
             serverTypeComboBox.DataSource = Enum.GetValues(typeof (ServerType));
             serverTypeComboBox.SelectedIndex = 0;
 
-            columnName.DataPropertyName = "ColumnName";
+            columnName.DataPropertyName = "Name";
             isPrimaryKey.DataPropertyName = "IsPrimaryKey";
             columnDataType.DataPropertyName = "DataType";
             cSharpType.DataPropertyName = "MappedType";
@@ -103,11 +103,12 @@ namespace NHibernateMappingGenerator
         private void PopulateTableDetails()
         {
             errorLabel.Text = string.Empty;
-            var selectedTableName = (string) tablesComboBox.SelectedItem;
+            var selectedTable = (Table) tablesComboBox.SelectedItem;
             try
             {
                 var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
-                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTableName);
+                dbTableDetailsGridView.AutoGenerateColumns = true;
+                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable);
             }
             catch (Exception ex)
             {
@@ -136,7 +137,8 @@ namespace NHibernateMappingGenerator
             var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
             try
             {
-                tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
+                //tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
+                tablesComboBox.DataSource = metadataReader.GetTables();
                 bool hasTables = tablesComboBox.Items.Count > 0;
                 tablesComboBox.Enabled = hasTables;
                 if (hasTables)
@@ -144,17 +146,18 @@ namespace NHibernateMappingGenerator
                     tablesComboBox.SelectedIndex = 0;
                 }
 
-                sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
-                bool hasSequences = sequencesComboBox.Items.Count > 0;
-                sequencesComboBox.Enabled = hasSequences;
-                if (hasSequences)
-                {
-                    sequencesComboBox.SelectedIndex = 0;
-                }
+                //sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
+                //bool hasSequences = sequencesComboBox.Items.Count > 0;
+                //sequencesComboBox.Enabled = hasSequences;
+                //if (hasSequences)
+                //{
+                //    sequencesComboBox.SelectedIndex = 0;
+                //}
             }
             catch (Exception ex)
             {
                 errorLabel.Text = ex.Message;
+                //throw (ex);
             }
         }
 
@@ -176,9 +179,9 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
-                string tableName = selectedItem.ToString();
-                var columnDetails = (ColumnDetails) dbTableDetailsGridView.DataSource;
-                Generate(tableName, columnDetails);
+                var table = (Table)selectedItem;
+                //var columnDetails = (Column) dbTableDetailsGridView.DataSource;
+                Generate(table);
                 errorLabel.Text = @"Generated all files successfully.";
             }
             catch (Exception ex)
@@ -202,12 +205,12 @@ namespace NHibernateMappingGenerator
                 {
                     var serverType = (ServerType) serverTypeComboBox.SelectedItem;
 
-                    foreach (object item in tablesComboBox.Items)
+                    foreach (var item in tablesComboBox.Items)
                     {
-                        string tableName = item.ToString();
+                        var table = (Table)item;
                         var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
-                        var columnDetails = metadataReader.GetTableDetails(tableName);
-                        Generate(tableName, columnDetails);
+                        table.Columns = metadataReader.GetTableDetails(table);
+                        Generate(table);
                     }
                     errorLabel.Text = @"Generated all files successfully.";
                 }
@@ -222,10 +225,10 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void Generate(string tableName, ColumnDetails columnDetails)
+        private void Generate(Table table)
         {
-            var applicationPreferences = GetApplicationPreferences(tableName);
-            var applicationController = new ApplicationController(applicationPreferences, columnDetails);
+            var applicationPreferences = GetApplicationPreferences(table.Name);
+            var applicationController = new ApplicationController(applicationPreferences, table);
             applicationController.Generate();
         }
 
@@ -236,7 +239,12 @@ namespace NHibernateMappingGenerator
 
         public bool IsFluent
         {
-            get { return fluentMappingOption.Checked ? true : false; }
+            get { return fluentMappingOption.Checked; }
+        }
+
+        public bool IsCastle
+        {
+            get { return castleMappingOption.Checked; }
         }
 
         private void prefixCheckChanged(object sender, EventArgs e)
@@ -265,6 +273,7 @@ namespace NHibernateMappingGenerator
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
+                                                 IsCastle = IsCastle,
                                                  ConnectionString = connStrTextBox.Text
                                              };
 

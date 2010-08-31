@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
+using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -13,8 +14,8 @@ namespace NMG.Core.Generator
         protected Language language;
 
         protected AbstractCodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                        string sequenceName, ColumnDetails columnDetails)
-            : base(filePath, tableName, nameSpace, assemblyName, sequenceName, columnDetails)
+                                        string sequenceName, Table table)
+            : base(filePath, tableName, nameSpace, assemblyName, sequenceName, table)
         {
         }
 

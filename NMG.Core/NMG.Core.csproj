@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NMG.Core</RootNamespace>
     <AssemblyName>NMG.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -69,10 +69,12 @@
     <Compile Include="Domain\ColumnDetail.cs" />
     <Compile Include="Domain\DotNetTypes.cs" />
     <Compile Include="Domain\Language.cs" />
+    <Compile Include="Domain\Table.cs" />
     <Compile Include="FieldNamingConvention.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />
     <Compile Include="Fluent\Constants.cs" />
     <Compile Include="Generator\AbstractCodeGenerator.cs" />
+    <Compile Include="Generator\CastleGenerator.cs" />
     <Compile Include="Generator\CodeGenerationHelper.cs" />
     <Compile Include="Generator\FluentGenerator.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Reader\IMetadataReader.cs" />
     <Compile Include="Reader\OracleMetadataReader.cs" />
     <Compile Include="Reader\SqlServerMetadataReader.cs" />
+    <Compile Include="TextFormatter\Inflector.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Generator\IGenerator.cs" />
     <Compile Include="Generator\AbstractGenerator.cs" />

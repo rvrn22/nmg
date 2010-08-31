@@ -5,7 +5,8 @@ namespace NMG.Core.Generator
 {
     public class OracleMappingGenerator : MappingGenerator
     {
-        public OracleMappingGenerator(ApplicationPreferences applicationPreferences, ColumnDetails columnDetails) : base(applicationPreferences, columnDetails)
+        public OracleMappingGenerator(ApplicationPreferences applicationPreferences, Table table)
+            : base(applicationPreferences, table)
         {
         }
 
