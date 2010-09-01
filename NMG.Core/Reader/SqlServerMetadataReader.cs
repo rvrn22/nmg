@@ -309,14 +309,13 @@ namespace NMG.Core.Reader
                 var tableCommand = conn.CreateCommand();
                 tableCommand.CommandText = "select table_name from information_schema.tables where table_type like 'BASE TABLE'";
                 var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                if (sqlDataReader != null)
-                    while (sqlDataReader.Read())
-                    {
-                        string tableName = sqlDataReader.GetString(0);
-                        tables.Add(new Table{Name = tableName});
-                    }
+                while (sqlDataReader.Read())
+                {
+                    var tableName = sqlDataReader.GetString(0);
+                    tables.Add(new Table{Name = tableName});
+                }
             }
-
+            tables.Sort((x, y) => x.Name.CompareTo(y.Name));
             return tables;
         }
 

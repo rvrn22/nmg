@@ -121,6 +121,7 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
+                tablesComboBox.DataSource = null;
                 tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
                 PopulateTablesAndSequences();
@@ -138,8 +139,9 @@ namespace NHibernateMappingGenerator
             try
             {
                 //tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
-                tablesComboBox.DataSource = metadataReader.GetTables();
-                bool hasTables = tablesComboBox.Items.Count > 0;
+                var tables = metadataReader.GetTables();
+                tablesComboBox.DataSource = tables;
+                var hasTables = tables.Count > 0;
                 tablesComboBox.Enabled = hasTables;
                 if (hasTables)
                 {

@@ -227,16 +227,16 @@ namespace NMG.Core.Reader
             conn.Open();
             using (conn)
             {
-                OracleCommand tableCommand = conn.CreateCommand();
+                var tableCommand = conn.CreateCommand();
                 tableCommand.CommandText = "select table_name from all_tables"; // where owner = 'HR'
-                OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (oracleDataReader.Read())
                 {
-                    string tableName = oracleDataReader.GetString(0);
+                    var tableName = oracleDataReader.GetString(0);
                     tables.Add(new Table {Name = tableName});
                 }
             }
-            //tables.Sort((x,y) => x.CompareTo(y));
+            tables.Sort((x,y) => x.Name.CompareTo(y.Name));
             return tables;
         }
 
