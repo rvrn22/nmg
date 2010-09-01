@@ -12,16 +12,30 @@ namespace NMG.Tests.Fluent
         public void ShouldMapDBColumn()
         {
             var mapper = new DBColumnMapper();
-            var columnDetail = new ColumnDetail("Age", "Int", 0, 0, 0, 0, true);
-            //Assert.That(mapper.Map(columnDetail), Is.EqualTo("Map(x => x.Age).Column(\"Age\");"));
+            var column = new Column
+                             {
+                                 Name = "Age",
+                                 DataType = "Int",
+                                 IsNullable = true
+                             };
+            Assert.That(mapper.Map(column), Is.EqualTo("Map(x => x.Age).Column(\"Age\");"));
         }
         
         [Test]
         public void ShouldMapDBColumnWithProperties()
         {
             var mapper = new DBColumnMapper();
-            var columnDetail = new ColumnDetail("Name", "varchar", 16, 0, 0, 0, false);
-            //Assert.That(mapper.Map(columnDetail), Is.EqualTo("Map(x => x.Name).Length(16).Not.Nullable().Column(\"Name\");"));
+            var column = new Column
+                                   {
+                                       Name = "Name",
+                                       DataLength = 16,
+                                       DataType = "varchar",
+                                       IsForeignKey = false,
+                                       IsNullable = false,
+                                       IsPrimaryKey = false,
+                                       MappedDataType = "string"
+                                   };
+            Assert.That(mapper.Map(column), Is.EqualTo("Map(x => x.Name).Not.Nullable().Column(\"Name\");"));
         }
     }
 }

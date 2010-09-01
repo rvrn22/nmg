@@ -113,7 +113,7 @@ namespace NMG.Tests.Generator
             }
             set {
             }
-        }"), "Was: " + stringBuilder.ToString());
+        }"), "Was: " + stringBuilder);
         }
     }
 }
