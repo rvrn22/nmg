@@ -4,14 +4,18 @@ using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Util;
+using NMG.Core.Reader;
 
 namespace NHibernateMappingGenerator
 {
     public partial class App : Form
     {
+        private IMetadataReader metadataReader;
+
         public App()
         {
             InitializeComponent();
+            ownersComboBox.SelectedIndexChanged += OwnersSelectedIndexChanged;
             tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             dbTableDetailsGridView.DataError += DataError;
@@ -86,13 +90,27 @@ namespace NHibernateMappingGenerator
             cSharpType.DataSource = new DotNetTypes();
         }
 
+        private void OwnersSelectedIndexChanged(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+
+            try
+            {
+                PopulateTablesAndSequences();
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
             entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
             try
             {
-                PopulateTableDetails();
+                PopulateTablesAndSequences();
             }
             finally
             {
@@ -106,9 +124,9 @@ namespace NHibernateMappingGenerator
             var selectedTable = (Table) tablesComboBox.SelectedItem;
             try
             {
-                var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+                //var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
                 dbTableDetailsGridView.AutoGenerateColumns = true;
-                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable);
+                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
             }
             catch (Exception ex)
             {
@@ -124,6 +142,9 @@ namespace NHibernateMappingGenerator
                 tablesComboBox.DataSource = null;
                 tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
+
+                metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+                PopulateOwners();
                 PopulateTablesAndSequences();
             }
             finally
@@ -132,14 +153,19 @@ namespace NHibernateMappingGenerator
             }
         }
 
+        private void PopulateOwners()
+        {
+            ownersComboBox.DataSource = metadataReader.GetOwners();
+        }
+
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+            tablesComboBox.DataBindings.Clear();
+
             try
             {
-                //tablesComboBox.Items.AddRange(metadataReader.GetTables().ToArray());
-                var tables = metadataReader.GetTables();
+                var tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
                 tablesComboBox.DataSource = tables;
                 var hasTables = tables.Count > 0;
                 tablesComboBox.Enabled = hasTables;
@@ -148,13 +174,13 @@ namespace NHibernateMappingGenerator
                     tablesComboBox.SelectedIndex = 0;
                 }
 
-                //sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
-                //bool hasSequences = sequencesComboBox.Items.Count > 0;
-                //sequencesComboBox.Enabled = hasSequences;
-                //if (hasSequences)
-                //{
-                //    sequencesComboBox.SelectedIndex = 0;
-                //}
+                sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
+                bool hasSequences = sequencesComboBox.Items.Count > 0;
+                sequencesComboBox.Enabled = hasSequences;
+                if (hasSequences)
+                {
+                    sequencesComboBox.SelectedIndex = 0;
+                }
             }
             catch (Exception ex)
             {
@@ -210,8 +236,8 @@ namespace NHibernateMappingGenerator
                     foreach (var item in tablesComboBox.Items)
                     {
                         var table = (Table)item;
-                        var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
-                        table.Columns = metadataReader.GetTableDetails(table);
+                        //var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
+                        table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                         Generate(table);
                     }
                     errorLabel.Text = @"Generated all files successfully.";

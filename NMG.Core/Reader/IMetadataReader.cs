@@ -5,8 +5,9 @@ namespace NMG.Core.Reader
 {
     public interface IMetadataReader
     {
-        IList<Column> GetTableDetails(Table selectedTableName);
-        List<Table> GetTables();
+        IList<Column> GetTableDetails(Table selectedTableName, string owner);
+        List<Table> GetTables(string owner);
+        IList<string> GetOwners();
         List<string> GetSequences();
         List<string> GetForeignKeyTables(string columnName);
         //bool UsesCompositeKey(string tableName);

@@ -40,7 +40,7 @@ namespace NMG.Core.Reader
             this.connectionStr = connectionStr;
         }
 
-        public IList<Column> GetTableDetails(Table selectedTableName)
+        public IList<Column> GetTableDetails(Table selectedTableName, string owner)
         {
             var columns = new List<Column>();
             var conn = new SqlConnection(connectionStr);
@@ -61,12 +61,12 @@ namespace NMG.Core.Reader
 			                        and tc.constraint_type <> 'CHECK'
 		                        )
 	                        ) on (
-		                        c.table_schema = ccu.table_schema and ccu.table_schema = user
+		                        c.table_schema = ccu.table_schema and ccu.table_schema = '{1}'
 		                        and c.table_name = ccu.table_name
 		                        and c.column_name = ccu.column_name
 	                        )
                         where c.table_name = '{0}'
-                        order by c.table_name, c.ordinal_position", selectedTableName.Name);
+                        order by c.table_name, c.ordinal_position", selectedTableName.Name, owner);
                     using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         if (sqlDataReader != null)
@@ -147,6 +147,11 @@ namespace NMG.Core.Reader
                 }
                 return key;
             }
+        }
+
+        public IList<string> GetOwners()
+        {
+            return new List<string>();
         }
 
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
@@ -299,7 +304,7 @@ namespace NMG.Core.Reader
         //    return false;
         //}
 
-        public List<Table> GetTables()
+        public List<Table> GetTables(string owner)
         {
             var tables = new List<Table>();
             var conn = new SqlConnection(connectionStr);
@@ -307,7 +312,7 @@ namespace NMG.Core.Reader
             using (conn)
             {
                 var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "select table_name from information_schema.tables where table_type like 'BASE TABLE'";
+                tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and schema = '{0}'", owner);
                 var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (sqlDataReader.Read())
                 {

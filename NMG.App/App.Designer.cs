@@ -63,12 +63,15 @@ namespace NHibernateMappingGenerator
             this.label6 = new System.Windows.Forms.Label();
             this.entityNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.ownersComboBox = new System.Windows.Forms.ComboBox();
+            this.lblOwner = new System.Windows.Forms.Label();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.propertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.fieldRadioBtn = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
             this.hbmMappingOption = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -80,7 +83,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.castleMappingOption = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -125,18 +127,19 @@ namespace NHibernateMappingGenerator
             // 
             this.tablesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.tablesComboBox.FormattingEnabled = true;
-            this.tablesComboBox.Location = new System.Drawing.Point(11, 72);
+            this.tablesComboBox.Location = new System.Drawing.Point(154, 71);
             this.tablesComboBox.Name = "tablesComboBox";
-            this.tablesComboBox.Size = new System.Drawing.Size(496, 21);
+            this.tablesComboBox.Size = new System.Drawing.Size(449, 21);
             this.tablesComboBox.TabIndex = 3;
             // 
             // sequencesComboBox
             // 
             this.sequencesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sequencesComboBox.DropDownWidth = 449;
             this.sequencesComboBox.FormattingEnabled = true;
-            this.sequencesComboBox.Location = new System.Drawing.Point(513, 72);
+            this.sequencesComboBox.Location = new System.Drawing.Point(609, 71);
             this.sequencesComboBox.Name = "sequencesComboBox";
-            this.sequencesComboBox.Size = new System.Drawing.Size(460, 21);
+            this.sequencesComboBox.Size = new System.Drawing.Size(449, 21);
             this.sequencesComboBox.TabIndex = 4;
             // 
             // dbTableDetailsGridView
@@ -276,7 +279,7 @@ namespace NHibernateMappingGenerator
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 53);
+            this.label4.Location = new System.Drawing.Point(151, 53);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(72, 13);
             this.label4.TabIndex = 16;
@@ -285,7 +288,7 @@ namespace NHibernateMappingGenerator
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(513, 53);
+            this.label5.Location = new System.Drawing.Point(606, 53);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(207, 13);
             this.label5.TabIndex = 17;
@@ -374,6 +377,8 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.ownersComboBox);
+            this.groupBox4.Controls.Add(this.lblOwner);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.dbConnStrLabel);
             this.groupBox4.Controls.Add(this.sequencesComboBox);
@@ -388,6 +393,24 @@ namespace NHibernateMappingGenerator
             this.groupBox4.Size = new System.Drawing.Size(1063, 103);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
+            // 
+            // ownersComboBox
+            // 
+            this.ownersComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ownersComboBox.FormattingEnabled = true;
+            this.ownersComboBox.Location = new System.Drawing.Point(11, 71);
+            this.ownersComboBox.Name = "ownersComboBox";
+            this.ownersComboBox.Size = new System.Drawing.Size(137, 21);
+            this.ownersComboBox.TabIndex = 19;
+            // 
+            // lblOwner
+            // 
+            this.lblOwner.AutoSize = true;
+            this.lblOwner.Location = new System.Drawing.Point(8, 53);
+            this.lblOwner.Name = "lblOwner";
+            this.lblOwner.Size = new System.Drawing.Size(38, 13);
+            this.lblOwner.TabIndex = 18;
+            this.lblOwner.Text = "Owner";
             // 
             // advanceSettingsTabPage
             // 
@@ -458,6 +481,17 @@ namespace NHibernateMappingGenerator
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Mapping Style";
+            // 
+            // castleMappingOption
+            // 
+            this.castleMappingOption.AutoSize = true;
+            this.castleMappingOption.Location = new System.Drawing.Point(6, 65);
+            this.castleMappingOption.Name = "castleMappingOption";
+            this.castleMappingOption.Size = new System.Drawing.Size(125, 17);
+            this.castleMappingOption.TabIndex = 8;
+            this.castleMappingOption.TabStop = true;
+            this.castleMappingOption.Text = "Castle Active Record";
+            this.castleMappingOption.UseVisualStyleBackColor = true;
             // 
             // fluentMappingOption
             // 
@@ -578,17 +612,6 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // castleMappingOption
-            // 
-            this.castleMappingOption.AutoSize = true;
-            this.castleMappingOption.Location = new System.Drawing.Point(6, 65);
-            this.castleMappingOption.Name = "castleMappingOption";
-            this.castleMappingOption.Size = new System.Drawing.Size(125, 17);
-            this.castleMappingOption.TabIndex = 8;
-            this.castleMappingOption.TabStop = true;
-            this.castleMappingOption.Text = "Castle Active Record";
-            this.castleMappingOption.UseVisualStyleBackColor = true;
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -671,6 +694,8 @@ namespace NHibernateMappingGenerator
         private DataGridViewComboBoxColumn cSharpType;
         private DataGridViewCheckBoxColumn isPrimaryKey;
         private RadioButton castleMappingOption;
+        private ComboBox ownersComboBox;
+        private Label lblOwner;
     }
 }
 

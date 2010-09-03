@@ -16,7 +16,7 @@ namespace NMG.Core.Reader
             this.connectionStr = connectionStr;
         }
 
-        public IList<Column> GetTableDetails(Table selectedTableName)
+        public IList<Column> GetTableDetails(Table selectedTableName, string owner)
         {
             var columns = new List<Column>();
             var conn = new OracleConnection(connectionStr);
@@ -37,12 +37,12 @@ namespace NMG.Core.Reader
 				                            and c.constraint_type <> 'C'
 			                            )
 		                            ) on (
-			                            tc.owner = cc.owner --and cc.owner = user
+			                            tc.owner = cc.owner and cc.owner = '{1}'
 			                            and tc.table_name = cc.table_name
 			                            and tc.column_name = cc.column_name
 		                            )
                                 where tc.table_name = '{0}'
-                            order by tc.table_name, cc.position nulls last, tc.column_id", selectedTableName.Name);
+                            order by tc.table_name, cc.position nulls last, tc.column_id", selectedTableName.Name, owner);
                     using (OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         while (oracleDataReader.Read())
@@ -220,7 +220,7 @@ namespace NMG.Core.Reader
 
         // http://blog.mclaughlinsoftware.com/2009/03/05/validating-foreign-keys/
 
-        public List<Table> GetTables()
+        public List<Table> GetTables(string owner)
         {
             var tables = new List<Table>();
             var conn = new OracleConnection(connectionStr);
@@ -228,7 +228,7 @@ namespace NMG.Core.Reader
             using (conn)
             {
                 var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "select table_name from all_tables"; // where owner = 'HR'
+                tableCommand.CommandText = String.Format("select table_name from all_tables where owner = '{0}'", owner); // where owner = 'HR'
                 var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (oracleDataReader.Read())
                 {
@@ -238,6 +238,25 @@ namespace NMG.Core.Reader
             }
             tables.Sort((x,y) => x.Name.CompareTo(y.Name));
             return tables;
+        }
+
+        public IList<string> GetOwners()
+        {
+            var owners = new List<string>();
+            var conn = new OracleConnection(connectionStr);
+            conn.Open();
+            using (conn)
+            {
+                var tableCommand = conn.CreateCommand();
+                tableCommand.CommandText = "select username from all_users order by username";
+                var oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                while (oracleDataReader.Read())
+                {
+                    var owner = oracleDataReader.GetString(0);
+                    owners.Add(owner);
+                }
+            }
+            return owners;
         }
 
         public List<string> GetSequences()
