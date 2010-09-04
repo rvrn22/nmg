@@ -196,7 +196,6 @@ namespace NMG.Core.Generator
             entireContent = "using System; \n" + entireContent;
             entireContent = "using System.Text; \n" + entireContent;
             entireContent = "using System.Collections.Generic; \n" + entireContent;
-            entireContent = "using System; \n" + entireContent;
             return entireContent;
         }
 
