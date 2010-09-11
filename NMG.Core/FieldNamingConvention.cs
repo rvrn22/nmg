@@ -4,7 +4,11 @@
     {
         SameAsDatabase,
         CamelCase,
-        Prefixed
+        Prefixed,
+        /// <summary>
+        /// Upper camel case.
+        /// </summary>
+        PascalCase
     }
 
     public enum FieldGenerationConvention

@@ -4,23 +4,28 @@ namespace NMG.Core.Generator
 {
     public abstract class AbstractGenerator : IGenerator
     {
-        protected string filePath;
-        protected string tableName;
-        protected string nameSpace;
-        protected string assemblyName;
-        protected string sequenceName;
         protected Table Table;
+        protected string assemblyName;
+        protected string filePath;
+        protected string nameSpace;
+        protected string sequenceName;
+        protected string tableName;
 
-        protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table)
+        protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
+                                    string sequenceName, Table table)
         {
             this.filePath = filePath;
             this.tableName = tableName;
             this.nameSpace = nameSpace;
             this.assemblyName = assemblyName;
             this.sequenceName = sequenceName;
-            this.Table = table;
-        } 
+            Table = table;
+        }
+
+        #region IGenerator Members
 
         public abstract void Generate();
+
+        #endregion
     }
 }

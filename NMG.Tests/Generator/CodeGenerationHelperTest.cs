@@ -101,7 +101,7 @@ namespace NMG.Tests.Generator
         public void ShouldGeneratePropertyWithNonNullableString()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            CodeMemberProperty memberProperty = codeGenerationHelper.CreateAutoProperty(typeof(string), "Name", true);
+            CodeMemberProperty memberProperty = codeGenerationHelper.CreateAutoProperty(typeof (string), "Name", true);
             CodeCompileUnit codeCompileUnit = codeGenerationHelper.GetCodeCompileUnit("someNamespace", "someType");
             codeCompileUnit.Namespaces[0].Types[0].Members.Add(memberProperty);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
@@ -113,7 +113,8 @@ namespace NMG.Tests.Generator
             }
             set {
             }
-        }"), "Was: " + stringBuilder);
+        }"),
+                "Was: " + stringBuilder);
         }
     }
 }

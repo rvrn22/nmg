@@ -102,9 +102,9 @@ namespace NMG.Core.TextFormatter
         private static void AddIrregularRule(string singular, string plural)
         {
             AddPluralRule(String.Concat("(", singular[0], ")", singular.Substring(1), "$"),
-                String.Concat("$1", plural.Substring(1)));
+                          String.Concat("$1", plural.Substring(1)));
             AddSingularRule(String.Concat("(", plural[0], ")", plural.Substring(1), "$"),
-                String.Concat("$1", singular.Substring(1)));
+                            String.Concat("$1", singular.Substring(1)));
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace NMG.Core.TextFormatter
         public static string ToTitleCase(this string word)
         {
             return Regex.Replace(ToHumanCase(AddUnderscores(word)), @"\b([a-z])",
-                match => match.Captures[0].Value.ToUpper());
+                                 match => match.Captures[0].Value.ToUpper());
         }
 
         /// <summary>
@@ -206,67 +206,60 @@ namespace NMG.Core.TextFormatter
         /// </summary>
         /// <param name="sourceString">The source string.</param>
         /// <returns></returns>
-        //public static string ToProper(this string sourceString)
-        //{
-        //    string propertyName = sourceString.ToPascalCase();
-        //    return propertyName;
-        //}
-
+        public static string ToProper(this string sourceString)
+        {
+            string propertyName = sourceString.ToPascalCase();
+            return propertyName;
+        }
         /// <summary>
         /// Converts the string to pascal case.
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">The lowercase and underscored word.</param>
         /// <returns></returns>
-        //public static string ToPascalCase(this string lowercaseAndUnderscoredWord)
-        //{
-        //    return ToPascalCase(lowercaseAndUnderscoredWord, true);
-        //}
-
+        public static string ToPascalCase(this string lowercaseAndUnderscoredWord)
+        {
+            return ToPascalCase(lowercaseAndUnderscoredWord, true);
+        }
         /// <summary>
         /// Converts text to pascal case...
         /// </summary>
         /// <param name="text">The text.</param>
         /// <param name="removeUnderscores">if set to <c>true</c> [remove underscores].</param>
         /// <returns></returns>
-        //public static string ToPascalCase(this string text, bool removeUnderscores)
-        //{
-        //    if (String.IsNullOrEmpty(text))
-        //        return text;
-
-        //    text = text.Replace("_", " ");
-        //    string joinString = removeUnderscores ? String.Empty : "_";
-        //    string[] words = text.Split(' ');
-        //    if (words.Length > 1 || words[0].IsUpperCase())
-        //    {
-        //        for (int i = 0; i < words.Length; i++)
-        //        {
-        //            if (words[i].Length > 0)
-        //            {
-        //                string word = words[i];
-        //                string restOfWord = word.Substring(1);
-
-        //                if (restOfWord.IsUpperCase())
-        //                    restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
-
-        //                char firstChar = char.ToUpper(word[0], CultureInfo.CurrentUICulture);
-        //                words[i] = String.Concat(firstChar, restOfWord);
-        //            }
-        //        }
-        //        return String.Join(joinString, words);
-        //    }
-        //    return String.Concat(words[0].Substring(0, 1).ToUpper(CultureInfo.CurrentUICulture), words[0].Substring(1));
-        //}
-
+        public static string ToPascalCase(this string text, bool removeUnderscores)
+        {
+            if (String.IsNullOrEmpty(text))
+                return text;
+            text = text.Replace("_", " ");
+            string joinString = removeUnderscores ? String.Empty : "_";
+            string[] words = text.Split(' ');
+            if (words.Length > 1 || words[0].IsUpperCase())
+            {
+                for (int i = 0; i < words.Length; i++)
+                {
+                    if (words[i].Length > 0)
+                    {
+                        string word = words[i];
+                        string restOfWord = word.Substring(1);
+                        if (restOfWord.IsUpperCase())
+                            restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
+                        char firstChar = char.ToUpper(word[0], CultureInfo.CurrentUICulture);
+                        words[i] = String.Concat(firstChar, restOfWord);
+                    }
+                }
+                return String.Join(joinString, words);
+            }
+            return String.Concat(words[0].Substring(0, 1).ToUpper(CultureInfo.CurrentUICulture), words[0].Substring(1));
+        }
         /// <summary>
         /// Converts the string to camel case.
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">The lowercase and underscored word.</param>
         /// <returns></returns>
-        //public static string ToCamelCase(this string lowercaseAndUnderscoredWord)
-        //{
-        //    return MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord));
-        //}
-
+        public static string ToCamelCase(this string lowercaseAndUnderscoredWord)
+        {
+            return MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord));
+        }
         /// <summary>
         /// Adds the underscores.
         /// </summary>
@@ -277,7 +270,7 @@ namespace NMG.Core.TextFormatter
             return
                 Regex.Replace(
                     Regex.Replace(Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
-                        "$1_$2"), @"[-\s]", "_").ToLower();
+                                  "$1_$2"), @"[-\s]", "_").ToLower();
         }
 
         /// <summary>
@@ -311,10 +304,8 @@ namespace NMG.Core.TextFormatter
         //    {
         //        int n = int.Parse(number);
         //        int nMod100 = n % 100;
-
         //        if (nMod100 >= 11 && nMod100 <= 13)
         //            return String.Concat(number, "th");
-
         //        switch (n % 10)
         //        {
         //            case 1:
@@ -329,7 +320,6 @@ namespace NMG.Core.TextFormatter
         //    }
         //    return number;
         //}
-
         /// <summary>
         /// Converts the underscores to dashes.
         /// </summary>
@@ -340,6 +330,15 @@ namespace NMG.Core.TextFormatter
             return underscoredWord.Replace('_', '-');
         }
 
+        /// <summary>
+        /// Checks if the first character of a string if capitalized.
+        /// </summary>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public static bool IsUpperCase(this string word)
+        {
+            return (new Regex("[A-Z]")).IsMatch(word);
+        }
 
         #region Nested type: InflectorRule
 

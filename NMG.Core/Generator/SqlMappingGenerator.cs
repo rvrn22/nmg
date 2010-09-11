@@ -12,7 +12,7 @@ namespace NMG.Core.Generator
 
         protected override void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement)
         {
-            var generatorElement = xmldoc.CreateElement("generator");
+            XmlElement generatorElement = xmldoc.CreateElement("generator");
             generatorElement.SetAttribute("class", "identity");
             idElement.AppendChild(generatorElement);
         }

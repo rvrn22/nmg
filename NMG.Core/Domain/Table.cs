@@ -59,15 +59,15 @@ namespace NMG.Core.Domain
         public string Name { get; set; }
         public bool IsPrimaryKey { get; set; }
         public bool IsForeignKey { get; set; }
+        public bool IsUnique { get; set; }
         public string DataType { get; set; }
-        public long DataLength { get; set; }
+        public int DataLength { get; set; }
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
     }
 
     public class ForeignKeyColumn : Column
     {
-
         public string References { get; set; }
     }
 
@@ -91,11 +91,15 @@ namespace NMG.Core.Domain
     {
         public AbstractPrimaryKey()
         {
-        Columns = new List<Column>();
+            Columns = new List<Column>();
         }
+
+        #region IPrimaryKey Members
 
         public abstract PrimaryKeyType KeyType { get; }
         public IList<Column> Columns { get; set; }
+
+        #endregion
     }
 
     /// <summary>
@@ -105,7 +109,7 @@ namespace NMG.Core.Domain
     {
         public PrimaryKey()
         {
-            Columns  = new List<Column>();
+            Columns = new List<Column>();
         }
 
         public PrimaryKeyType Type { get; set; }

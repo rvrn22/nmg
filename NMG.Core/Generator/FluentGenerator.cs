@@ -1,14 +1,12 @@
-﻿using System.CodeDom;
-using System.Collections.Generic;
+﻿using System;
+using System.CodeDom;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using NMG.Core.Domain;
 using NMG.Core.Fluent;
-using NMG.Core.Reader;
 using NMG.Core.TextFormatter;
 using NMG.Core.Util;
-using System;
-using System.Linq;
 
 namespace NMG.Core.Generator
 {
@@ -54,30 +52,33 @@ namespace NMG.Core.Generator
 
             //foreach(var primaryKeys in Table.PrimaryKey)
             //{
-                // refactor to set primarykeytype enum and use that instead to check
+            // refactor to set primarykeytype enum and use that instead to check
             if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Table.PrimaryKey.Type));
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name,
+                                                                        Table.PrimaryKey.Columns[0].DataType,
+                                                                        Table.PrimaryKey.Type));
             else
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey));
             //}
 
-            foreach (var fk in Table.ForeignKeys)
+            foreach (ForeignKey fk in Table.ForeignKeys)
             {
                 constructor.Statements.Add(
                     new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");",
                                                            fk.References.GetFormattedText().MakeSingular(), fk.Name)));
             }
 
-            foreach(var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
                 string columnMapping = new DBColumnMapper().Map(column);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
-            foreach (var hasMany in Table.HasManyRelationships)
+            foreach (HasMany hasMany in Table.HasManyRelationships)
             {
                 constructor.Statements.Add(
-                    new CodeSnippetStatement(string.Format(TABS + "HasMany(x => x.{0});", hasMany.Reference.GetFormattedText().MakePlural())));
+                    new CodeSnippetStatement(string.Format(TABS + "HasMany(x => x.{0});",
+                                                           hasMany.Reference.GetFormattedText().MakePlural())));
             }
 
             //if (Table.ForeignKeys.Count >= 1)
@@ -140,14 +141,15 @@ namespace NMG.Core.Generator
             return base.AddStandardHeader(entireContent);
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType, PrimaryKeyType keyType)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType,
+                                                                         PrimaryKeyType keyType)
         {
             var dataTypeMapper = new DataTypeMapper();
             bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
-            var idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
+            string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             return
                 new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).{1}.Column(\"{2}\");",
-                                                       pkColumnName.GetFormattedText(), 
+                                                       pkColumnName.GetFormattedText(),
                                                        idGeneratorType,
                                                        pkColumnName));
         }
@@ -160,7 +162,7 @@ namespace NMG.Core.Generator
             //bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
             //var idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
-            foreach (var pkColumn in primaryKey.Columns)
+            foreach (Column pkColumn in primaryKey.Columns)
             {
                 keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0})", pkColumn.Name.GetFormattedText()));
             }
@@ -172,7 +174,6 @@ namespace NMG.Core.Generator
         // Generate id sequence
         private static CodeSnippetStatement GetIdMapCodeSnippetStatementSequenceId(PrimaryKeyType primaryKey)
         {
-
             return new CodeSnippetStatement(TABS);
         }
     }

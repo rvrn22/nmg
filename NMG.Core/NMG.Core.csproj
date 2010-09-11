@@ -82,10 +82,14 @@
     <Compile Include="DataTypeMapper.cs" />
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="ApplicationPreferences.cs" />
+    <Compile Include="Reader\IConstraintTypeResolver.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
+    <Compile Include="Reader\OracleConstraintType.cs" />
     <Compile Include="Reader\OracleMetadataReader.cs" />
+    <Compile Include="Reader\SqlServerConstraintType.cs" />
     <Compile Include="Reader\SqlServerMetadataReader.cs" />
     <Compile Include="TextFormatter\Inflector.cs" />
+    <Compile Include="TextFormatter\TextFormatter.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Generator\IGenerator.cs" />
     <Compile Include="Generator\AbstractGenerator.cs" />

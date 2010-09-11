@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
-using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -21,7 +20,7 @@ namespace NMG.Core.Generator
 
         public string GenerateCode(CodeCompileUnit compileUnit, string className)
         {
-            var provider = GetCodeDomProvider();
+            CodeDomProvider provider = GetCodeDomProvider();
             var stringBuilder = new StringBuilder();
             using (provider)
             {
@@ -33,8 +32,8 @@ namespace NMG.Core.Generator
 
         protected void WriteToFile(string content, string fileName)
         {
-            var provider = GetCodeDomProvider();
-            var sourceFile = GetCompleteFilePath(provider, fileName);
+            CodeDomProvider provider = GetCodeDomProvider();
+            string sourceFile = GetCompleteFilePath(provider, fileName);
             using (provider)
             {
                 File.WriteAllText(sourceFile, content);
@@ -77,7 +76,7 @@ namespace NMG.Core.Generator
         {
             if (!filePath.EndsWith("\\"))
                 filePath += "\\";
-            var fileName = filePath + entityFileName;
+            string fileName = filePath + entityFileName;
             return provider.FileExtension[0] == '.'
                        ? fileName + provider.FileExtension
                        : fileName + "." + provider.FileExtension;
@@ -85,7 +84,7 @@ namespace NMG.Core.Generator
 
         protected CodeDomProvider GetCodeDomProvider()
         {
-            return language == Language.CSharp ? (CodeDomProvider)new CSharpCodeProvider() : new VBCodeProvider();
+            return language == Language.CSharp ? (CodeDomProvider) new CSharpCodeProvider() : new VBCodeProvider();
         }
     }
 }

@@ -4,6 +4,13 @@ namespace NMG.Core
 {
     public class ApplicationPreferences
     {
+        public ApplicationPreferences()
+        {
+            FieldNamingConvention = FieldNamingConvention.SameAsDatabase;
+            FieldGenerationConvention = FieldGenerationConvention.Field;
+            Prefix = string.Empty;
+        }
+
         public string TableName { get; set; }
 
         public string FolderPath { get; set; }
@@ -26,23 +33,16 @@ namespace NMG.Core
 
         public string EntityName { get; set; }
 
-        public ApplicationPreferences()
-        {
-            FieldNamingConvention = FieldNamingConvention.SameAsDatabase;
-            FieldGenerationConvention = FieldGenerationConvention.Field;
-            Prefix = string.Empty;
-        }
-
         public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences
-            {
-                FieldGenerationConvention = FieldGenerationConvention.AutoProperty,
-                FieldNamingConvention = FieldNamingConvention.SameAsDatabase,
-                Prefix = string.Empty,
-                IsFluent = true,
-                Language = Language.CSharp,
-            };
+                                  {
+                                      FieldGenerationConvention = FieldGenerationConvention.AutoProperty,
+                                      FieldNamingConvention = FieldNamingConvention.SameAsDatabase,
+                                      Prefix = string.Empty,
+                                      IsFluent = true,
+                                      Language = Language.CSharp,
+                                  };
             return preferences;
         }
     }

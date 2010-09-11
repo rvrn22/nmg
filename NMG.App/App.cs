@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
-using NMG.Core.Util;
 using NMG.Core.Reader;
+using NMG.Core.Util;
 
 namespace NHibernateMappingGenerator
 {
@@ -25,9 +26,24 @@ namespace NHibernateMappingGenerator
             Closing += App_Closing;
         }
 
+        private Language LanguageSelected
+        {
+            get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
+        }
+
+        public bool IsFluent
+        {
+            get { return fluentMappingOption.Checked; }
+        }
+
+        public bool IsCastle
+        {
+            get { return castleMappingOption.Checked; }
+        }
+
         protected override void OnLoad(EventArgs e)
         {
-            var applicationSettings = ApplicationSettings.Load();
+            ApplicationSettings applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
                 serverTypeComboBox.SelectedItem = applicationSettings.ServerType;
@@ -75,7 +91,9 @@ namespace NHibernateMappingGenerator
         private void ServerTypeSelected(object sender, EventArgs e)
         {
             bool isOracleSelected = ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle);
-            connStrTextBox.Text = isOracleSelected ? StringConstants.ORACLE_CONN_STR_TEMPLATE : StringConstants.SQL_CONN_STR_TEMPLATE;
+            connStrTextBox.Text = isOracleSelected
+                                      ? StringConstants.ORACLE_CONN_STR_TEMPLATE
+                                      : StringConstants.SQL_CONN_STR_TEMPLATE;
         }
 
         private void BindData()
@@ -110,7 +128,7 @@ namespace NHibernateMappingGenerator
             entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
             try
             {
-                PopulateTablesAndSequences();
+                PopulateTableDetails();
             }
             finally
             {
@@ -126,7 +144,8 @@ namespace NHibernateMappingGenerator
             {
                 //var metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
                 dbTableDetailsGridView.AutoGenerateColumns = true;
-                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
+                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable,
+                                                                                   ownersComboBox.SelectedItem.ToString());
             }
             catch (Exception ex)
             {
@@ -143,7 +162,8 @@ namespace NHibernateMappingGenerator
                 tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
 
-                metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem, connStrTextBox.Text);
+                metadataReader = MetadataFactory.GetReader((ServerType) serverTypeComboBox.SelectedItem,
+                                                           connStrTextBox.Text);
                 PopulateOwners();
                 PopulateTablesAndSequences();
             }
@@ -165,9 +185,9 @@ namespace NHibernateMappingGenerator
 
             try
             {
-                var tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
+                List<Table> tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
                 tablesComboBox.DataSource = tables;
-                var hasTables = tables.Count > 0;
+                bool hasTables = tables.Count > 0;
                 tablesComboBox.Enabled = hasTables;
                 if (hasTables)
                 {
@@ -207,7 +227,7 @@ namespace NHibernateMappingGenerator
             try
             {
                 errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
-                var table = (Table)selectedItem;
+                var table = (Table) selectedItem;
                 //var columnDetails = (Column) dbTableDetailsGridView.DataSource;
                 Generate(table);
                 errorLabel.Text = @"Generated all files successfully.";
@@ -233,9 +253,9 @@ namespace NHibernateMappingGenerator
                 {
                     var serverType = (ServerType) serverTypeComboBox.SelectedItem;
 
-                    foreach (var item in tablesComboBox.Items)
+                    foreach (object item in tablesComboBox.Items)
                     {
-                        var table = (Table)item;
+                        var table = (Table) item;
                         //var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
                         table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                         Generate(table);
@@ -255,24 +275,9 @@ namespace NHibernateMappingGenerator
 
         private void Generate(Table table)
         {
-            var applicationPreferences = GetApplicationPreferences(table.Name);
+            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table.Name);
             var applicationController = new ApplicationController(applicationPreferences, table);
             applicationController.Generate();
-        }
-
-        private Language LanguageSelected
-        {
-            get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
-        }
-
-        public bool IsFluent
-        {
-            get { return fluentMappingOption.Checked; }
-        }
-
-        public bool IsCastle
-        {
-            get { return castleMappingOption.Checked; }
         }
 
         private void prefixCheckChanged(object sender, EventArgs e)
@@ -282,7 +287,7 @@ namespace NHibernateMappingGenerator
 
         private ApplicationPreferences GetApplicationPreferences(string tableName)
         {
-            var sequence = string.Empty;
+            string sequence = string.Empty;
             if (sequencesComboBox.SelectedItem != null)
             {
                 sequence = sequencesComboBox.SelectedItem.ToString();
@@ -310,7 +315,7 @@ namespace NHibernateMappingGenerator
 
         private FieldGenerationConvention GetFieldGenerationConvention()
         {
-            var convention = FieldGenerationConvention.Field;
+            FieldGenerationConvention convention = FieldGenerationConvention.Field;
             if (autoPropertyRadioBtn.Checked)
                 convention = FieldGenerationConvention.AutoProperty;
             if (propertyRadioBtn.Checked)
@@ -320,7 +325,7 @@ namespace NHibernateMappingGenerator
 
         private FieldNamingConvention GetFieldNamingConvention()
         {
-            var convention = FieldNamingConvention.SameAsDatabase;
+            FieldNamingConvention convention = FieldNamingConvention.SameAsDatabase;
             if (prefixRadioButton.Checked)
                 convention = FieldNamingConvention.Prefixed;
             if (camelCasedRadioButton.Checked)

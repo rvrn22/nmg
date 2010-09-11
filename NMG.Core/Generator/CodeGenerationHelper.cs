@@ -27,11 +27,13 @@ namespace NMG.Core.Generator
                                              Type = new CodeTypeReference(type)
                                          };
 
-            var fieldName = propertyName.MakeFirstCharLowerCase();
-            var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), fieldName);
+            string fieldName = propertyName.MakeFirstCharLowerCase();
+            var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+                                                                                fieldName);
             var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
             codeMemberProperty.GetStatements.Add(returnStatement);
-            var assignStatement = new CodeAssignStatement(codeFieldReferenceExpression, new CodePropertySetValueReferenceExpression());
+            var assignStatement = new CodeAssignStatement(codeFieldReferenceExpression,
+                                                          new CodePropertySetValueReferenceExpression());
             codeMemberProperty.SetStatements.Add(assignStatement);
             return codeMemberProperty;
         }
@@ -45,7 +47,10 @@ namespace NMG.Core.Generator
                                              HasGet = true,
                                              HasSet = true,
                                              Attributes = MemberAttributes.Public,
-                                             Type = (setFieldAsNullable ? new CodeTypeReference(typeof(System.Nullable)) : new CodeTypeReference(type))
+                                             Type =
+                                                 (setFieldAsNullable
+                                                      ? new CodeTypeReference(typeof (Nullable))
+                                                      : new CodeTypeReference(type))
                                          };
             if (setFieldAsNullable)
                 codeMemberProperty.Type.TypeArguments.Add(type);
@@ -61,23 +66,23 @@ namespace NMG.Core.Generator
                                              HasGet = true,
                                              HasSet = true,
                                              Attributes = MemberAttributes.Public,
-                                             Type = new CodeTypeReference(typeName) 
+                                             Type = new CodeTypeReference(typeName)
                                          };
 
             return codeMemberProperty;
         }
 
         // For Castle
-        public CodeMemberProperty CreateAutoProperty(string typeName, string propertyName, CodeAttributeDeclaration attributeArgument)
-        {
-            var codeMemberProperty = new CodeMemberProperty
-            {
-                Name = propertyName,
-                HasGet = true,
-                HasSet = true,
-                Attributes = MemberAttributes.Public,
-                Type = new CodeTypeReference(typeName)
-            };
+        public CodeMemberProperty CreateAutoProperty(string typeName, string propertyName,
+                                                     CodeAttributeDeclaration attributeArgument)
+        {var codeMemberProperty = new CodeMemberProperty
+                                         {
+                                             Name = propertyName,
+                                             HasGet = true,
+                                             HasSet = true,
+                                             Attributes = MemberAttributes.Public,
+                                             Type = new CodeTypeReference(typeName)
+                                         };
 
             codeMemberProperty.CustomAttributes.Add(attributeArgument);
 
@@ -94,7 +99,7 @@ namespace NMG.Core.Generator
         private static bool IsNullable(Type type)
         {
             return type.IsValueType ||
-                (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
+                   (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>));
         }
     }
 }

@@ -13,16 +13,25 @@ namespace NMG.Core.Util
             return formattedText;
         }
 
-        public static string GetPreferenceFormattedText(this string text, ApplicationPreferences applicationPreferences)
+        public static string GetPreferenceFormattedText(this string text, ApplicationPreferences applicationPreferences, bool pluralize)
         {
             if (applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.SameAsDatabase))
                 return text;
             string formattedText = text.Replace('_', ' ');
             formattedText = formattedText.MakeTitleCase();
             formattedText = formattedText.Replace(" ", "");
+
             if (applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.Prefixed))
                 return applicationPreferences.Prefix + formattedText;
-            return applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.CamelCase) ? formattedText.MakeFirstCharLowerCase() : formattedText;
+
+            return applicationPreferences.FieldNamingConvention.Equals(FieldNamingConvention.CamelCase)
+                       ? formattedText.MakeFirstCharLowerCase()
+                       : formattedText;
+        }
+
+        public static string GetPreferenceFormattedText(this string text, ApplicationPreferences applicationPreferences)
+        {
+            return GetPreferenceFormattedText(text, applicationPreferences, false);
         }
 
         public static string MakeFirstCharLowerCase(this string text)
@@ -40,7 +49,7 @@ namespace NMG.Core.Util
             text = upper + text;
             return text;
         }
-        
+
         public static string MakeTitleCase(this string text)
         {
             text = text.Trim();

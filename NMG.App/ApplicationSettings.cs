@@ -36,7 +36,7 @@ namespace NHibernateMappingGenerator
             var fi = new FileInfo(Application.LocalUserAppDataPath + @"\nmg.config");
             if (fi.Exists)
             {
-                using (var fileStream = fi.OpenRead())
+                using (FileStream fileStream = fi.OpenRead())
                 {
                     appSettings = (ApplicationSettings) xmlSerializer.Deserialize(fileStream);
                 }

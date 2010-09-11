@@ -2,7 +2,8 @@ namespace NMG.Core.Domain
 {
     public class ColumnDetail
     {
-        public ColumnDetail(string columnName, string dataType, int? dataLength, int? dataPrecision, int dataPrecisionRadix, int? dataScale, bool isNullable)
+        public ColumnDetail(string columnName, string dataType, int? dataLength, int? dataPrecision,
+                            int dataPrecisionRadix, int? dataScale, bool isNullable)
         {
             DataLength = dataLength;
             DataPrecision = dataPrecision;

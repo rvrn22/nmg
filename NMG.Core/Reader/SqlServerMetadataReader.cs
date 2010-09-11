@@ -2,33 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using NMG.Core.Domain;
 using System.Linq;
+using NMG.Core.Domain;
 
 namespace NMG.Core.Reader
 {
-    // Type safe enumerator
-    public sealed class SqlServerConstraintType
-    {
-        private readonly String name;
-        private readonly int value;
-
-        public static readonly SqlServerConstraintType PrimaryKey = new SqlServerConstraintType(1, "PRIMARY KEY");
-        public static readonly SqlServerConstraintType ForeignKey = new SqlServerConstraintType(2, "FOREIGN KEY");
-        public static readonly SqlServerConstraintType Check = new SqlServerConstraintType(3, "CHECK");
-
-        private SqlServerConstraintType(int value, String name)
-        {
-            this.name = name;
-            this.value = value;
-        }
-
-        public override String ToString()
-        {
-            return name;
-        }
-    }
-
     // http://www.sqlteam.com/forums/topic.asp?TOPIC_ID=72957
 
     public class SqlServerMetadataReader : IMetadataReader
@@ -40,17 +18,19 @@ namespace NMG.Core.Reader
             this.connectionStr = connectionStr;
         }
 
-        public IList<Column> GetTableDetails(Table selectedTableName, string owner)
+        #region IMetadataReader Members
+
+        public IList<Column> GetTableDetails(Table table, string owner)
         {
             var columns = new List<Column>();
             var conn = new SqlConnection(connectionStr);
             conn.Open();
             using (conn)
             {
-                using (var tableDetailsCommand = conn.CreateCommand())
+                using (SqlCommand tableDetailsCommand = conn.CreateCommand())
                 {
                     tableDetailsCommand.CommandText = string.Format(
-                    @"
+                        @"
                         select c.column_name,c .data_type, c.is_nullable, tc.constraint_type
                         from information_schema.columns c
 	                        left outer join (
@@ -66,8 +46,9 @@ namespace NMG.Core.Reader
 		                        and c.column_name = ccu.column_name
 	                        )
                         where c.table_name = '{0}'
-                        order by c.table_name, c.ordinal_position", selectedTableName.Name, owner);
-                    using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
+                        order by c.table_name, c.ordinal_position",
+                        table.Name, owner);
+                    using (SqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         if (sqlDataReader != null)
                         {
@@ -75,34 +56,43 @@ namespace NMG.Core.Reader
                             {
                                 string columnName = sqlDataReader.GetString(0);
                                 string dataType = sqlDataReader.GetString(1);
-                                bool isNullable = sqlDataReader.GetString(2).Equals("YES", StringComparison.CurrentCultureIgnoreCase);
-                                bool isPrimaryKey = 
-                                    (!sqlDataReader.IsDBNull(3) ?
-                                    sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase) :
-                                    false);
-                                bool isForeignKey =                                     
-                                    (!sqlDataReader.IsDBNull(3) ? 
-                                    sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase) :
-                                    false);
+                                bool isNullable = sqlDataReader.GetString(2).Equals("YES",
+                                                                                    StringComparison.
+                                                                                        CurrentCultureIgnoreCase);
+                                bool isPrimaryKey =
+                                    (!sqlDataReader.IsDBNull(3)
+                                         ? sqlDataReader.GetString(3).Equals(
+                                             SqlServerConstraintType.PrimaryKey.ToString(),
+                                             StringComparison.CurrentCultureIgnoreCase)
+                                         : false);
+                                bool isForeignKey =
+                                    (!sqlDataReader.IsDBNull(3)
+                                         ? sqlDataReader.GetString(3).Equals(
+                                             SqlServerConstraintType.ForeignKey.ToString(),
+                                             StringComparison.CurrentCultureIgnoreCase)
+                                         : false);
 
                                 var m = new DataTypeMapper();
 
-                                columns.Add(new Column()
-                                {
-                                    Name = columnName,
-                                    DataType = dataType,
-                                    IsNullable = isNullable,
-                                    IsPrimaryKey = isPrimaryKey, //IsPrimaryKey(selectedTableName.Name, columnName)
-                                    IsForeignKey = isForeignKey, // IsFK()
-                                    MappedDataType = m.MapFromDBType(dataType, null, null, null).ToString()
-                                    //DataLength = dataLength
-                                });
+                                columns.Add(new Column
+                                                {
+                                                    Name = columnName,
+                                                    DataType = dataType,
+                                                    IsNullable = isNullable,
+                                                    IsPrimaryKey = isPrimaryKey,
+                                                    //IsPrimaryKey(selectedTableName.Name, columnName)
+                                                    IsForeignKey = isForeignKey,
+                                                    // IsFK()
+                                                    MappedDataType =
+                                                        m.MapFromDBType(dataType, null, null, null).ToString()
+                                                    //DataLength = dataLength
+                                                });
 
-                                selectedTableName.Columns = columns;
+                                table.Columns = columns;
                             }
-                            selectedTableName.PrimaryKey = DeterminePrimaryKeys(selectedTableName);
-                            selectedTableName.ForeignKeys = DetermineForeignKeyReferences(selectedTableName);
-                            selectedTableName.HasManyRelationships = DetermineHasManyRelationships(selectedTableName);
+                            table.PrimaryKey = DeterminePrimaryKeys(table);
+                            table.ForeignKeys = DetermineForeignKeyReferences(table);
+                            table.HasManyRelationships = DetermineHasManyRelationships(table);
                         }
                     }
                 }
@@ -110,17 +100,52 @@ namespace NMG.Core.Reader
             return columns;
         }
 
+        public IList<string> GetOwners()
+        {
+            return new List<string>();
+        }
+
+        public List<Table> GetTables(string owner)
+        {
+            var tables = new List<Table>();
+            var conn = new SqlConnection(connectionStr);
+            conn.Open();
+            using (conn)
+            {
+                SqlCommand tableCommand = conn.CreateCommand();
+                tableCommand.CommandText =
+                    String.Format(
+                        "select table_name from information_schema.tables where table_type like 'BASE TABLE' and schema = '{0}'",
+                        owner);
+                SqlDataReader sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                while (sqlDataReader.Read())
+                {
+                    string tableName = sqlDataReader.GetString(0);
+                    tables.Add(new Table {Name = tableName});
+                }
+            }
+            tables.Sort((x, y) => x.Name.CompareTo(y.Name));
+            return tables;
+        }
+
+        public List<string> GetSequences()
+        {
+            return new List<string>();
+        }
+
+        #endregion
+
         private PrimaryKey DeterminePrimaryKeys(Table table)
         {
-            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
+            IEnumerable<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
 
             if (primaryKeys.Count() == 1)
             {
                 Column c = primaryKeys.First();
                 var key = new PrimaryKey
-                {
-                    Type = PrimaryKeyType.PrimaryKey,
-                    Columns =
+                              {
+                                  Type = PrimaryKeyType.PrimaryKey,
+                                  Columns =
                                       {
                                           new Column
                                               {
@@ -128,44 +153,39 @@ namespace NMG.Core.Reader
                                                   Name = c.Name
                                               }
                                       }
-                };
+                              };
                 return key;
             }
             else
             {
                 var key = new PrimaryKey
-                {
-                    Type = PrimaryKeyType.CompositeKey
-                };
-                foreach (var primaryKey in primaryKeys)
+                              {
+                                  Type = PrimaryKeyType.CompositeKey
+                              };
+                foreach (Column primaryKey in primaryKeys)
                 {
                     key.Columns.Add(new Column
-                    {
-                        DataType = primaryKey.DataType,
-                        Name = primaryKey.Name
-                    });
+                                        {
+                                            DataType = primaryKey.DataType,
+                                            Name = primaryKey.Name
+                                        });
                 }
                 return key;
             }
         }
 
-        public IList<string> GetOwners()
-        {
-            return new List<string>();
-        }
-
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
+            IEnumerable<Column> foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
             var tempForeignKeys = new List<ForeignKey>();
 
-            foreach (var foreignKey in foreignKeys)
+            foreach (Column foreignKey in foreignKeys)
             {
                 tempForeignKeys.Add(new ForeignKey
-                {
-                    Name = foreignKey.Name,
-                    References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
-                });
+                                        {
+                                            Name = foreignKey.Name,
+                                            References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
+                                        });
             }
 
             return tempForeignKeys;
@@ -192,10 +212,11 @@ namespace NMG.Core.Reader
                         inner join information_schema.key_column_usage i2 on i1.constraint_name = i2.constraint_name
                         where i1.constraint_type = 'PRIMARY KEY'
                         ) pt on pt.table_name = pk.table_name
-                        where fk.table_name = '{0}' and cu.column_name = '{1}'", selectedTableName, columnName);
-                var referencedTableName = tableCommand.ExecuteScalar();
+                        where fk.table_name = '{0}' and cu.column_name = '{1}'",
+                    selectedTableName, columnName);
+                object referencedTableName = tableCommand.ExecuteScalar();
 
-                return (string)referencedTableName;
+                return (string) referencedTableName;
             }
         }
 
@@ -210,7 +231,9 @@ namespace NMG.Core.Reader
                 using (var command = new SqlCommand())
                 {
                     command.Connection = conn;
-                    command.CommandText = String.Format(@"
+                    command.CommandText =
+                        String.Format(
+                            @"
                         select DISTINCT
 	                        PK_TABLE = b.TABLE_NAME,
 	                        FK_TABLE = c.TABLE_NAME
@@ -229,172 +252,21 @@ namespace NMG.Core.Reader
                         where
 	                        b.TABLE_NAME = '{0}'
                         order by
-	                        1,2", table.Name);
-                    var reader = command.ExecuteReader();
+	                        1,2",
+                            table.Name);
+                    SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
                         hasManyRelationships.Add(new HasMany
-                        {
-                            Reference = reader.GetString(1)
-                        });
+                                                     {
+                                                         Reference = reader.GetString(1)
+                                                     });
                     }
 
                     return hasManyRelationships;
                 }
             }
-        }
-
-        //private void MarkPrimaryKeyColumn(string selectedTableName, ColumnDetails columnDetails)
-        //{
-        //    var conn = new SqlConnection(connectionStr);
-        //    conn.Open();
-        //    using (conn)
-        //    {
-        //        using (var constraintCommand = conn.CreateCommand())
-        //        {
-        //            constraintCommand.CommandText = string.Format("select constraint_name from information_schema.TABLE_CONSTRAINTS where table_name = '{0}' and constraint_type = 'PRIMARY KEY'", selectedTableName);
-        //            var value = constraintCommand.ExecuteScalar();
-                    
-        //            if (value == null) return;
-
-        //            var constraintName = (string)value;
-        //            using (var pkColumnCommand = conn.CreateCommand())
-        //            {
-        //                pkColumnCommand.CommandText = string.Format("select column_name from information_schema.CONSTRAINT_COLUMN_USAGE where table_name = '{0}' and constraint_name = '{1}'", selectedTableName, constraintName);
-        //                var colName = pkColumnCommand.ExecuteScalar();
-        //                if (colName != null)
-        //                {
-        //                    var pkColumnName = (string)colName;
-        //                    var columnDetail = columnDetails.Find(detail => detail.ColumnName.Equals(pkColumnName));
-        //                    columnDetail.IsPrimaryKey = true;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private bool IsForeignKey(string selectedTableName, string columnName)
-        //{
-        //    var conn = new SqlConnection(connectionStr);
-        //    conn.Open();
-        //    using (conn)
-        //    {
-        //        using (var constraintCommand = conn.CreateCommand())
-        //        {
-        //            constraintCommand.CommandText = string.Format("SELECT constraint_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE table_name = '{0}' and constraint_type = 'FOREIGN KEY'", selectedTableName);
-        //            var value = constraintCommand.ExecuteScalar();
-        //            if (value != null)
-        //            {
-        //                var constraintName = (string)value;
-        //                using (var fkColumnCommand = conn.CreateCommand())
-        //                {
-        //                    fkColumnCommand.CommandText = string.Format("SELECT column_name FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE WHERE table_name = '{0}' and constraint_name = '{1}'", selectedTableName, constraintName);
-        //                    var colName = fkColumnCommand.ExecuteScalar();
-        //                    if (colName != null)
-        //                    {
-        //                        var fkColumnName = (string)colName;
-        //                        return columnName.Equals(fkColumnName, StringComparison.CurrentCultureIgnoreCase);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-        public List<Table> GetTables(string owner)
-        {
-            var tables = new List<Table>();
-            var conn = new SqlConnection(connectionStr);
-            conn.Open();
-            using (conn)
-            {
-                var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and schema = '{0}'", owner);
-                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (sqlDataReader.Read())
-                {
-                    var tableName = sqlDataReader.GetString(0);
-                    tables.Add(new Table{Name = tableName});
-                }
-            }
-            tables.Sort((x, y) => x.Name.CompareTo(y.Name));
-            return tables;
-        }
-
-//        public string GetForeignKeyReferenceTableName(string tableName)
-//        {
-//            string foreignKeyReferenceTableName = string.Empty;
-//            var conn = new SqlConnection(connectionStr);
-//            conn.Open();
-//            using (conn)
-//            {
-//                var tableCommand = conn.CreateCommand();
-//                tableCommand.CommandText = @"SELECT PK_Table  = PK.TABLE_NAME, PK_Column = PT.COLUMN_NAME, Constraint_Name = C.CONSTRAINT_NAME 
-//                    FROM 
-//                            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS C 
-//                            INNER JOIN 
-//                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS PK 
-//                                ON C.UNIQUE_CONSTRAINT_NAME = PK.CONSTRAINT_NAME 
-//                            INNER JOIN 
-//                            ( 
-//                                SELECT 
-//                                    i2.COLUMN_NAME, i2.CONSTRAINT_NAME 
-//                                FROM 
-//                                    INFORMATION_SCHEMA.TABLE_CONSTRAINTS i1 
-//                                    INNER JOIN 
-//                                    INFORMATION_SCHEMA.KEY_COLUMN_USAGE i2 
-//                                    ON i1.CONSTRAINT_NAME = i2.CONSTRAINT_NAME 
-//                                    WHERE i1.CONSTRAINT_TYPE = 'PRIMARY KEY' 
-//                            ) PT 
-//                            ON PK.CONSTRAINT_NAME = PT.CONSTRAINT_NAME
-//                            WHERE PK.TABLE_NAME = '" + tableName + "'";
-
-//                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-//                if (sqlDataReader != null)
-//                    while (sqlDataReader.Read())
-//                    {
-//                        foreignKeyReferenceTableName = sqlDataReader.GetString(0);
-//                    }
-//            }
-//            return foreignKeyReferenceTableName;
-//        }
-
-        public List<string> GetSequences()
-        {
-            return new List<string>();
-        }
-
-        public List<string> GetForeignKeyTables(string primaryKeyColumnName)
-        {
-            var foreignKeyTables = new List<string>();
-            var conn = new SqlConnection(connectionStr);
-            conn.Open();
-            using (conn)
-            {
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = string.Format(@"SELECT KCU.TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS  TC JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU
-                                        ON TC.CONSTRAINT_NAME = KCU.CONSTRAINT_NAME AND TC.CONSTRAINT_SCHEMA = KCU.CONSTRAINT_SCHEMA
-                                        WHERE TC.CONSTRAINT_TYPE = 'FOREIGN KEY' AND KCU.COLUMN_NAME = '{0}'", primaryKeyColumnName);
-                    var dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                    if (dataReader != null)
-                    {
-                        while (dataReader.Read())
-                        {
-                            foreignKeyTables.Add(dataReader.GetString(0));
-                        }
-                    }
-                }
-            }
-            return foreignKeyTables;
-        }
-
-        public bool UsesCompositeKey(string tableName)
-        {
-            return false;
         }
     }
 }

@@ -1,11 +1,5 @@
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Text;
-using Microsoft.CSharp;
 using NMG.Core;
-using NMG.Core.Domain;
 using NUnit.Framework;
-using CodeGenerator = NMG.Core.Generator.CodeGenerator;
 
 namespace NMG.Tests.Generator
 {

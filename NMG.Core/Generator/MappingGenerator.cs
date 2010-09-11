@@ -1,11 +1,10 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using NMG.Core.Domain;
 using NMG.Core.Fluent;
-using NMG.Core.Util;
 using NMG.Core.TextFormatter;
+using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -14,7 +13,9 @@ namespace NMG.Core.Generator
         private readonly ApplicationPreferences applicationPreferences;
 
         protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table)
-            : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
+            : base(
+                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
+                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
         {
             this.applicationPreferences = applicationPreferences;
         }
@@ -26,7 +27,7 @@ namespace NMG.Core.Generator
             string fileName = filePath + tableName.GetFormattedText().MakeSingular() + ".hbm.xml";
             using (var stringWriter = new StringWriter())
             {
-                var xmldoc = CreateMappingDocument();
+                XmlDocument xmldoc = CreateMappingDocument();
                 xmldoc.Save(stringWriter);
                 string generatedXML = RemoveEmptyNamespaces(stringWriter.ToString());
 
@@ -47,34 +48,34 @@ namespace NMG.Core.Generator
         public XmlDocument CreateMappingDocument()
         {
             var xmldoc = new XmlDocument();
-            var xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", string.Empty, string.Empty);
+            XmlDeclaration xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", string.Empty, string.Empty);
             xmldoc.AppendChild(xmlDeclaration);
-            var root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
+            XmlElement root = xmldoc.CreateElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
             root.SetAttribute("assembly", assemblyName);
             root.SetAttribute("namespace", nameSpace);
             xmldoc.AppendChild(root);
 
-            var classElement = xmldoc.CreateElement("class");
+            XmlElement classElement = xmldoc.CreateElement("class");
             classElement.SetAttribute("name", tableName.GetFormattedText().MakeSingular());
             classElement.SetAttribute("table", tableName);
             classElement.SetAttribute("lazy", "true");
             root.AppendChild(classElement);
-            var primaryKey = Table.PrimaryKey;
+            PrimaryKey primaryKey = Table.PrimaryKey;
 
-            if(primaryKey.Type == PrimaryKeyType.PrimaryKey)
+            if (primaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
-                var idElement = xmldoc.CreateElement("id");
+                XmlElement idElement = xmldoc.CreateElement("id");
                 idElement.SetAttribute("name", primaryKey.Columns[0].Name.GetFormattedText());
                 idElement.SetAttribute("column", primaryKey.Columns[0].Name);
 
                 classElement.AppendChild(idElement);
             }
-            else if(primaryKey.Type == PrimaryKeyType.CompositeKey)
+            else if (primaryKey.Type == PrimaryKeyType.CompositeKey)
             {
-                var idElement = xmldoc.CreateElement("composite-id");
-                foreach(var key in primaryKey.Columns)
+                XmlElement idElement = xmldoc.CreateElement("composite-id");
+                foreach (Column key in primaryKey.Columns)
                 {
-                    var keyProperty = xmldoc.CreateElement("key-property");
+                    XmlElement keyProperty = xmldoc.CreateElement("key-property");
                     keyProperty.SetAttribute("name", key.Name.GetFormattedText());
                     keyProperty.SetAttribute("column", key.Name);
 
@@ -84,19 +85,19 @@ namespace NMG.Core.Generator
                 }
             }
 
-            foreach(var foreignKey in Table.ForeignKeys)
+            foreach (ForeignKey foreignKey in Table.ForeignKeys)
             {
-                var fkProperty = xmldoc.CreateElement("many-to-one");
+                XmlElement fkProperty = xmldoc.CreateElement("many-to-one");
                 fkProperty.SetAttribute("name", foreignKey.References.GetFormattedText().MakeSingular());
                 fkProperty.SetAttribute("column", foreignKey.Name);
 
                 classElement.AppendChild(fkProperty);
             }
 
-            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
                 string columnMapping = new DBColumnMapper().Map(column);
-                var property = xmldoc.CreateElement("property");
+                XmlElement property = xmldoc.CreateElement("property");
                 property.SetAttribute("name", column.Name.GetFormattedText());
                 property.SetAttribute("column", column.Name);
 
@@ -146,7 +147,7 @@ namespace NMG.Core.Generator
             //    {
             //        xmlNode.SetAttribute("name", propertyName);
             //    }
-                
+
             //    xmlNode.SetAttribute("column", columnDetail.ColumnName);
             //    if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
             //    {

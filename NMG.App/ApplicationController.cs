@@ -7,10 +7,10 @@ namespace NHibernateMappingGenerator
     public class ApplicationController
     {
         private readonly ApplicationPreferences applicationPreferences;
-        private readonly MappingGenerator mappingGenerator;
+        private readonly CastleGenerator castleGenerator;
         private readonly CodeGenerator codeGenerator;
         private readonly FluentGenerator fluentGenerator;
-        private readonly CastleGenerator castleGenerator;
+        private readonly MappingGenerator mappingGenerator;
 
         public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
@@ -32,17 +32,17 @@ namespace NHibernateMappingGenerator
         public void Generate()
         {
             codeGenerator.Generate();
-            if(applicationPreferences.IsFluent)
+            if (applicationPreferences.IsFluent)
             {
                 fluentGenerator.Generate();
-            } 
-            else if(applicationPreferences.IsCastle)
+            }
+            else if (applicationPreferences.IsCastle)
             {
-                castleGenerator.Generate(); 
+                castleGenerator.Generate();
             }
             else
             {
-                mappingGenerator.Generate(); 
+                mappingGenerator.Generate();
             }
         }
 

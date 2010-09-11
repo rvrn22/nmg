@@ -1,15 +1,13 @@
 ﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
-using NMG.Core.Reader;
-using NMG.Core.Util;
 using NMG.Core.TextFormatter;
+using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -43,37 +41,40 @@ namespace NMG.Core.Generator
             var mapper = new DataTypeMapper();
             CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
 
-            foreach(var pk in Table.PrimaryKey.Columns)
+            foreach (Column pk in Table.PrimaryKey.Columns)
             {
                 Type mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
+
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     mapFromDbType.ToString(),
                     pk.Name.GetFormattedText()
-                    ));
+                                        ));
             }
 
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
-            foreach (var fk in Table.ForeignKeys)
+            foreach (ForeignKey fk in Table.ForeignKeys)
             {
                 Type mapFromDbType = mapper.MapFromDBType(fk.Name, null, null, null);
-                
+                //string columnName = fk.References.GetPreferenceFormattedText(fk.References, )
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     fk.References.GetFormattedText().MakeSingular(),
                     fk.References.GetFormattedText().MakeSingular()
-                    ));
+                                        ));
             }
 
-            foreach(var hasMany in Table.HasManyRelationships)
+            foreach (HasMany hasMany in Table.HasManyRelationships)
             {
                 newType.Members.Add(
                     codeGenerationHelper.CreateAutoProperty(
-                        "IList<" + hasMany.Reference.GetFormattedText().MakeSingular() + ">", hasMany.Reference.GetFormattedText().MakePlural()));
+                        "IList<" + hasMany.Reference.GetFormattedText().MakeSingular() + ">",
+                        hasMany.Reference.GetFormattedText().MakePlural()));
             }
 
-            foreach(var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
                 Type mapFromDbType = mapper.MapFromDBType(column.DataType, null, null, null);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, column.Name.GetFormattedText(),
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType,
+                                                                            column.Name.GetFormattedText(),
                                                                             column.IsNullable));
             }
             //foreach (ColumnDetail columnDetail in columnDetails)
@@ -182,7 +183,7 @@ namespace NMG.Core.Generator
             entireContent = entireContent.Replace(@"{
         }", "{ }");
             entireContent = entireContent.Replace(
-            @"{
+                @"{
             get {
             }
             set {

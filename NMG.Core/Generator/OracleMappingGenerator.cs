@@ -12,11 +12,11 @@ namespace NMG.Core.Generator
 
         protected override void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement)
         {
-            var generatorElement = xmldoc.CreateElement("generator");
+            XmlElement generatorElement = xmldoc.CreateElement("generator");
             generatorElement.SetAttribute("class", "sequence");
             idElement.AppendChild(generatorElement);
 
-            var paramElement = xmldoc.CreateElement("param");
+            XmlElement paramElement = xmldoc.CreateElement("param");
             paramElement.SetAttribute("name", "sequence");
             paramElement.InnerText = sequenceName;
             generatorElement.AppendChild(paramElement);
