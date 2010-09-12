@@ -19,7 +19,8 @@ namespace NMG.Core.Generator
             : base(
                 applicationPreferences.FolderPath, applicationPreferences.TableName,
                 applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
+                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table,
+                applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
             language = this.applicationPreferences.Language;
@@ -27,7 +28,7 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-            string className = tableName.GetFormattedText().MakeSingular() + "Map";
+            string className = Formatter.FormatSingular(Table.Name) + "Map";
             CodeCompileUnit compileUnit = GetCompleteCompileUnit(className);
             string generateCode = GenerateCode(compileUnit, className);
             WriteToFile(generateCode, className);
@@ -40,14 +41,13 @@ namespace NMG.Core.Generator
 
             CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
 
-            newType.BaseTypes.Add("ClassMap<" + Table.Name.GetFormattedText().MakeSingular() + ">");
+            newType.BaseTypes.Add("ClassMap<" + Formatter.FormatSingular(Table.Name) + ">");
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             //newType.Members.Add(constructor);
             constructor.Statements.Add(
                 new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
-            constructor.Statements.Add(
-                new CodeSnippetStatement(TABS + "ReadOnly();"));
+            //constructor.Statements.Add(new CodeSnippetStatement(TABS + "ReadOnly();"));
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
 
             //foreach(var primaryKeys in Table.PrimaryKey)
@@ -65,7 +65,7 @@ namespace NMG.Core.Generator
             {
                 constructor.Statements.Add(
                     new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");",
-                                                           fk.References.GetFormattedText().MakeSingular(), fk.Name)));
+                                                           Formatter.FormatSingular(fk.References), fk.Name)));
             }
 
             foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
@@ -78,7 +78,7 @@ namespace NMG.Core.Generator
             {
                 constructor.Statements.Add(
                     new CodeSnippetStatement(string.Format(TABS + "HasMany(x => x.{0});",
-                                                           hasMany.Reference.GetFormattedText().MakePlural())));
+                                                           Formatter.FormatPlural(hasMany.Reference))));
             }
 
             //if (Table.ForeignKeys.Count >= 1)

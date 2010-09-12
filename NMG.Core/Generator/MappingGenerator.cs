@@ -15,7 +15,7 @@ namespace NMG.Core.Generator
         protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table)
             : base(
                 applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
+                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
         }

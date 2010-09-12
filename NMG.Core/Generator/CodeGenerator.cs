@@ -19,7 +19,7 @@ namespace NMG.Core.Generator
         public CodeGenerator(ApplicationPreferences applicationPreferences, Table table)
             : base(
                 applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table)
+                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
             language = applicationPreferences.Language;
@@ -57,17 +57,17 @@ namespace NMG.Core.Generator
                 Type mapFromDbType = mapper.MapFromDBType(fk.Name, null, null, null);
                 //string columnName = fk.References.GetPreferenceFormattedText(fk.References, )
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    fk.References.GetFormattedText().MakeSingular(),
-                    fk.References.GetFormattedText().MakeSingular()
-                                        ));
+                    Formatter.FormatSingular(fk.References),
+                    Formatter.FormatSingular(fk.References)
+                ));
             }
 
             foreach (HasMany hasMany in Table.HasManyRelationships)
             {
                 newType.Members.Add(
                     codeGenerationHelper.CreateAutoProperty(
-                        "IList<" + hasMany.Reference.GetFormattedText().MakeSingular() + ">",
-                        hasMany.Reference.GetFormattedText().MakePlural()));
+                        "IList<" + Formatter.FormatSingular(hasMany.Reference),
+                        Formatter.FormatPlural(hasMany.Reference)));
             }
 
             foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))

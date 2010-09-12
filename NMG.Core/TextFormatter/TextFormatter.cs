@@ -5,33 +5,47 @@ namespace NMG.Core.TextFormatter
     public interface ITextFormatter
     {
         string FormatText(string text);
+        string FormatSingular(string text);
+        string FormatPlural(string text);
     }
 
-    public class UnformattedTextFormatter : ITextFormatter
+    public abstract class AbstractTextFormatter : ITextFormatter
     {
-        public string FormatText(string text)
+        public virtual string FormatText(string text)
         {
             return text;
         }
+
+        public string FormatSingular(string text)
+        {
+            return FormatText(text).MakeSingular();
+        }
+
+        public string FormatPlural(string text)
+        {
+            return FormatText(text).MakePlural();
+        }
     }
 
-    public class CamelCaseTextFormatter : ITextFormatter
+    public class UnformattedTextFormatter : AbstractTextFormatter { }
+
+    public class CamelCaseTextFormatter : AbstractTextFormatter
     {
-        public string FormatText(string text)
+        public override string FormatText(string text)
         {
             return text.ToCamelCase();
         }
     }
 
-    public class PascalCaseTextFormatter : ITextFormatter
+    public class PascalCaseTextFormatter : AbstractTextFormatter
     {
-        public string FormatText(string text)
+        public override string FormatText(string text)
         {
             return text.ToPascalCase();
         }
     }
 
-    public class PrefixedTextFormatter : ITextFormatter
+    public class PrefixedTextFormatter : AbstractTextFormatter
     {
         public PrefixedTextFormatter(string prefix)
         {
@@ -40,7 +54,7 @@ namespace NMG.Core.TextFormatter
 
         private string Prefix { get; set; }
 
-        public string FormatText(string text)
+        public override string FormatText(string text)
         {
             return Prefix + text;
         }

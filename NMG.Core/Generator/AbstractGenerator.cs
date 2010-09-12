@@ -1,4 +1,5 @@
 using NMG.Core.Domain;
+using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {
@@ -12,7 +13,7 @@ namespace NMG.Core.Generator
         protected string tableName;
 
         protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                    string sequenceName, Table table)
+                                    string sequenceName, Table table, ApplicationPreferences applicationPreferences)
         {
             this.filePath = filePath;
             this.tableName = tableName;
@@ -20,9 +21,12 @@ namespace NMG.Core.Generator
             this.assemblyName = assemblyName;
             this.sequenceName = sequenceName;
             Table = table;
+            Formatter = TextFormatterFactory.GetTextFormatter(applicationPreferences);
         }
 
         #region IGenerator Members
+
+        public ITextFormatter Formatter { get; set; }
 
         public abstract void Generate();
 
