@@ -175,7 +175,12 @@ namespace NHibernateMappingGenerator
 
         private void PopulateOwners()
         {
-            ownersComboBox.DataSource = metadataReader.GetOwners();
+            var owners = metadataReader.GetOwners();
+            if (owners == null || owners.Count == 0)
+            {
+                owners = new List<string> { "dbo" };
+            }
+            ownersComboBox.DataSource = owners;
         }
 
         private void PopulateTablesAndSequences()
@@ -185,9 +190,14 @@ namespace NHibernateMappingGenerator
 
             try
             {
-                List<Table> tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
+                if (ownersComboBox.SelectedItem == null)
+                {
+                    return;
+                }
+
+                var tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
                 tablesComboBox.DataSource = tables;
-                bool hasTables = tables.Count > 0;
+                var hasTables = tables.Count > 0;
                 tablesComboBox.Enabled = hasTables;
                 if (hasTables)
                 {

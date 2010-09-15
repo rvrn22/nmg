@@ -50,50 +50,47 @@ namespace NMG.Core.Reader
                         table.Name, owner);
                     using (SqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
-                        if (sqlDataReader != null)
+                        while (sqlDataReader.Read())
                         {
-                            while (sqlDataReader.Read())
-                            {
-                                string columnName = sqlDataReader.GetString(0);
-                                string dataType = sqlDataReader.GetString(1);
-                                bool isNullable = sqlDataReader.GetString(2).Equals("YES",
-                                                                                    StringComparison.
-                                                                                        CurrentCultureIgnoreCase);
-                                bool isPrimaryKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
-                                             SqlServerConstraintType.PrimaryKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
-                                bool isForeignKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
-                                             SqlServerConstraintType.ForeignKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
+                            string columnName = sqlDataReader.GetString(0);
+                            string dataType = sqlDataReader.GetString(1);
+                            bool isNullable = sqlDataReader.GetString(2).Equals("YES",
+                                                                                StringComparison.
+                                                                                    CurrentCultureIgnoreCase);
+                            bool isPrimaryKey =
+                                (!sqlDataReader.IsDBNull(3)
+                                     ? sqlDataReader.GetString(3).Equals(
+                                         SqlServerConstraintType.PrimaryKey.ToString(),
+                                         StringComparison.CurrentCultureIgnoreCase)
+                                     : false);
+                            bool isForeignKey =
+                                (!sqlDataReader.IsDBNull(3)
+                                     ? sqlDataReader.GetString(3).Equals(
+                                         SqlServerConstraintType.ForeignKey.ToString(),
+                                         StringComparison.CurrentCultureIgnoreCase)
+                                     : false);
 
-                                var m = new DataTypeMapper();
+                            var m = new DataTypeMapper();
 
-                                columns.Add(new Column
-                                                {
-                                                    Name = columnName,
-                                                    DataType = dataType,
-                                                    IsNullable = isNullable,
-                                                    IsPrimaryKey = isPrimaryKey,
-                                                    //IsPrimaryKey(selectedTableName.Name, columnName)
-                                                    IsForeignKey = isForeignKey,
-                                                    // IsFK()
-                                                    MappedDataType =
-                                                        m.MapFromDBType(dataType, null, null, null).ToString()
-                                                    //DataLength = dataLength
-                                                });
+                            columns.Add(new Column
+                                            {
+                                                Name = columnName,
+                                                DataType = dataType,
+                                                IsNullable = isNullable,
+                                                IsPrimaryKey = isPrimaryKey,
+                                                //IsPrimaryKey(selectedTableName.Name, columnName)
+                                                IsForeignKey = isForeignKey,
+                                                // IsFK()
+                                                MappedDataType =
+                                                    m.MapFromDBType(dataType, null, null, null).ToString()
+                                                //DataLength = dataLength
+                                            });
 
-                                table.Columns = columns;
-                            }
-                            table.PrimaryKey = DeterminePrimaryKeys(table);
-                            table.ForeignKeys = DetermineForeignKeyReferences(table);
-                            table.HasManyRelationships = DetermineHasManyRelationships(table);
+                            table.Columns = columns;
                         }
+                        table.PrimaryKey = DeterminePrimaryKeys(table);
+                        table.ForeignKeys = DetermineForeignKeyReferences(table);
+                        table.HasManyRelationships = DetermineHasManyRelationships(table);
                     }
                 }
             }
@@ -102,7 +99,22 @@ namespace NMG.Core.Reader
 
         public IList<string> GetOwners()
         {
-            return new List<string>();
+            var owners = new List<string>();
+            var conn = new SqlConnection(connectionStr);
+            conn.Open();
+            using (conn)
+            {
+                var tableCommand = conn.CreateCommand();
+                tableCommand.CommandText = "SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA";
+                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                while (sqlDataReader.Read())
+                {
+                    var ownerName = sqlDataReader.GetString(0);
+                    owners.Add(ownerName);
+                }
+            }
+
+            return owners;
         }
 
         public List<Table> GetTables(string owner)
@@ -112,15 +124,12 @@ namespace NMG.Core.Reader
             conn.Open();
             using (conn)
             {
-                SqlCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText =
-                    String.Format(
-                        "select table_name from information_schema.tables where table_type like 'BASE TABLE' and schema = '{0}'",
-                        owner);
-                SqlDataReader sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                var tableCommand = conn.CreateCommand();
+                tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
+                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (sqlDataReader.Read())
                 {
-                    string tableName = sqlDataReader.GetString(0);
+                    var tableName = sqlDataReader.GetString(0);
                     tables.Add(new Table {Name = tableName});
                 }
             }
@@ -135,7 +144,7 @@ namespace NMG.Core.Reader
 
         #endregion
 
-        private PrimaryKey DeterminePrimaryKeys(Table table)
+        private static PrimaryKey DeterminePrimaryKeys(Table table)
         {
             IEnumerable<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
 
@@ -162,7 +171,7 @@ namespace NMG.Core.Reader
                               {
                                   Type = PrimaryKeyType.CompositeKey
                               };
-                foreach (Column primaryKey in primaryKeys)
+                foreach (var primaryKey in primaryKeys)
                 {
                     key.Columns.Add(new Column
                                         {
@@ -176,10 +185,10 @@ namespace NMG.Core.Reader
 
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            IEnumerable<Column> foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
+            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
             var tempForeignKeys = new List<ForeignKey>();
 
-            foreach (Column foreignKey in foreignKeys)
+            foreach (var foreignKey in foreignKeys)
             {
                 tempForeignKeys.Add(new ForeignKey
                                         {
@@ -193,7 +202,6 @@ namespace NMG.Core.Reader
 
         private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
         {
-            string foreignKeyReferenceTableName = string.Empty;
             var conn = new SqlConnection(connectionStr);
             conn.Open();
             using (conn)
