@@ -83,6 +83,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
+            this.pascalCasedRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -475,7 +476,7 @@ namespace NHibernateMappingGenerator
             this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
-            this.groupBox3.Location = new System.Drawing.Point(439, 6);
+            this.groupBox3.Location = new System.Drawing.Point(527, 6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 140);
             this.groupBox3.TabIndex = 6;
@@ -519,7 +520,7 @@ namespace NHibernateMappingGenerator
             // 
             this.groupBox2.Controls.Add(this.vbRadioButton);
             this.groupBox2.Controls.Add(this.cSharpRadioButton);
-            this.groupBox2.Location = new System.Drawing.Point(223, 6);
+            this.groupBox2.Location = new System.Drawing.Point(321, 6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 140);
             this.groupBox2.TabIndex = 2;
@@ -550,6 +551,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.pascalCasedRadioButton);
             this.groupBox1.Controls.Add(this.prefixTextBox);
             this.groupBox1.Controls.Add(this.prefixRadioButton);
             this.groupBox1.Controls.Add(this.prefixLabel);
@@ -557,14 +559,14 @@ namespace NHibernateMappingGenerator
             this.groupBox1.Controls.Add(this.sameAsDBRadioButton);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 140);
+            this.groupBox1.Size = new System.Drawing.Size(309, 140);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generated Property Name";
             // 
             // prefixTextBox
             // 
-            this.prefixTextBox.Location = new System.Drawing.Point(47, 93);
+            this.prefixTextBox.Location = new System.Drawing.Point(70, 110);
             this.prefixTextBox.Name = "prefixTextBox";
             this.prefixTextBox.Size = new System.Drawing.Size(105, 20);
             this.prefixTextBox.TabIndex = 3;
@@ -573,18 +575,18 @@ namespace NHibernateMappingGenerator
             // prefixRadioButton
             // 
             this.prefixRadioButton.AutoSize = true;
-            this.prefixRadioButton.Location = new System.Drawing.Point(6, 65);
+            this.prefixRadioButton.Location = new System.Drawing.Point(6, 88);
             this.prefixRadioButton.Name = "prefixRadioButton";
-            this.prefixRadioButton.Size = new System.Drawing.Size(63, 17);
+            this.prefixRadioButton.Size = new System.Drawing.Size(212, 17);
             this.prefixRadioButton.TabIndex = 2;
-            this.prefixRadioButton.Text = "Prefixed";
+            this.prefixRadioButton.Text = "Prefixed (e.g. m_ThisIsMyColumnName)";
             this.prefixRadioButton.UseVisualStyleBackColor = true;
             this.prefixRadioButton.CheckedChanged += new System.EventHandler(this.prefixCheckChanged);
             // 
             // prefixLabel
             // 
             this.prefixLabel.AutoSize = true;
-            this.prefixLabel.Location = new System.Drawing.Point(6, 96);
+            this.prefixLabel.Location = new System.Drawing.Point(22, 113);
             this.prefixLabel.Name = "prefixLabel";
             this.prefixLabel.Size = new System.Drawing.Size(42, 13);
             this.prefixLabel.TabIndex = 2;
@@ -595,9 +597,9 @@ namespace NHibernateMappingGenerator
             this.camelCasedRadioButton.AutoSize = true;
             this.camelCasedRadioButton.Location = new System.Drawing.Point(6, 42);
             this.camelCasedRadioButton.Name = "camelCasedRadioButton";
-            this.camelCasedRadioButton.Size = new System.Drawing.Size(83, 17);
+            this.camelCasedRadioButton.Size = new System.Drawing.Size(212, 17);
             this.camelCasedRadioButton.TabIndex = 1;
-            this.camelCasedRadioButton.Text = "Camelcased";
+            this.camelCasedRadioButton.Text = "Camel Case (e.g. thisIsMyColumnName)";
             this.camelCasedRadioButton.UseVisualStyleBackColor = true;
             // 
             // sameAsDBRadioButton
@@ -606,11 +608,21 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Checked = true;
             this.sameAsDBRadioButton.Location = new System.Drawing.Point(6, 19);
             this.sameAsDBRadioButton.Name = "sameAsDBRadioButton";
-            this.sameAsDBRadioButton.Size = new System.Drawing.Size(179, 17);
+            this.sameAsDBRadioButton.Size = new System.Drawing.Size(241, 17);
             this.sameAsDBRadioButton.TabIndex = 0;
             this.sameAsDBRadioButton.TabStop = true;
-            this.sameAsDBRadioButton.Text = "Same as database column name";
+            this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // pascalCasedRadioButton
+            // 
+            this.pascalCasedRadioButton.AutoSize = true;
+            this.pascalCasedRadioButton.Location = new System.Drawing.Point(6, 65);
+            this.pascalCasedRadioButton.Name = "pascalCasedRadioButton";
+            this.pascalCasedRadioButton.Size = new System.Drawing.Size(219, 17);
+            this.pascalCasedRadioButton.TabIndex = 4;
+            this.pascalCasedRadioButton.Text = "Pascal Case (e.g. ThisIsMyColumnName)";
+            this.pascalCasedRadioButton.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -696,6 +708,7 @@ namespace NHibernateMappingGenerator
         private RadioButton castleMappingOption;
         private ComboBox ownersComboBox;
         private Label lblOwner;
+        private RadioButton pascalCasedRadioButton;
     }
 }
 

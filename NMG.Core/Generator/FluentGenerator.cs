@@ -6,7 +6,6 @@ using System.Text;
 using NMG.Core.Domain;
 using NMG.Core.Fluent;
 using NMG.Core.TextFormatter;
-using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -50,16 +49,22 @@ namespace NMG.Core.Generator
             //constructor.Statements.Add(new CodeSnippetStatement(TABS + "ReadOnly();"));
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
 
-            //foreach(var primaryKeys in Table.PrimaryKey)
-            //{
+            // Determine primary key type
+            if(UsesSequence)
+            {
+                constructor.Statements.Add(new CodeSnippetStatement(String.Format("\t\t\tId(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
+                    Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, applicationPreferences.Sequence)));
+            }
             // refactor to set primarykeytype enum and use that instead to check
-            if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+            else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name,
                                                                         Table.PrimaryKey.Columns[0].DataType,
-                                                                        Table.PrimaryKey.Type));
+                                                                        Table.PrimaryKey.Type,
+                                                                        Formatter));
             else
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey));
-            //}
+            {
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
+            }
 
             foreach (ForeignKey fk in Table.ForeignKeys)
             {
@@ -70,69 +75,17 @@ namespace NMG.Core.Generator
 
             foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                string columnMapping = new DBColumnMapper().Map(column);
+                string columnMapping = new DBColumnMapper().Map(column, Formatter);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
             foreach (HasMany hasMany in Table.HasManyRelationships)
             {
-                constructor.Statements.Add(
-                    new CodeSnippetStatement(string.Format(TABS + "HasMany(x => x.{0});",
-                                                           Formatter.FormatPlural(hasMany.Reference))));
+                constructor.Statements.Add(new OneToMany(Formatter).Create(hasMany.Reference));
             }
 
-            //if (Table.ForeignKeys.Count >= 1)
-            //{
-
-            //}
-
-            //foreach (ColumnDetail columnDetail in columnDetails)
-            //{
-            //    //columnDetail.ColumnName = FormatColumnName(columnDetail.ColumnName);
-            //    if (columnDetail.IsPrimaryKey)
-            //    {
-            //        constructor.Statements.Add(GetIdMapCodeSnippetStatement(columnDetail.ColumnName, columnDetail.DataType));
-            //        IMetadataReader metadataReader = MetadataFactory.GetReader(applicationPreferences.ServerType,
-            //                                                                   applicationPreferences.ConnectionString);
-            //        List<string> foreignKeyTables = metadataReader.GetForeignKeyTables(columnDetail.PropertyName);
-            //        foreach (string foreignKeyTable in foreignKeyTables)
-            //        {
-            //            constructor.Statements.Add(
-            //                new CodeSnippetStatement(string.Format(TABS + "HasMany(x => x.{0}).KeyColumn(\"{1}\");",
-            //                                                       foreignKeyTable.GetFormattedText() + "s", 
-            //                                                       columnDetail.ColumnName)));
-            //        }
-            //        continue;
-            //    }
-            //    if (columnDetail.IsForeignKey)
-            //    {
-            //        constructor.Statements.Add(
-            //            new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");",
-            //                                                   columnDetail.ForeignKeyEntity.GetFormattedText(), columnDetail.ColumnName)));
-            //    }
-            //    else
-            //    {
-            //        string columnMapping = new DBColumnMapper().Map(columnDetail);
-            //        constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
-            //    }
-            //}
             newType.Members.Add(constructor);
             return compileUnit;
-        }
-
-        private string FormatColumnName(string p)
-        {
-            p = p.ToLower();
-
-            string[] columnNameParts = p.Split(new[] {'_'});
-            var columnNameBuilder = new StringBuilder();
-
-            foreach (string columnNamePart in columnNameParts)
-            {
-                columnNameBuilder.Append(columnNamePart.Capitalize());
-            }
-
-            return columnNameBuilder.ToString();
         }
 
         protected override string AddStandardHeader(string entireContent)
@@ -142,21 +95,21 @@ namespace NMG.Core.Generator
         }
 
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType,
-                                                                         PrimaryKeyType keyType)
+                                                                         PrimaryKeyType keyType, ITextFormatter Formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
             bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
             string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             return
                 new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).{1}.Column(\"{2}\");",
-                                                       pkColumnName.GetFormattedText(),
+                                                       Formatter.FormatText(pkColumnName),
                                                        idGeneratorType,
                                                        pkColumnName));
         }
 
         // Generate composite key 
         //IList<Column> pkColumns, PrimaryKeyType keyType
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, ITextFormatter Formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
             //bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
@@ -164,7 +117,7 @@ namespace NMG.Core.Generator
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
             foreach (Column pkColumn in primaryKey.Columns)
             {
-                keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0})", pkColumn.Name.GetFormattedText()));
+                keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0})", Formatter.FormatText(pkColumn.Name)));
             }
 
             return
@@ -187,6 +140,23 @@ namespace NMG.Core.Generator
                 typeToCheck == typeof (long) ||
                 typeToCheck == typeof (uint) ||
                 typeToCheck == typeof (ulong);
+        }
+    }
+
+    public class OneToMany
+    {
+        public OneToMany(ITextFormatter formatter)
+        {
+            Formatter = formatter;
+        }
+
+        private ITextFormatter Formatter { get; set; }
+
+        public CodeSnippetStatement Create(string references)
+        {
+            return
+                new CodeSnippetStatement(string.Format("\t\t\t" + "HasMany(x => x.{0});",
+                                                       Formatter.FormatPlural(references)));
         }
     }
 

@@ -28,15 +28,14 @@ namespace NMG.Core.Generator
         public override void Generate()
         {
             CodeCompileUnit compileUnit = GetCompileUnit();
-            WriteToFile(compileUnit, tableName.GetFormattedText());
+            WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
         }
 
         public CodeCompileUnit GetCompileUnit()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
             // This is where we construct the constructor
-            CodeCompileUnit compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace,
-                                                                                  Table.Name.GetFormattedText().MakeSingular());
+            CodeCompileUnit compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Formatter.FormatSingular(Table.Name));
 
             var mapper = new DataTypeMapper();
             CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
@@ -47,7 +46,7 @@ namespace NMG.Core.Generator
 
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     mapFromDbType.ToString(),
-                    pk.Name.GetFormattedText()
+                    Formatter.FormatText(pk.Name)
                                         ));
             }
 
@@ -55,7 +54,6 @@ namespace NMG.Core.Generator
             foreach (ForeignKey fk in Table.ForeignKeys)
             {
                 Type mapFromDbType = mapper.MapFromDBType(fk.Name, null, null, null);
-                //string columnName = fk.References.GetPreferenceFormattedText(fk.References, )
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     Formatter.FormatSingular(fk.References),
                     Formatter.FormatSingular(fk.References)
@@ -66,7 +64,7 @@ namespace NMG.Core.Generator
             {
                 newType.Members.Add(
                     codeGenerationHelper.CreateAutoProperty(
-                        "IList<" + Formatter.FormatSingular(hasMany.Reference),
+                        "IList<" + Formatter.FormatSingular(hasMany.Reference) + ">",
                         Formatter.FormatPlural(hasMany.Reference)));
             }
 
@@ -74,7 +72,7 @@ namespace NMG.Core.Generator
             {
                 Type mapFromDbType = mapper.MapFromDBType(column.DataType, null, null, null);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType,
-                                                                            column.Name.GetFormattedText(),
+                                                                            Formatter.FormatText(column.Name),
                                                                             column.IsNullable));
             }
             //foreach (ColumnDetail columnDetail in columnDetails)

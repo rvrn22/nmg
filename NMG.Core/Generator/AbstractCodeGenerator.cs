@@ -1,3 +1,4 @@
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -5,7 +6,6 @@ using System.Text;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
-using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {

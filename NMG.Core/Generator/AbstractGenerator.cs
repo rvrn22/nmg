@@ -1,3 +1,4 @@
+using System;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 
@@ -22,6 +23,14 @@ namespace NMG.Core.Generator
             this.sequenceName = sequenceName;
             Table = table;
             Formatter = TextFormatterFactory.GetTextFormatter(applicationPreferences);
+        }
+
+        public bool UsesSequence
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(sequenceName);
+            }
         }
 
         #region IGenerator Members

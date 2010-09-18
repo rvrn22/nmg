@@ -24,7 +24,7 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-            string fileName = filePath + tableName.GetFormattedText().MakeSingular() + ".hbm.xml";
+            string fileName = filePath + Formatter.FormatSingular(tableName) + ".hbm.xml";
             using (var stringWriter = new StringWriter())
             {
                 XmlDocument xmldoc = CreateMappingDocument();
@@ -56,16 +56,30 @@ namespace NMG.Core.Generator
             xmldoc.AppendChild(root);
 
             XmlElement classElement = xmldoc.CreateElement("class");
-            classElement.SetAttribute("name", tableName.GetFormattedText().MakeSingular());
+            classElement.SetAttribute("name", Formatter.FormatSingular(tableName));
             classElement.SetAttribute("table", tableName);
             classElement.SetAttribute("lazy", "true");
             root.AppendChild(classElement);
             PrimaryKey primaryKey = Table.PrimaryKey;
 
-            if (primaryKey.Type == PrimaryKeyType.PrimaryKey)
+            if(UsesSequence)
             {
                 XmlElement idElement = xmldoc.CreateElement("id");
-                idElement.SetAttribute("name", primaryKey.Columns[0].Name.GetFormattedText());
+
+                XmlElement generatorElement = xmldoc.CreateElement("generator");
+                generatorElement.SetAttribute("class", "sequence");
+                XmlElement paramElement = xmldoc.CreateElement("param");
+                generatorElement.AppendChild(paramElement);
+                paramElement.SetAttribute("name", "sequence");
+                paramElement.InnerText = sequenceName;
+
+                idElement.AppendChild(generatorElement);
+                classElement.AppendChild(idElement);
+            }
+            else if (primaryKey.Type == PrimaryKeyType.PrimaryKey)
+            {
+                XmlElement idElement = xmldoc.CreateElement("id");
+                idElement.SetAttribute("name", Formatter.FormatText(primaryKey.Columns[0].Name));
                 idElement.SetAttribute("column", primaryKey.Columns[0].Name);
 
                 classElement.AppendChild(idElement);
@@ -76,7 +90,7 @@ namespace NMG.Core.Generator
                 foreach (Column key in primaryKey.Columns)
                 {
                     XmlElement keyProperty = xmldoc.CreateElement("key-property");
-                    keyProperty.SetAttribute("name", key.Name.GetFormattedText());
+                    keyProperty.SetAttribute("name", Formatter.FormatText(key.Name));
                     keyProperty.SetAttribute("column", key.Name);
 
                     idElement.AppendChild(keyProperty);
@@ -88,7 +102,7 @@ namespace NMG.Core.Generator
             foreach (ForeignKey foreignKey in Table.ForeignKeys)
             {
                 XmlElement fkProperty = xmldoc.CreateElement("many-to-one");
-                fkProperty.SetAttribute("name", foreignKey.References.GetFormattedText().MakeSingular());
+                fkProperty.SetAttribute("name", Formatter.FormatSingular(foreignKey.References));
                 fkProperty.SetAttribute("column", foreignKey.Name);
 
                 classElement.AppendChild(fkProperty);
@@ -96,39 +110,13 @@ namespace NMG.Core.Generator
 
             foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                string columnMapping = new DBColumnMapper().Map(column);
                 XmlElement property = xmldoc.CreateElement("property");
-                property.SetAttribute("name", column.Name.GetFormattedText());
+                property.SetAttribute("name", Formatter.FormatText(column.Name));
                 property.SetAttribute("column", column.Name);
 
                 classElement.AppendChild(property);
             }
 
-            //var primaryKeyColumn = columnDetails.Find(detail => detail.IsPrimaryKey);
-            //if (primaryKeyColumn != null)
-            //{
-            //    var idElement = xmldoc.CreateElement("id");
-            //    string propertyName = primaryKeyColumn.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-            //    if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
-            //    {
-            //        idElement.SetAttribute("name", propertyName.MakeFirstCharLowerCase());
-            //    }else
-            //    {
-            //        idElement.SetAttribute("name", propertyName);
-            //    }
-            //    var mapper = new DataTypeMapper();
-            //    Type mapFromDbType = mapper.MapFromDBType(primaryKeyColumn.DataType, primaryKeyColumn.DataLength, primaryKeyColumn.DataPrecision, primaryKeyColumn.DataScale);
-            //    idElement.SetAttribute("type", mapFromDbType.Name);
-            //    idElement.SetAttribute("column", primaryKeyColumn.ColumnName);
-            //    if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
-            //    {
-            //        idElement.SetAttribute("access", "field");
-            //    }
-            //    classElement.AppendChild(idElement);
-            //    AddIdGenerator(xmldoc, idElement);
-            //}
-
-            //AddAllProperties(xmldoc, classElement);
             return xmldoc;
         }
 

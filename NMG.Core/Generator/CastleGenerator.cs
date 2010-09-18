@@ -27,7 +27,7 @@ namespace NMG.Core.Generator
         public override void Generate()
         {
             CodeCompileUnit compileUnit = GetCompileUnit();
-            WriteToFile(compileUnit, tableName.GetFormattedText());
+            WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
         }
 
         public CodeCompileUnit GetCompileUnit()
@@ -49,8 +49,7 @@ namespace NMG.Core.Generator
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     mapFromDbType.ToString(),
                     pk.Name.GetFormattedText(),
-                    declaration
-                                        ));
+                    declaration));
             }
 
             foreach (ForeignKey fk in Table.ForeignKeys)
@@ -65,7 +64,7 @@ namespace NMG.Core.Generator
 
             foreach (Column property in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                var declaration = new CodeAttributeDeclaration("PrimaryKey");
+                var declaration = new CodeAttributeDeclaration("Property");
                 declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(property.Name)));
                 declaration.Arguments.Add(new CodeAttributeArgument("Length",
                                                                     new CodePrimitiveExpression(property.DataLength)));
