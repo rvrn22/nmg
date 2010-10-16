@@ -1,5 +1,4 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
@@ -7,128 +6,55 @@ using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
-using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
     public class CodeGenerator : AbstractGenerator
     {
-        private readonly ApplicationPreferences applicationPreferences;
         private readonly Language language;
 
-        public CodeGenerator(ApplicationPreferences applicationPreferences, Table table)
-            : base(
-                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public CodeGenerator(ApplicationPreferences applicationPreferences, Table table) : base( applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
-            this.applicationPreferences = applicationPreferences;
             language = applicationPreferences.Language;
         }
 
         public override void Generate()
         {
-            CodeCompileUnit compileUnit = GetCompileUnit();
+            var compileUnit = GetCompileUnit();
             WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
         }
 
         public CodeCompileUnit GetCompileUnit()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            // This is where we construct the constructor
-            CodeCompileUnit compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Formatter.FormatSingular(Table.Name));
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Formatter.FormatSingular(Table.Name));
 
             var mapper = new DataTypeMapper();
-            CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
+            var newType = compileUnit.Namespaces[0].Types[0];
 
-            foreach (Column pk in Table.PrimaryKey.Columns)
+            foreach (var pk in Table.PrimaryKey.Columns)
             {
-                Type mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
-
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    mapFromDbType.ToString(),
-                    Formatter.FormatText(pk.Name)
-                                        ));
+                var mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), Formatter.FormatText(pk.Name)));
             }
 
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
-            foreach (ForeignKey fk in Table.ForeignKeys)
+            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                Type mapFromDbType = mapper.MapFromDBType(fk.Name, null, null, null);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    Formatter.FormatSingular(fk.References),
-                    Formatter.FormatSingular(fk.References)
-                ));
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.References)));
             }
 
-            foreach (HasMany hasMany in Table.HasManyRelationships)
+            foreach (var hasMany in Table.HasManyRelationships)
             {
-                newType.Members.Add(
-                    codeGenerationHelper.CreateAutoProperty(
-                        "IList<" + Formatter.FormatSingular(hasMany.Reference) + ">",
-                        Formatter.FormatPlural(hasMany.Reference)));
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty("IList<" + Formatter.FormatSingular(hasMany.Reference) + ">",Formatter.FormatPlural(hasMany.Reference)));
             }
 
-            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                Type mapFromDbType = mapper.MapFromDBType(column.DataType, null, null, null);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType,
-                                                                            Formatter.FormatText(column.Name),
-                                                                            column.IsNullable));
+                var mapFromDbType = mapper.MapFromDBType(column.DataType, null, null, null);
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable));
             }
-            //foreach (ColumnDetail columnDetail in columnDetails)
-            //{
-            //    //if(columnDetail.ColumnName == tableName)
-            //    //    columnDetail.ColumnName = columnDetail.ColumnName + "_";
-
-            //    string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-            //    Type mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength,
-            //                                              columnDetail.DataPrecision, columnDetail.DataScale);
-
-            //    if (columnDetail.IsPrimaryKey)
-            //    {
-            //        IMetadataReader metadataReader = MetadataFactory.GetReader(applicationPreferences.ServerType,
-            //                                                                   applicationPreferences.ConnectionString);
-            //        List<string> foreignKeyTables = metadataReader.GetForeignKeyTables(columnDetail.PropertyName);
-            //        foreach (string foreignKeyTable in foreignKeyTables)
-            //        {
-            //            // Pluralize property name
-            //            newType.Members.Add(
-            //                codeGenerationHelper.CreateAutoProperty(
-            //                    "IList<" + foreignKeyTable.GetFormattedText() + ">", foreignKeyTable.GetFormattedText() + "s"));
-            //        }
-            //    }
-
-            //    if (columnDetail.IsForeignKey)
-            //    {
-            //        newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-            //            columnDetail.ForeignKeyEntity.GetFormattedText(),
-            //            columnDetail.ForeignKeyEntity.GetFormattedText()));
-            //    }
-            //        // Probably not the best way to solve this. But this way we don't generate a FK
-            //        // and an auto property.
-            //    else
-            //    {
-            //        switch (applicationPreferences.FieldGenerationConvention)
-            //        {
-            //            case FieldGenerationConvention.Property:
-            //                newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType,
-            //                                                                        propertyName.MakeFirstCharUpperCase()));
-            //                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType,
-            //                                                                     propertyName.MakeFirstCharLowerCase()));
-            //                break;
-            //            case FieldGenerationConvention.AutoProperty:
-            //                CodeMemberProperty codeMemberProperty =
-            //                    codeGenerationHelper.CreateAutoProperty(mapFromDbType, propertyName.GetFormattedText(),
-            //                                                            columnDetail.IsNullable);
-            //                newType.Members.Add(codeMemberProperty);
-            //                break;
-            //            default:
-            //                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType,
-            //                                                                     propertyName.GetFormattedText()));
-            //                break;
-            //        }
-            //    }
-            //}
+            
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             newType.Members.Add(constructor);
             return compileUnit;
@@ -136,8 +62,8 @@ namespace NMG.Core.Generator
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
         {
-            CodeDomProvider provider = GetCodeDomProvider();
-            string sourceFile = GetCompleteFilePath(provider, className.MakeSingular());
+            var provider = GetCodeDomProvider();
+            var sourceFile = GetCompleteFilePath(provider, className.MakeSingular());
             using (provider)
             {
                 var streamWriter = new StreamWriter(sourceFile);
@@ -173,10 +99,6 @@ namespace NMG.Core.Generator
         // Hack : Auto property generator is not there in CodeDom.
         private static string FixAutoProperties(string entireContent)
         {
-//            entireContent = entireContent.Replace(@"get {
-//            }", "get;");
-//            entireContent = entireContent.Replace(@"set {
-//            }", "set;");
             // Do NOT mess with this...
             entireContent = entireContent.Replace(@"{
         }", "{ }");

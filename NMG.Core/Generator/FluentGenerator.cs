@@ -59,18 +59,15 @@ namespace NMG.Core.Generator
             else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name,
                                                                         Table.PrimaryKey.Columns[0].DataType,
-                                                                        Table.PrimaryKey.Type,
                                                                         Formatter));
             else
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
             }
 
-            foreach (ForeignKey fk in Table.ForeignKeys)
+            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                constructor.Statements.Add(
-                    new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");",
-                                                           Formatter.FormatSingular(fk.References), fk.Name)));
+                constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", Formatter.FormatSingular(fk.References), fk.Name)));
             }
 
             foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
@@ -94,8 +91,7 @@ namespace NMG.Core.Generator
             return base.AddStandardHeader(entireContent);
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType,
-                                                                         PrimaryKeyType keyType, ITextFormatter Formatter)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType, ITextFormatter Formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
             bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
@@ -107,13 +103,8 @@ namespace NMG.Core.Generator
                                                        pkColumnName));
         }
 
-        // Generate composite key 
-        //IList<Column> pkColumns, PrimaryKeyType keyType
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, ITextFormatter Formatter)
         {
-            var dataTypeMapper = new DataTypeMapper();
-            //bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
-            //var idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
             foreach (Column pkColumn in primaryKey.Columns)
             {
@@ -122,12 +113,6 @@ namespace NMG.Core.Generator
 
             return
                 new CodeSnippetStatement(TABS + string.Format("CompositeId(){0};", keyPropertyBuilder));
-        }
-
-        // Generate id sequence
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatementSequenceId(PrimaryKeyType primaryKey)
-        {
-            return new CodeSnippetStatement(TABS);
         }
     }
 
