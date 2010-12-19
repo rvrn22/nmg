@@ -12,9 +12,13 @@ namespace NMG.Core
             {
                 metadataReader = new OracleMetadataReader(connectionStr);
             }
-            else
+            else if (serverType == ServerType.SqlServer)
             {
                 metadataReader = new SqlServerMetadataReader(connectionStr);
+            }
+            else
+            {
+                metadataReader = new NpgsqlMetadataReader(connectionStr);
             }
             return metadataReader;
         }

@@ -6,5 +6,8 @@
 
         public static string SQL_CONN_STR_TEMPLATE =
             "Data Source=localhost;Initial Catalog=Sample;Integrated Security=SSPI;";
+
+        public static string POSTGRESQL_CONN_STR_TEMPLATE =
+            "server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=password;";
     }
 }

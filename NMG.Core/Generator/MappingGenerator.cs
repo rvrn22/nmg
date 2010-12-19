@@ -62,29 +62,8 @@ namespace NMG.Core.Generator
             root.AppendChild(classElement);
             PrimaryKey primaryKey = Table.PrimaryKey;
 
-            if(UsesSequence)
-            {
-                XmlElement idElement = xmldoc.CreateElement("id");
-
-                XmlElement generatorElement = xmldoc.CreateElement("generator");
-                generatorElement.SetAttribute("class", "sequence");
-                XmlElement paramElement = xmldoc.CreateElement("param");
-                generatorElement.AppendChild(paramElement);
-                paramElement.SetAttribute("name", "sequence");
-                paramElement.InnerText = sequenceName;
-
-                idElement.AppendChild(generatorElement);
-                classElement.AppendChild(idElement);
-            }
-            else if (primaryKey.Type == PrimaryKeyType.PrimaryKey)
-            {
-                XmlElement idElement = xmldoc.CreateElement("id");
-                idElement.SetAttribute("name", Formatter.FormatText(primaryKey.Columns[0].Name));
-                idElement.SetAttribute("column", primaryKey.Columns[0].Name);
-
-                classElement.AppendChild(idElement);
-            }
-            else if (primaryKey.Type == PrimaryKeyType.CompositeKey)
+            
+            if (primaryKey.Type == PrimaryKeyType.CompositeKey)
             {
                 XmlElement idElement = xmldoc.CreateElement("composite-id");
                 foreach (Column key in primaryKey.Columns)
@@ -99,22 +78,49 @@ namespace NMG.Core.Generator
                 }
             }
 
-            foreach (ForeignKey foreignKey in Table.ForeignKeys)
+
+
+            foreach (Column column in Table.Columns)
             {
-                XmlElement fkProperty = xmldoc.CreateElement("many-to-one");
-                fkProperty.SetAttribute("name", Formatter.FormatSingular(foreignKey.References));
-                fkProperty.SetAttribute("column", foreignKey.Name);
+                XmlElement property = null;
+                XmlElement property2 = null;
+               
+                    if (column.IsForeignKey)
+                    {
+                        property = xmldoc.CreateElement("many-to-one");
+                        property.SetAttribute("insert", "false");
+                        property.SetAttribute("update", "false");
+                        property.SetAttribute("lazy", "false");
+                        property2 = xmldoc.CreateElement("property");
+                    }
+                    else if (column.IsPrimaryKey)
+                    {
+                        property2 = xmldoc.CreateElement("id");
+                        XmlElement generatorElement = xmldoc.CreateElement("generator");
+                        generatorElement.SetAttribute("class", "identity");
+                        property2.AppendChild(generatorElement);
+                    }
+                    else
+                    {
+                        property2 = xmldoc.CreateElement("property");
+                    }
 
-                classElement.AppendChild(fkProperty);
-            }
 
-            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
-            {
-                XmlElement property = xmldoc.CreateElement("property");
-                property.SetAttribute("name", Formatter.FormatText(column.Name));
-                property.SetAttribute("column", column.Name);
+                    if (property != null)
+                        property.SetAttribute("name", Formatter.FormatText(column.Name));
+                    property2.SetAttribute("name", Formatter.FormatText(column.Name));
+                    XmlElement columnProperty = xmldoc.CreateElement("column");
+                    if (property != null)
+                        property.AppendChild(columnProperty);
 
-                classElement.AppendChild(property);
+                    columnProperty.SetAttribute("name", column.Name);
+                    columnProperty.SetAttribute("sql-type", column.DataType);
+                    columnProperty.SetAttribute("not-null", (!column.IsNullable).ToString().ToLower());
+                    property2.AppendChild(columnProperty.Clone());
+                    if (property != null)
+                        classElement.AppendChild(property);
+                    classElement.AppendChild(property2);
+                
             }
 
             return xmldoc;

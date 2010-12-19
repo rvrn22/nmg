@@ -51,6 +51,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Npgsql">
+      <HintPath>..\Lib\Npgsql2.0.11-bin-ms.net3.5sp1\Npgsql.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -80,10 +83,13 @@
     <Compile Include="Generator\MappingGenerator.cs" />
     <Compile Include="Generator\CodeGenerator.cs" />
     <Compile Include="DataTypeMapper.cs" />
+    <Compile Include="Generator\NpgsqlMappingGenerator.cs" />
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="Reader\IConstraintTypeResolver.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
+    <Compile Include="Reader\NpgsqlConstraintType.cs" />
+    <Compile Include="Reader\NpgsqlMetadataReader.cs" />
     <Compile Include="Reader\OracleConstraintType.cs" />
     <Compile Include="Reader\OracleMetadataReader.cs" />
     <Compile Include="Reader\SqlServerConstraintType.cs" />

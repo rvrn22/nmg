@@ -90,10 +90,17 @@ namespace NHibernateMappingGenerator
 
         private void ServerTypeSelected(object sender, EventArgs e)
         {
-            bool isOracleSelected = ((ServerType) serverTypeComboBox.SelectedItem == ServerType.Oracle);
-            connStrTextBox.Text = isOracleSelected
-                                      ? StringConstants.ORACLE_CONN_STR_TEMPLATE
-                                      : StringConstants.SQL_CONN_STR_TEMPLATE;
+            if ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle)
+            {
+                connStrTextBox.Text =StringConstants.ORACLE_CONN_STR_TEMPLATE;
+            }
+            else if((ServerType) serverTypeComboBox.SelectedItem == ServerType.SqlServer){
+                connStrTextBox.Text =StringConstants.SQL_CONN_STR_TEMPLATE;
+            }
+            else{
+                connStrTextBox.Text =StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
+            }
+            
         }
 
         private void BindData()
@@ -124,12 +131,14 @@ namespace NHibernateMappingGenerator
 
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
+
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+                entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
                 PopulateTableDetails();
             }
+            catch (Exception) { }
             finally
             {
                 Cursor.Current = Cursors.Default;
@@ -161,13 +170,15 @@ namespace NHibernateMappingGenerator
                 tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
 
-                metadataReader = MetadataFactory.GetReader((ServerType) serverTypeComboBox.SelectedItem,
-                                                           connStrTextBox.Text);
-                PopulateOwners();
-                PopulateTablesAndSequences();
+                
             }
+            catch (Exception ex) { }
             finally
             {
+                metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem,
+                                                              connStrTextBox.Text);
+                PopulateOwners();
+                PopulateTablesAndSequences();
                 Cursor.Current = Cursors.Default;
             }
         }
@@ -202,7 +213,7 @@ namespace NHibernateMappingGenerator
                 {
                     tablesComboBox.SelectedIndex = 0;
                 }
-
+                if(metadataReader.GetSequences()!=null)
                 sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
                 bool hasSequences = sequencesComboBox.Items.Count > 0;
                 sequencesComboBox.Enabled = hasSequences;
@@ -283,7 +294,7 @@ namespace NHibernateMappingGenerator
 
         private void Generate(Table table, bool generateAll)
         {
-            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table.Name, generateAll);
+            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, generateAll);
             var applicationController = new ApplicationController(applicationPreferences, table);
             applicationController.Generate();
         }
@@ -293,19 +304,21 @@ namespace NHibernateMappingGenerator
             prefixLabel.Visible = prefixTextBox.Visible = prefixRadioButton.Checked;
         }
 
-        private ApplicationPreferences GetApplicationPreferences(string tableName, bool all)
+        private ApplicationPreferences GetApplicationPreferences(Table tableName, bool all)
         {
             string sequence = string.Empty;
+
             if (sequencesComboBox.SelectedItem != null && !all)
             {
                 sequence = sequencesComboBox.SelectedItem.ToString();
             }
+            
 
             var applicationPreferences = new ApplicationPreferences
                                              {
                                                  ServerType = (ServerType) serverTypeComboBox.SelectedItem,
                                                  FolderPath = folderTextBox.Text,
-                                                 TableName = tableName,
+                                                 TableName = tableName.Name,
                                                  NameSpace = nameSpaceTextBox.Text,
                                                  AssemblyName = assemblyNameTextBox.Text,
                                                  Sequence = sequence,
@@ -315,7 +328,7 @@ namespace NHibernateMappingGenerator
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
                                                  IsCastle = IsCastle,
-                                                 ConnectionString = connStrTextBox.Text
+                                                 ConnectionString = connStrTextBox.Text,                                                 
                                              };
 
             return applicationPreferences;
