@@ -1,10 +1,8 @@
-using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
 using Microsoft.CSharp;
-using Microsoft.VisualBasic;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 using NMG.Core.Util;
@@ -13,18 +11,16 @@ namespace NMG.Core.Generator
 {
     public class CastleGenerator : AbstractGenerator
     {
-        private readonly Language language;
+        private readonly ApplicationPreferences applicationPreferences;
 
-        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table)
-            : base(
-                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
+            this.applicationPreferences = applicationPreferences;
         }
 
         public override void Generate()
         {
-            CodeCompileUnit compileUnit = GetCompileUnit();
+            var compileUnit = GetCompileUnit();
             WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
         }
 
@@ -32,50 +28,37 @@ namespace NMG.Core.Generator
         {
             var codeGenerationHelper = new CodeGenerationHelper();
             // This is where we construct the constructor
-            CodeCompileUnit compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace,
-                                                                                  Table.Name.GetFormattedText().
-                                                                                      MakeSingular());
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Table.Name.GetFormattedText().MakeSingular());
             var mapper = new DataTypeMapper();
-            CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
-
-            foreach (Column pk in Table.PrimaryKey.Columns)
+            var newType = compileUnit.Namespaces[0].Types[0];
+            newType.IsPartial = applicationPreferences.GeneratePartialClasses;
+            foreach (var pk in Table.PrimaryKey.Columns)
             {
-                Type mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
+                var mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
 
                 var declaration = new CodeAttributeDeclaration("PrimaryKey");
                 declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(pk.Name)));
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    mapFromDbType.ToString(),
-                    pk.Name.GetFormattedText(),
-                    declaration));
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), pk.Name.GetFormattedText(), declaration));
             }
 
-            foreach (ForeignKey fk in Table.ForeignKeys)
+            foreach (var fk in Table.ForeignKeys)
             {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    fk.References.GetFormattedText().MakeSingular(),
-                    fk.References.GetFormattedText().MakeSingular()
-                                        ));
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(fk.References.GetFormattedText().MakeSingular(), fk.References.GetFormattedText().MakeSingular()));
             }
 
-            foreach (Column property in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (var property in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
                 var declaration = new CodeAttributeDeclaration("Property");
                 declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(property.Name)));
-                declaration.Arguments.Add(new CodeAttributeArgument("Length",
-                                                                    new CodePrimitiveExpression(property.DataLength)));
+                declaration.Arguments.Add(new CodeAttributeArgument("Length", new CodePrimitiveExpression(property.DataLength)));
 
                 if (!property.IsNullable)
                 {
                     declaration.Arguments.Add(new CodeAttributeArgument("NotNull", new CodePrimitiveExpression(true)));
                 }
 
-                Type mapFromDbType = mapper.MapFromDBType(property.DataType, null, null, null);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
-                    mapFromDbType.ToString(),
-                    property.Name.GetFormattedText(),
-                    declaration
-                                        ));
+                var mapFromDbType = mapper.MapFromDBType(property.DataType, null, null, null);
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), property.Name.GetFormattedText(), declaration));
             }
 
             return compileUnit;
@@ -83,7 +66,7 @@ namespace NMG.Core.Generator
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
         {
-            CodeDomProvider provider = GetCodeDomProvider();
+            var provider = (CodeDomProvider) new CSharpCodeProvider();
             string sourceFile = GetCompleteFilePath(provider, className.MakeSingular());
             using (provider)
             {
@@ -159,11 +142,6 @@ namespace NMG.Core.Generator
             return provider.FileExtension[0] == '.'
                        ? fileName + provider.FileExtension
                        : fileName + "." + provider.FileExtension;
-        }
-
-        private CodeDomProvider GetCodeDomProvider()
-        {
-            return language == Language.CSharp ? (CodeDomProvider) new CSharpCodeProvider() : new VBCodeProvider();
         }
     }
 }

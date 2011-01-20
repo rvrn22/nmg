@@ -37,6 +37,11 @@ namespace NHibernateMappingGenerator
             get { return fluentMappingOption.Checked; }
         }
 
+        public bool GeneratePartialClasses
+        {
+            get { return partialClassesCheckBox.Checked; }
+        }
+
         public bool IsCastle
         {
             get { return castleMappingOption.Checked; }
@@ -334,6 +339,7 @@ namespace NHibernateMappingGenerator
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
                                                  IsCastle = IsCastle,
+                                                 GeneratePartialClasses = GeneratePartialClasses,
                                                  ConnectionString = connStrTextBox.Text,                                                 
                                              };
 

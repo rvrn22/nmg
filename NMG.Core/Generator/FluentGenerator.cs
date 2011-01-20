@@ -36,30 +36,27 @@ namespace NMG.Core.Generator
         public CodeCompileUnit GetCompleteCompileUnit(string className)
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            CodeCompileUnit compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);
 
-            CodeTypeDeclaration newType = compileUnit.Namespaces[0].Types[0];
+            var newType = compileUnit.Namespaces[0].Types[0];
+            
+            newType.IsPartial = applicationPreferences.GeneratePartialClasses;
 
             newType.BaseTypes.Add("ClassMap<" + Formatter.FormatSingular(Table.Name) + ">");
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
-            //newType.Members.Add(constructor);
-            constructor.Statements.Add(
-                new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
-            //constructor.Statements.Add(new CodeSnippetStatement(TABS + "ReadOnly();"));
+            constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
 
-            // Determine primary key type
             if(UsesSequence)
             {
                 constructor.Statements.Add(new CodeSnippetStatement(String.Format("\t\t\tId(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
                     Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, applicationPreferences.Sequence)));
             }
-            // refactor to set primarykeytype enum and use that instead to check
             else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name,
-                                                                        Table.PrimaryKey.Columns[0].DataType,
-                                                                        Formatter));
+            {
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
+            }
             else
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
@@ -70,13 +67,13 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", Formatter.FormatSingular(fk.References), fk.Name)));
             }
 
-            foreach (Column column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                string columnMapping = new DBColumnMapper().Map(column, Formatter);
+                var columnMapping = new DBColumnMapper().Map(column, Formatter);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
-            foreach (HasMany hasMany in Table.HasManyRelationships)
+            foreach (var hasMany in Table.HasManyRelationships)
             {
                 constructor.Statements.Add(new OneToMany(Formatter).Create(hasMany.Reference));
             }

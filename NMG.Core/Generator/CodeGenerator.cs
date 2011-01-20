@@ -11,10 +11,12 @@ namespace NMG.Core.Generator
 {
     public class CodeGenerator : AbstractGenerator
     {
+        private readonly ApplicationPreferences applicationPreferences;
         private readonly Language language;
 
         public CodeGenerator(ApplicationPreferences applicationPreferences, Table table) : base( applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
+            this.applicationPreferences = applicationPreferences;
             language = applicationPreferences.Language;
         }
 
@@ -31,6 +33,8 @@ namespace NMG.Core.Generator
 
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
+            
+            newType.IsPartial = applicationPreferences.GeneratePartialClasses;
 
             foreach (var pk in Table.PrimaryKey.Columns)
             {

@@ -78,12 +78,14 @@ namespace NHibernateMappingGenerator
             this.vbRadioButton = new System.Windows.Forms.RadioButton();
             this.cSharpRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.pascalCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.prefixTextBox = new System.Windows.Forms.TextBox();
             this.prefixRadioButton = new System.Windows.Forms.RadioButton();
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.pascalCasedRadioButton = new System.Windows.Forms.RadioButton();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.partialClassesCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -95,6 +97,7 @@ namespace NHibernateMappingGenerator
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // connStrTextBox
@@ -415,6 +418,7 @@ namespace NHibernateMappingGenerator
             // 
             // advanceSettingsTabPage
             // 
+            this.advanceSettingsTabPage.Controls.Add(this.groupBox8);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox7);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox3);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox2);
@@ -564,6 +568,16 @@ namespace NHibernateMappingGenerator
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generated Property Name";
             // 
+            // pascalCasedRadioButton
+            // 
+            this.pascalCasedRadioButton.AutoSize = true;
+            this.pascalCasedRadioButton.Location = new System.Drawing.Point(6, 65);
+            this.pascalCasedRadioButton.Name = "pascalCasedRadioButton";
+            this.pascalCasedRadioButton.Size = new System.Drawing.Size(219, 17);
+            this.pascalCasedRadioButton.TabIndex = 4;
+            this.pascalCasedRadioButton.Text = "Pascal Case (e.g. ThisIsMyColumnName)";
+            this.pascalCasedRadioButton.UseVisualStyleBackColor = true;
+            // 
             // prefixTextBox
             // 
             this.prefixTextBox.Location = new System.Drawing.Point(70, 110);
@@ -614,15 +628,25 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // pascalCasedRadioButton
+            // groupBox8
             // 
-            this.pascalCasedRadioButton.AutoSize = true;
-            this.pascalCasedRadioButton.Location = new System.Drawing.Point(6, 65);
-            this.pascalCasedRadioButton.Name = "pascalCasedRadioButton";
-            this.pascalCasedRadioButton.Size = new System.Drawing.Size(219, 17);
-            this.pascalCasedRadioButton.TabIndex = 4;
-            this.pascalCasedRadioButton.Text = "Pascal Case (e.g. ThisIsMyColumnName)";
-            this.pascalCasedRadioButton.UseVisualStyleBackColor = true;
+            this.groupBox8.Controls.Add(this.partialClassesCheckBox);
+            this.groupBox8.Location = new System.Drawing.Point(212, 152);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(200, 140);
+            this.groupBox8.TabIndex = 6;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Other Options";
+            // 
+            // partialClassesCheckBox
+            // 
+            this.partialClassesCheckBox.AutoSize = true;
+            this.partialClassesCheckBox.Location = new System.Drawing.Point(7, 20);
+            this.partialClassesCheckBox.Name = "partialClassesCheckBox";
+            this.partialClassesCheckBox.Size = new System.Drawing.Size(141, 17);
+            this.partialClassesCheckBox.TabIndex = 0;
+            this.partialClassesCheckBox.Text = "Generate Partial Classes";
+            this.partialClassesCheckBox.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -651,6 +675,8 @@ namespace NHibernateMappingGenerator
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -709,6 +735,8 @@ namespace NHibernateMappingGenerator
         private ComboBox ownersComboBox;
         private Label lblOwner;
         private RadioButton pascalCasedRadioButton;
+        private GroupBox groupBox8;
+        private CheckBox partialClassesCheckBox;
     }
 }
 
