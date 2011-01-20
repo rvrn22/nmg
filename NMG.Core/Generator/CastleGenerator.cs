@@ -13,7 +13,6 @@ namespace NMG.Core.Generator
 {
     public class CastleGenerator : AbstractGenerator
     {
-        private readonly ApplicationPreferences applicationPreferences;
         private readonly Language language;
 
         public CastleGenerator(ApplicationPreferences applicationPreferences, Table table)
@@ -21,7 +20,6 @@ namespace NMG.Core.Generator
                 applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
                 applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
-            this.applicationPreferences = applicationPreferences;
         }
 
         public override void Generate()
@@ -54,8 +52,6 @@ namespace NMG.Core.Generator
 
             foreach (ForeignKey fk in Table.ForeignKeys)
             {
-                Type mapFromDbType = mapper.MapFromDBType(fk.Name, null, null, null);
-
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
                     fk.References.GetFormattedText().MakeSingular(),
                     fk.References.GetFormattedText().MakeSingular()

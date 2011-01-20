@@ -1,23 +1,16 @@
 using System.IO;
-using System.Linq;
 using System.Xml;
 using NMG.Core.Domain;
-using NMG.Core.Fluent;
-using NMG.Core.TextFormatter;
-using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
     public abstract class MappingGenerator : AbstractGenerator
     {
-        private readonly ApplicationPreferences applicationPreferences;
-
         protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table)
             : base(
                 applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
                 applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
-            this.applicationPreferences = applicationPreferences;
         }
 
         protected abstract void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement);
@@ -62,7 +55,7 @@ namespace NMG.Core.Generator
             root.AppendChild(classElement);
             PrimaryKey primaryKey = Table.PrimaryKey;
 
-            
+
             if (primaryKey.Type == PrimaryKeyType.CompositeKey)
             {
                 XmlElement idElement = xmldoc.CreateElement("composite-id");
@@ -79,76 +72,49 @@ namespace NMG.Core.Generator
             }
 
 
-
             foreach (Column column in Table.Columns)
             {
                 XmlElement property = null;
-                XmlElement property2 = null;
-               
-                    if (column.IsForeignKey)
-                    {
-                        property = xmldoc.CreateElement("many-to-one");
-                        property.SetAttribute("insert", "false");
-                        property.SetAttribute("update", "false");
-                        property.SetAttribute("lazy", "false");
-                        property2 = xmldoc.CreateElement("property");
-                    }
-                    else if (column.IsPrimaryKey)
-                    {
-                        property2 = xmldoc.CreateElement("id");
-                        XmlElement generatorElement = xmldoc.CreateElement("generator");
-                        generatorElement.SetAttribute("class", "identity");
-                        property2.AppendChild(generatorElement);
-                    }
-                    else
-                    {
-                        property2 = xmldoc.CreateElement("property");
-                    }
+                XmlElement property2;
+
+                if (column.IsForeignKey)
+                {
+                    property = xmldoc.CreateElement("many-to-one");
+                    property.SetAttribute("insert", "false");
+                    property.SetAttribute("update", "false");
+                    property.SetAttribute("lazy", "false");
+                    property2 = xmldoc.CreateElement("property");
+                }
+                else if (column.IsPrimaryKey)
+                {
+                    property2 = xmldoc.CreateElement("id");
+                    XmlElement generatorElement = xmldoc.CreateElement("generator");
+                    generatorElement.SetAttribute("class", "identity");
+                    property2.AppendChild(generatorElement);
+                }
+                else
+                {
+                    property2 = xmldoc.CreateElement("property");
+                }
 
 
-                    if (property != null)
-                        property.SetAttribute("name", Formatter.FormatText(column.Name));
-                    property2.SetAttribute("name", Formatter.FormatText(column.Name));
-                    XmlElement columnProperty = xmldoc.CreateElement("column");
-                    if (property != null)
-                        property.AppendChild(columnProperty);
+                if (property != null)
+                    property.SetAttribute("name", Formatter.FormatText(column.Name));
+                property2.SetAttribute("name", Formatter.FormatText(column.Name));
+                XmlElement columnProperty = xmldoc.CreateElement("column");
+                if (property != null)
+                    property.AppendChild(columnProperty);
 
-                    columnProperty.SetAttribute("name", column.Name);
-                    columnProperty.SetAttribute("sql-type", column.DataType);
-                    columnProperty.SetAttribute("not-null", (!column.IsNullable).ToString().ToLower());
-                    property2.AppendChild(columnProperty.Clone());
-                    if (property != null)
-                        classElement.AppendChild(property);
-                    classElement.AppendChild(property2);
-                
+                columnProperty.SetAttribute("name", column.Name);
+                columnProperty.SetAttribute("sql-type", column.DataType);
+                columnProperty.SetAttribute("not-null", (!column.IsNullable).ToString().ToLower());
+                property2.AppendChild(columnProperty.Clone());
+                if (property != null)
+                    classElement.AppendChild(property);
+                classElement.AppendChild(property2);
             }
 
             return xmldoc;
-        }
-
-        private void AddAllProperties(XmlDocument xmldoc, XmlNode classElement)
-        {
-            //foreach (var columnDetail in columnDetails)
-            //{
-            //    if (columnDetail.IsPrimaryKey)
-            //        continue;
-            //    var xmlNode = xmldoc.CreateElement("property");
-            //    string propertyName = columnDetail.ColumnName.GetPreferenceFormattedText(applicationPreferences);
-            //    if (applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Property)
-            //    {
-            //        xmlNode.SetAttribute("name", propertyName.MakeFirstCharLowerCase());    
-            //    }else
-            //    {
-            //        xmlNode.SetAttribute("name", propertyName);
-            //    }
-
-            //    xmlNode.SetAttribute("column", columnDetail.ColumnName);
-            //    if (applicationPreferences.FieldGenerationConvention != FieldGenerationConvention.AutoProperty)
-            //    {
-            //        xmlNode.SetAttribute("access", "field");
-            //    }
-            //    classElement.AppendChild(xmlNode);
-            //}
         }
     }
 }

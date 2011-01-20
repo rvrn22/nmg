@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
@@ -312,12 +313,17 @@ namespace NHibernateMappingGenerator
             {
                 sequence = sequencesComboBox.SelectedItem.ToString();
             }
-            
 
+            var folderPath = AddSlashToFolderPath(folderTextBox.Text);
+            if(!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            
             var applicationPreferences = new ApplicationPreferences
                                              {
                                                  ServerType = (ServerType) serverTypeComboBox.SelectedItem,
-                                                 FolderPath = folderTextBox.Text,
+                                                 FolderPath = folderPath,
                                                  TableName = tableName.Name,
                                                  NameSpace = nameSpaceTextBox.Text,
                                                  AssemblyName = assemblyNameTextBox.Text,
@@ -354,6 +360,15 @@ namespace NHibernateMappingGenerator
             if (pascalCasedRadioButton.Checked)
                 convention = FieldNamingConvention.PascalCase;
             return convention;
+        }
+
+        private static string AddSlashToFolderPath(string folderPath)
+        {
+            if (!folderPath.EndsWith("\\"))
+            {
+                folderPath += "\\";
+            }
+            return folderPath;
         }
     }
 }

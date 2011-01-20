@@ -15,7 +15,6 @@ namespace NHibernateMappingGenerator
         public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
             this.applicationPreferences = applicationPreferences;
-            applicationPreferences.FolderPath = AddSlashToFolderPath(applicationPreferences.FolderPath);
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
@@ -44,15 +43,6 @@ namespace NHibernateMappingGenerator
             {
                 mappingGenerator.Generate();
             }
-        }
-
-        private static string AddSlashToFolderPath(string folderPath)
-        {
-            if (!folderPath.EndsWith("\\"))
-            {
-                folderPath += "\\";
-            }
-            return folderPath;
         }
     }
 }
