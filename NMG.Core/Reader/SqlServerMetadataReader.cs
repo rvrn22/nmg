@@ -242,25 +242,16 @@ namespace NMG.Core.Reader
                     command.CommandText =
                         String.Format(
                             @"
-                        select DISTINCT
-	                        PK_TABLE = b.TABLE_NAME,
-	                        FK_TABLE = c.TABLE_NAME
-                        from
-	                        INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
-	                        on
-	                        a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
-	                        a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
-	                        on
-	                        a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
-	                        a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
-                        where
-	                        b.TABLE_NAME = '{0}'
-                        order by
-	                        1,2",
+                        SELECT DISTINCT 
+                            PK_TABLE = b.TABLE_NAME,
+                            FK_TABLE = c.TABLE_NAME,
+                            FK_COLUMN_NAME = d.COLUMN_NAME
+                        FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a 
+                          JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS b ON a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA AND a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME 
+                          JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS c ON a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA AND a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                          JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE d on a.CONSTRAINT_NAME = d.CONSTRAINT_NAME
+                        WHERE b.TABLE_NAME = '{0}'
+                        ORDER BY 1,2",
                             table.Name);
                     SqlDataReader reader = command.ExecuteReader();
 
@@ -268,7 +259,8 @@ namespace NMG.Core.Reader
                     {
                         hasManyRelationships.Add(new HasMany
                                                      {
-                                                         Reference = reader.GetString(1)
+                                                         Reference = reader.GetString(1),
+                                                         ReferenceColumn = reader["FK_COLUMN_NAME"].ToString()
                                                      });
                     }
 

@@ -49,6 +49,7 @@ namespace NMG.Core.Domain
     public class HasMany
     {
         public string Reference { get; set; }
+        public string ReferenceColumn { get; set; }
     }
 
     /// <summary>
