@@ -114,6 +114,29 @@ namespace NMG.Core.Generator
                 classElement.AppendChild(property2);
             }
 
+            foreach (var hasMany in Table.HasManyRelationships)
+            {
+                XmlElement bagElement = xmldoc.CreateElement("bag");
+
+                bagElement.SetAttribute("name", Formatter.FormatPlural(hasMany.Reference));
+                bagElement.SetAttribute("inverse", "true");
+                bagElement.SetAttribute("cascade", "none");
+
+                classElement.AppendChild(bagElement);
+
+                XmlElement keyElement = xmldoc.CreateElement("key");
+
+                keyElement.SetAttribute("column", hasMany.ReferenceColumn);
+
+                bagElement.AppendChild(keyElement);
+
+                XmlElement oneToManyElement = xmldoc.CreateElement("one-to-many");
+
+                oneToManyElement.SetAttribute("class", Formatter.FormatSingular(hasMany.Reference));
+
+                bagElement.AppendChild(oneToManyElement);
+            }
+
             return xmldoc;
         }
     }
