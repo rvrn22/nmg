@@ -10,60 +10,60 @@ namespace NMG.Core
                 dataType == "TIMESTAMP WITH TIME ZONE" || dataType == "TIMESTAMP WITH LOCAL TIME ZONE" ||
                 dataType == "smalldatetime")
             {
-                return typeof (DateTime);
+                return typeof(DateTime);
             }
             if (dataType == "NUMBER" || dataType == "nchar" || dataType == "LONG" || dataType == "bigint")
             {
-                return typeof (long);
+                return typeof(long);
             }
             if (dataType == "int" || dataType == "INTERVAL YEAR TO MONTH" || dataType == "BINARY_INTEGER")
             {
-                return typeof (int);
+                return typeof(int);
             }
             if (dataType == "BINARY_DOUBLE" || dataType == "float")
             {
-                return typeof (double);
+                return typeof(double);
             }
             if (dataType == "BINARY_FLOAT" || dataType == "FLOAT")
             {
-                return typeof (float);
+                return typeof(float);
             }
             if (dataType == "BLOB" || dataType == "BFILE *" || dataType == "LONG RAW" || dataType == "binary" ||
                 dataType == "image" || dataType == "timestamp" || dataType == "varbinary")
             {
-                return typeof (byte[]);
+                return typeof(byte[]);
             }
             if (dataType == "INTERVAL DAY TO SECOND")
             {
-                return typeof (TimeSpan);
+                return typeof(TimeSpan);
             }
             if (dataType == "bit")
             {
-                return typeof (Boolean);
+                return typeof(Boolean);
             }
-            if (dataType == "decimal" || dataType == "money" || dataType == "smallmoney")
+            if (dataType == "decimal" || dataType == "money" || dataType == "smallmoney" || dataType == "numeric")
             {
-                return typeof (decimal);
+                return typeof(decimal);
             }
             if (dataType == "real")
             {
-                return typeof (Single);
+                return typeof(Single);
             }
             if (dataType == "smallint")
             {
-                return typeof (Int16);
+                return typeof(Int16);
             }
             if (dataType == "uniqueidentifier")
             {
-                return typeof (Guid);
+                return typeof(Guid);
             }
             if (dataType == "tinyint")
             {
-                return typeof (Byte);
+                return typeof(Byte);
             }
 
             // CHAR, CLOB, NCLOB, NCHAR, XMLType, VARCHAR2, nchar, ntext
-            return typeof (string);
+            return typeof(string);
         }
     }
 }
