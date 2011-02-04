@@ -7,14 +7,14 @@
   </target>
 
   <target name="compile">
-    <exec basedir="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE" program="devenv.com" failonerror="true" >
+    <exec basedir="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE" program="devenv.com" failonerror="true" >
       <arg value="NMG.sln" />
       <arg value="/build" />
     </exec>
   </target>
 
   <target name="clean">
-    <exec basedir="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE" program="devenv.com" failonerror="true" >
+    <exec basedir="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE" program="devenv.com" failonerror="true" >
       <arg value="NMG.sln" />
       <arg value="/clean" />
     </exec>
