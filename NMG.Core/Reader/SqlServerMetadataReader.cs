@@ -31,20 +31,20 @@ namespace NMG.Core.Reader
                 {
                     tableDetailsCommand.CommandText = string.Format(
                         @"
-                        select c.column_name,c .data_type, c.is_nullable, tc.constraint_type
+                        SELECT c.column_name, c .data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length
                         from information_schema.columns c
-	                        left outer join (
-		                        information_schema.constraint_column_usage ccu
-		                        join information_schema.table_constraints tc on (
-			                        tc.table_schema = ccu.table_schema
-			                        and tc.constraint_name = ccu.constraint_name
-			                        and tc.constraint_type <> 'CHECK'
-		                        )
-	                        ) on (
-		                        c.table_schema = ccu.table_schema and ccu.table_schema = '{1}'
-		                        and c.table_name = ccu.table_name
-		                        and c.column_name = ccu.column_name
-	                        )
+                            left outer join (
+                                information_schema.constraint_column_usage ccu
+                                join information_schema.table_constraints tc on (
+                                    tc.table_schema = ccu.table_schema
+                                    and tc.constraint_name = ccu.constraint_name
+                                    and tc.constraint_type <> 'CHECK'
+                                )
+                            ) on (
+                                c.table_schema = ccu.table_schema and ccu.table_schema = '{1}'
+                                and c.table_name = ccu.table_name
+                                and c.column_name = ccu.column_name
+                            )
                         where c.table_name = '{0}'
                         order by c.table_name, c.ordinal_position",
                         table.Name, owner);
@@ -57,6 +57,10 @@ namespace NMG.Core.Reader
                             bool isNullable = sqlDataReader.GetString(2).Equals("YES",
                                                                                 StringComparison.
                                                                                     CurrentCultureIgnoreCase);
+                            var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
+                            var numericPrecision = sqlDataReader["numeric_precision"] as int?;
+                            var numericScale = sqlDataReader["numeric_scale"] as int?;
+
                             bool isPrimaryKey =
                                 (!sqlDataReader.IsDBNull(3)
                                      ? sqlDataReader.GetString(3).Equals(
@@ -82,8 +86,8 @@ namespace NMG.Core.Reader
                                                 IsForeignKey = isForeignKey,
                                                 // IsFK()
                                                 MappedDataType =
-                                                    m.MapFromDBType(dataType, null, null, null).ToString()
-                                                //DataLength = dataLength
+                                                    m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
+                                                DataLength = characterMaxLenth
                                             });
 
                             table.Columns = columns;
