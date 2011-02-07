@@ -50,7 +50,9 @@ namespace NMG.Core.Generator
             {
                 var declaration = new CodeAttributeDeclaration("Property");
                 declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(property.Name)));
-                declaration.Arguments.Add(new CodeAttributeArgument("Length", new CodePrimitiveExpression(property.DataLength)));
+
+                if(property.DataLength.HasValue)
+                    declaration.Arguments.Add(new CodeAttributeArgument("Length", new CodePrimitiveExpression(property.DataLength)));
 
                 if (!property.IsNullable)
                 {

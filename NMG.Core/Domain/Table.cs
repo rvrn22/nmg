@@ -62,7 +62,7 @@ namespace NMG.Core.Domain
         public bool IsForeignKey { get; set; }
         public bool IsUnique { get; set; }
         public string DataType { get; set; }
-        public int DataLength { get; set; }
+        public int? DataLength { get; set; }
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
        
