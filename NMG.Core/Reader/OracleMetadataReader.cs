@@ -59,21 +59,20 @@ namespace NMG.Core.Reader
                     tableCommand.CommandText =
                         String.Format(
                             @"
-                            select tc.column_name as column_name, tc.data_type as data_type, tc.nullable as nullable, nvl(c.constraint_type, 'CHANGE THIS IN CODE') as constraint_type, 
-                                data_length as data_length
+                             SELECT tc.column_name AS column_name, tc.data_type AS data_type, tc.nullable AS NULLABLE, nvl(c.constraint_type,'CHANGE THIS IN CODE') AS constraint_type, data_length, data_precision, data_scale
                             from all_tab_columns tc
-	                            left outer join (
-			                            all_cons_columns cc
-			                            join all_constraints c on (
-				                            c.owner=cc.owner 
-				                            and c.constraint_name = cc.constraint_name 
-				                            and c.constraint_type <> 'C'
-			                            )
-		                            ) on (
-			                            tc.owner = cc.owner and cc.owner = '{1}'
-			                            and tc.table_name = cc.table_name
-			                            and tc.column_name = cc.column_name
-		                            )
+                                left outer join (
+                                        all_cons_columns cc
+                                        join all_constraints c on (
+                                            c.owner=cc.owner 
+                                            and c.constraint_name = cc.constraint_name 
+                                            and c.constraint_type <> 'C'
+                                        )
+                                    ) on (
+                                        tc.owner = cc.owner and cc.owner = '{1}'
+                                        and tc.table_name = cc.table_name
+                                        and tc.column_name = cc.column_name
+                                    )
                                 where tc.table_name = '{0}'
                             order by tc.table_name, cc.position nulls last, tc.column_id",
                             table.Name, owner);
@@ -82,6 +81,10 @@ namespace NMG.Core.Reader
                         var m = new DataTypeMapper();
                         while (oracleDataReader.Read())
                         {
+                            var dataLength = oracleDataReader["data_length"] as int?;
+                            var dataPrecision = oracleDataReader["data_precision"] as int?;
+                            var dataScale = oracleDataReader["data_scale"] as int?;
+
                             columns.Add(new Column
                                             {
                                                 Name = oracleDataReader["column_name"].ToString(),
@@ -100,9 +103,8 @@ namespace NMG.Core.Reader
                                                     ConstraintTypeResolver.IsUnique(
                                                         oracleDataReader["constraint_type"].ToString()),
                                                 MappedDataType =
-                                                    m.MapFromDBType(oracleDataReader["data_type"].ToString(), null, null,
-                                                                    null).ToString(),
-                                                DataLength = Convert.ToInt16(oracleDataReader["data_length"])
+                                                    m.MapFromDBType(oracleDataReader["data_type"].ToString(), dataLength, dataPrecision, dataScale).ToString(),
+                                                DataLength = dataLength
                                             });
 
                             table.Columns = columns;
