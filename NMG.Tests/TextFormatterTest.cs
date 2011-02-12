@@ -77,7 +77,7 @@ namespace NMG.Tests
 
             Assert.AreEqual("columnName", formatter.FormatText("Column_Name"));
             Assert.AreEqual("columnName", formatter.FormatText("COLUMN_NAME"));
-            Assert.AreEqual("hitman", formatter.FormatText("HitMan"));
+            Assert.AreEqual("hitMan", formatter.FormatText("HitMan"));
         }
 
         [Test] public void ConvertStringToPascalCase()

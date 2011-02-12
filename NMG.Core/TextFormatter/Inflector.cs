@@ -337,7 +337,7 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static bool IsUpperCase(this string word)
         {
-            return (new Regex("[A-Z]")).IsMatch(word);
+            return (new Regex("^[A-Z][^\\s]*")).IsMatch(word);
         }
 
         #region Nested type: InflectorRule
