@@ -96,17 +96,21 @@ namespace NHibernateMappingGenerator
 
         private void ServerTypeSelected(object sender, EventArgs e)
         {
-            if ((ServerType)serverTypeComboBox.SelectedItem == ServerType.Oracle)
+            pOracleOnlyOptions.Hide();
+
+            switch ((ServerType)serverTypeComboBox.SelectedItem)
             {
-                connStrTextBox.Text =StringConstants.ORACLE_CONN_STR_TEMPLATE;
+                case ServerType.Oracle:
+                    connStrTextBox.Text = StringConstants.ORACLE_CONN_STR_TEMPLATE;
+                    pOracleOnlyOptions.Show();
+                    break;
+                case ServerType.SqlServer:
+                    connStrTextBox.Text = StringConstants.SQL_CONN_STR_TEMPLATE;
+                    break;
+                default:
+                    connStrTextBox.Text = StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
+                    break;
             }
-            else if((ServerType) serverTypeComboBox.SelectedItem == ServerType.SqlServer){
-                connStrTextBox.Text =StringConstants.SQL_CONN_STR_TEMPLATE;
-            }
-            else{
-                connStrTextBox.Text =StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
-            }
-            
         }
 
         private void BindData()
@@ -176,16 +180,15 @@ namespace NHibernateMappingGenerator
                 tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
 
-                
-            }
-            catch (Exception ex) { }
-            finally
-            {
                 metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem,
-                                                              connStrTextBox.Text);
+                                              connStrTextBox.Text);
                 PopulateOwners();
                 PopulateTablesAndSequences();
                 Cursor.Current = Cursors.Default;
+            }
+            catch (Exception ex)
+            {
+                errorLabel.Text = ex.Message;
             }
         }
 
