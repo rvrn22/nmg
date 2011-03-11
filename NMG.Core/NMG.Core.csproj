@@ -10,13 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NMG.Core</RootNamespace>
     <AssemblyName>NMG.Core</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -72,6 +73,7 @@
     <Compile Include="Domain\ColumnDetail.cs" />
     <Compile Include="Domain\DotNetTypes.cs" />
     <Compile Include="Domain\Language.cs" />
+    <Compile Include="Domain\PrimaryKeyType.cs" />
     <Compile Include="Domain\Table.cs" />
     <Compile Include="FieldNamingConvention.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />

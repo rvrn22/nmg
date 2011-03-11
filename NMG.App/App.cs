@@ -7,13 +7,17 @@ using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Reader;
 using NMG.Core.Util;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NHibernateMappingGenerator
 {
     public partial class App : Form
     {
         private IMetadataReader metadataReader;
-
+		private readonly BackgroundWorker worker;
+		
         public App()
         {
             InitializeComponent();
@@ -25,6 +29,7 @@ namespace NHibernateMappingGenerator
             tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
             Closing += App_Closing;
+			worker = new BackgroundWorker {WorkerSupportsCancellation = true};
         }
 
         private Language LanguageSelected
@@ -49,7 +54,7 @@ namespace NHibernateMappingGenerator
 
         protected override void OnLoad(EventArgs e)
         {
-            ApplicationSettings applicationSettings = ApplicationSettings.Load();
+            var applicationSettings = ApplicationSettings.Load();
             if (applicationSettings != null)
             {
                 serverTypeComboBox.SelectedItem = applicationSettings.ServerType;
@@ -59,6 +64,7 @@ namespace NHibernateMappingGenerator
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
+				folderTextBox.Text = applicationSettings.FolderPath;
             }
             else
             {
@@ -88,7 +94,8 @@ namespace NHibernateMappingGenerator
                                               AssemblyName = assemblyNameTextBox.Text,
                                               Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
                                               IsFluent = fluentMappingOption.Checked,
-                                              IsAutoProperty = autoPropertyRadioBtn.Checked
+                                              IsAutoProperty = autoPropertyRadioBtn.Checked,
+											  FolderPath = folderTextBox.Text
                                           };
 
             applicationSettings.Save();
@@ -141,14 +148,17 @@ namespace NHibernateMappingGenerator
 
         private void TablesSelectedIndexChanged(object sender, EventArgs e)
         {
-
+			errorLabel.Text = string.Empty;
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
                 entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
                 PopulateTableDetails();
             }
-            catch (Exception) { }
+            catch (Exception ex) 
+			{
+				errorLabel.Text = ex.Message;
+			}
             finally
             {
                 Cursor.Current = Cursors.Default;
@@ -173,6 +183,7 @@ namespace NHibernateMappingGenerator
 
         private void connectBtnClicked(object sender, EventArgs e)
         {
+			errorLabel.Text = string.Empty;
             Cursor.Current = Cursors.WaitCursor;
             try
             {
@@ -256,7 +267,7 @@ namespace NHibernateMappingGenerator
             {
                 errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
                 var table = (Table) selectedItem;
-                //var columnDetails = (Column) dbTableDetailsGridView.DataSource;
+                table.EntityName = entityNameTextBox.Text;
                 Generate(table, false);
                 errorLabel.Text = @"Generated all files successfully.";
             }
@@ -269,7 +280,8 @@ namespace NHibernateMappingGenerator
         private void GenerateAllClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
-            if (tablesComboBox.Items.Count == 0)
+			var items = tablesComboBox.Items;
+            if (items.Count == 0)
             {
                 errorLabel.Text = @"Please connect to a database to populate the tables first.";
                 return;
@@ -279,16 +291,11 @@ namespace NHibernateMappingGenerator
                 Cursor.Current = Cursors.WaitCursor;
                 try
                 {
-                    var serverType = (ServerType) serverTypeComboBox.SelectedItem;
-
-                    foreach (object item in tablesComboBox.Items)
-                    {
-                        var table = (Table) item;
-                        //var metadataReader = MetadataFactory.GetReader(serverType, connStrTextBox.Text);
-                        table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
-                        Generate(table, true);
-                    }
-                    errorLabel.Text = @"Generated all files successfully.";
+                    progressBar.Maximum = 100;
+                    progressBar.Value = 10;
+                    worker.DoWork += DoWork;
+                    worker.RunWorkerCompleted += WorkerCompleted;
+                    worker.RunWorkerAsync();
                 }
                 finally
                 {
@@ -300,6 +307,28 @@ namespace NHibernateMappingGenerator
                 errorLabel.Text = ex.Message;
             }
         }
+		
+        private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar.Value = 100;
+            errorLabel.Text = @"Generated all files successfully.";
+        }
+
+        private void DoWork(object sender, DoWorkEventArgs e)
+        {
+            var items = tablesComboBox.Items;
+            Parallel.ForEach(items.Cast<Table>(), (table, loopState) =>
+            {
+                if(worker != null && worker.CancellationPending && !loopState.IsStopped)
+                {
+                    loopState.Stop();
+                    loopState.Break();
+                    Thread.Sleep(1000);
+                }
+                table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
+                Generate(table, true);
+            });
+        }		
 
         private void Generate(Table table, bool generateAll)
         {
@@ -379,5 +408,13 @@ namespace NHibernateMappingGenerator
             }
             return folderPath;
         }
+		
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            if(worker != null)
+            {
+                worker.CancelAsync();
+            }
+        }		
     }
 }

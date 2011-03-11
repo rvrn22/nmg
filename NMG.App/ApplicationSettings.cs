@@ -17,6 +17,7 @@ namespace NHibernateMappingGenerator
         public bool IsAutoProperty { get; set; }
         public CodeGenerationOptions CodeGenerationOptions { get; set; }
         public FieldGenerationConvention FieldGenerationConvention { get; set; }
+        public string FolderPath { get; set; }
 
         public void Save()
         {

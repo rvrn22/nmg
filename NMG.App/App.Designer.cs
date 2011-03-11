@@ -60,6 +60,8 @@ namespace NHibernateMappingGenerator
             this.basicSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.cancelButton = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.entityNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -213,7 +215,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateButton
             // 
-            this.generateButton.Location = new System.Drawing.Point(14, 177);
+            this.generateButton.Location = new System.Drawing.Point(14, 156);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(106, 23);
             this.generateButton.TabIndex = 8;
@@ -260,7 +262,7 @@ namespace NHibernateMappingGenerator
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 139);
+            this.label3.Location = new System.Drawing.Point(14, 131);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 13;
@@ -268,7 +270,7 @@ namespace NHibernateMappingGenerator
             // 
             // assemblyNameTextBox
             // 
-            this.assemblyNameTextBox.Location = new System.Drawing.Point(105, 135);
+            this.assemblyNameTextBox.Location = new System.Drawing.Point(105, 127);
             this.assemblyNameTextBox.Name = "assemblyNameTextBox";
             this.assemblyNameTextBox.Size = new System.Drawing.Size(514, 20);
             this.assemblyNameTextBox.TabIndex = 14;
@@ -303,7 +305,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateAllBtn
             // 
-            this.generateAllBtn.Location = new System.Drawing.Point(513, 177);
+            this.generateAllBtn.Location = new System.Drawing.Point(387, 156);
             this.generateAllBtn.Name = "generateAllBtn";
             this.generateAllBtn.Size = new System.Drawing.Size(106, 23);
             this.generateAllBtn.TabIndex = 18;
@@ -347,6 +349,8 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.cancelButton);
+            this.groupBox5.Controls.Add(this.progressBar);			
             this.groupBox5.Controls.Add(this.label6);
             this.groupBox5.Controls.Add(this.entityNameTextBox);
             this.groupBox5.Controls.Add(this.folderTextBox);
@@ -365,6 +369,13 @@ namespace NHibernateMappingGenerator
             this.groupBox5.Size = new System.Drawing.Size(1063, 238);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(3, 184);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1054, 13);
+            this.progressBar.TabIndex = 21;			
             // 
             // label6
             // 
@@ -453,6 +464,16 @@ namespace NHibernateMappingGenerator
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Other Options";
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(513, 156);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(106, 23);
+            this.cancelButton.TabIndex = 22;
+            this.cancelButton.Text = "Cance&l";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // partialClassesCheckBox
             // 
@@ -753,6 +774,8 @@ namespace NHibernateMappingGenerator
         private GroupBox groupBox8;
         private CheckBox partialClassesCheckBox;
         private Panel pOracleOnlyOptions;
+        private ProgressBar progressBar;
+        private Button cancelButton;		
     }
 }
 

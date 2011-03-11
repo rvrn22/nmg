@@ -3,29 +3,12 @@ using System.Collections.Generic;
 namespace NMG.Core.Domain
 {
     /// <summary>
-    /// Defines what primary keys are supported.
-    /// </summary>
-    public enum PrimaryKeyType
-    {
-        /// <summary>
-        /// Primary key consisting of one column.
-        /// </summary>
-        PrimaryKey,
-        /// <summary>
-        /// Primary key consisting of two or more columns.
-        /// </summary>
-        CompositeKey,
-        /// <summary>
-        /// Default primary key type.
-        /// </summary>
-        Default = PrimaryKey
-    }
-
-    /// <summary>
     /// Defines a database table entity.
     /// </summary>
     public class Table
     {
+        private string name;
+
         public Table()
         {
             ForeignKeys = new List<ForeignKey>();
@@ -33,12 +16,20 @@ namespace NMG.Core.Domain
             HasManyRelationships = new List<HasMany>();
         }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(EntityName) ? name : EntityName;
+            }
+            set { name = value; }
+        }
         public string Owner { get; set; }
         public PrimaryKey PrimaryKey { get; set; }
         public IList<ForeignKey> ForeignKeys { get; set; }
         public IList<Column> Columns { get; set; }
         public IList<HasMany> HasManyRelationships { get; set; }
+        public string EntityName { get; set; }
 
         public override string ToString()
         {
@@ -79,19 +70,9 @@ namespace NMG.Core.Domain
         IList<Column> Columns { get; set; }
     }
 
-    //public interface IPk : IPrimaryKey
-    //{
-    //    Column KeyColumn { get; set; }
-    //}
-
-    //public interface ICompositeKey : IPrimaryKey
-    //{
-    //    IList<Column> KeyColumns { get; set; }
-    //}
-
     public abstract class AbstractPrimaryKey : IPrimaryKey
     {
-        public AbstractPrimaryKey()
+        protected AbstractPrimaryKey()
         {
             Columns = new List<Column>();
         }
@@ -125,17 +106,10 @@ namespace NMG.Core.Domain
     /// </summary>
     public class CompositeKey : AbstractPrimaryKey
     {
-        //public CompositeKey()
-        //{
-        //    KeyColumns = new List<Column>();
-        //}
-
         public override PrimaryKeyType KeyType
         {
             get { return PrimaryKeyType.CompositeKey; }
         }
-
-        //public IList<Column> KeyColumns { get; set; }
     }
 
     /// <summary>
