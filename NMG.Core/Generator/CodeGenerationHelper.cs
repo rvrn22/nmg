@@ -101,5 +101,20 @@ namespace NMG.Core.Generator
             return type.IsValueType ||
                    (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>));
         }
+
+        public CodeMemberProperty CreateAutoPropertyWithDataMemberAttribute(string type, string propertyName)
+        {
+            var attributes = new CodeAttributeDeclarationCollection { new CodeAttributeDeclaration("DataMember") };
+            var codeMemberProperty = new CodeMemberProperty
+            {
+                Name = propertyName,
+                HasGet = true,
+                HasSet = true,
+                CustomAttributes = attributes,
+                Attributes = MemberAttributes.Public,
+                Type = new CodeTypeReference(type)
+            };
+            return codeMemberProperty;
+        }
     }
 }

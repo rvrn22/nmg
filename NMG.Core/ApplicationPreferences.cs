@@ -34,6 +34,8 @@ namespace NMG.Core
 
         public string EntityName { get; set; }
 
+        public bool GenerateWCFDataContract { get; set; }
+
         public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences

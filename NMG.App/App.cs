@@ -47,6 +47,11 @@ namespace NHibernateMappingGenerator
             get { return partialClassesCheckBox.Checked; }
         }
 
+        public bool GenerateWCFDataContract
+        {
+            get { return wcfDataContractCheckBox.Checked; }
+        }
+
         public bool IsCastle
         {
             get { return castleMappingOption.Checked; }
@@ -127,8 +132,11 @@ namespace NHibernateMappingGenerator
 
             columnName.DataPropertyName = "Name";
             isPrimaryKey.DataPropertyName = "IsPrimaryKey";
+            isForeignKey.DataPropertyName = "IsForeignKey";
+            isUniqueKey.DataPropertyName = "IsUnique";
+            isNullable.DataPropertyName = "IsNullable";
             columnDataType.DataPropertyName = "DataType";
-            cSharpType.DataPropertyName = "MappedType";
+            cSharpType.DataPropertyName = "MappedDataType";
             cSharpType.DataSource = new DotNetTypes();
         }
 
@@ -172,8 +180,7 @@ namespace NHibernateMappingGenerator
             try
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
-                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable,
-                                                                                   ownersComboBox.SelectedItem.ToString());
+                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
             }
             catch (Exception ex)
             {
@@ -372,6 +379,7 @@ namespace NHibernateMappingGenerator
                                                  IsFluent = IsFluent,
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = GeneratePartialClasses,
+                                                 GenerateWCFDataContract = GenerateWCFDataContract,
                                                  ConnectionString = connStrTextBox.Text,                                                 
                                              };
 

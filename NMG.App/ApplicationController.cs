@@ -11,6 +11,7 @@ namespace NHibernateMappingGenerator
         private readonly CodeGenerator codeGenerator;
         private readonly FluentGenerator fluentGenerator;
         private readonly MappingGenerator mappingGenerator;
+        private readonly ContractGenerator contractGenerator;
 
         public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
@@ -18,6 +19,7 @@ namespace NHibernateMappingGenerator
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
+            contractGenerator = new ContractGenerator(applicationPreferences, table);
             if (applicationPreferences.ServerType == ServerType.Oracle)
             {
                 mappingGenerator = new OracleMappingGenerator(applicationPreferences, table);
@@ -42,6 +44,10 @@ namespace NHibernateMappingGenerator
             else
             {
                 mappingGenerator.Generate();
+            }
+            if(applicationPreferences.GenerateWCFDataContract)
+            {
+                contractGenerator.Generate();
             }
         }
     }

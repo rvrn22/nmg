@@ -34,6 +34,13 @@ namespace NMG.Core.Util
             return GetPreferenceFormattedText(text, applicationPreferences, false);
         }
 
+        public static string ReplaceAt(this string text, int index, char charToUse)
+        {
+            var buffer = text.ToCharArray();
+            buffer[index] = charToUse;
+            return new string(buffer);
+        }
+
         public static string MakeFirstCharLowerCase(this string text)
         {
             char lower = char.ToLower(text[0]);

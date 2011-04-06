@@ -42,6 +42,9 @@ namespace NHibernateMappingGenerator
             this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.errorLabel = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderTextBox = new System.Windows.Forms.TextBox();
@@ -60,8 +63,8 @@ namespace NHibernateMappingGenerator
             this.basicSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.label6 = new System.Windows.Forms.Label();
             this.entityNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -89,6 +92,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
+            this.wcfDataContractCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -161,7 +165,10 @@ namespace NHibernateMappingGenerator
             this.columnName,
             this.columnDataType,
             this.cSharpType,
-            this.isPrimaryKey});
+            this.isPrimaryKey,
+            this.isForeignKey,
+            this.isNullable,
+            this.isUniqueKey});
             this.dbTableDetailsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(3, 16);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
@@ -194,6 +201,24 @@ namespace NHibernateMappingGenerator
             this.isPrimaryKey.HeaderText = "Primary Key";
             this.isPrimaryKey.Name = "isPrimaryKey";
             this.isPrimaryKey.ReadOnly = true;
+            // 
+            // isForeignKey
+            // 
+            this.isForeignKey.HeaderText = "Foreign Key";
+            this.isForeignKey.Name = "isForeignKey";
+            this.isForeignKey.ReadOnly = true;
+            // 
+            // isNullable
+            // 
+            this.isNullable.HeaderText = "Nullable";
+            this.isNullable.Name = "isNullable";
+            this.isNullable.ReadOnly = true;
+            // 
+            // isUniqueKey
+            // 
+            this.isUniqueKey.HeaderText = "Unique Key";
+            this.isUniqueKey.Name = "isUniqueKey";
+            this.isUniqueKey.ReadOnly = true;
             // 
             // errorLabel
             // 
@@ -350,7 +375,7 @@ namespace NHibernateMappingGenerator
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.cancelButton);
-            this.groupBox5.Controls.Add(this.progressBar);			
+            this.groupBox5.Controls.Add(this.progressBar);
             this.groupBox5.Controls.Add(this.label6);
             this.groupBox5.Controls.Add(this.entityNameTextBox);
             this.groupBox5.Controls.Add(this.folderTextBox);
@@ -370,12 +395,22 @@ namespace NHibernateMappingGenerator
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(513, 156);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(106, 23);
+            this.cancelButton.TabIndex = 22;
+            this.cancelButton.Text = "Cance&l";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(3, 184);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1054, 13);
-            this.progressBar.TabIndex = 21;			
+            this.progressBar.TabIndex = 21;
             // 
             // label6
             // 
@@ -457,6 +492,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.wcfDataContractCheckBox);
             this.groupBox8.Controls.Add(this.partialClassesCheckBox);
             this.groupBox8.Location = new System.Drawing.Point(212, 152);
             this.groupBox8.Name = "groupBox8";
@@ -464,16 +500,6 @@ namespace NHibernateMappingGenerator
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Other Options";
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Location = new System.Drawing.Point(513, 156);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(106, 23);
-            this.cancelButton.TabIndex = 22;
-            this.cancelButton.Text = "Cance&l";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // partialClassesCheckBox
             // 
@@ -682,6 +708,16 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
+            // wcfDataContractCheckBox
+            // 
+            this.wcfDataContractCheckBox.AutoSize = true;
+            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(6, 43);
+            this.wcfDataContractCheckBox.Name = "wcfDataContractCheckBox";
+            this.wcfDataContractCheckBox.Size = new System.Drawing.Size(171, 17);
+            this.wcfDataContractCheckBox.TabIndex = 1;
+            this.wcfDataContractCheckBox.Text = "Generate WCF Data Contracts";
+            this.wcfDataContractCheckBox.UseVisualStyleBackColor = true;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -767,6 +803,9 @@ namespace NHibernateMappingGenerator
         private DataGridViewTextBoxColumn columnDataType;
         private DataGridViewComboBoxColumn cSharpType;
         private DataGridViewCheckBoxColumn isPrimaryKey;
+        private DataGridViewCheckBoxColumn isForeignKey;
+        private DataGridViewCheckBoxColumn isUniqueKey;
+        private DataGridViewCheckBoxColumn isNullable;
         private RadioButton castleMappingOption;
         private ComboBox ownersComboBox;
         private Label lblOwner;
@@ -775,7 +814,8 @@ namespace NHibernateMappingGenerator
         private CheckBox partialClassesCheckBox;
         private Panel pOracleOnlyOptions;
         private ProgressBar progressBar;
-        private Button cancelButton;		
+        private Button cancelButton;
+        private CheckBox wcfDataContractCheckBox;		
     }
 }
 

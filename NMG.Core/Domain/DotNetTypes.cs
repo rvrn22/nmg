@@ -7,22 +7,22 @@ namespace NMG.Core.Domain
     {
         public DotNetTypes()
         {
-            Add(typeof (String).Name);
-            Add(typeof (Int16).Name);
-            Add(typeof (Int32).Name);
-            Add(typeof (Int64).Name);
+            Add(typeof (String).FullName);
+            Add(typeof (Int16).FullName);
+            Add(typeof (Int32).FullName);
+            Add(typeof (Int64).FullName);
 
-            Add(typeof (double).Name);
+            Add(typeof (double).FullName);
 
-            Add(typeof (DateTime).Name);
-            Add(typeof (TimeSpan).Name);
+            Add(typeof (DateTime).FullName);
+            Add(typeof (TimeSpan).FullName);
 
-            Add(typeof (Byte).Name);
-            Add(typeof (byte[]).Name);
+            Add(typeof (Byte).FullName);
+            Add(typeof (byte[]).FullName);
 
-            Add(typeof (Boolean).Name);
-            Add(typeof (Single).Name);
-            Add(typeof (Guid).Name);
+            Add(typeof (Boolean).FullName);
+            Add(typeof (Single).FullName);
+            Add(typeof (Guid).FullName);
         }
     }
 }

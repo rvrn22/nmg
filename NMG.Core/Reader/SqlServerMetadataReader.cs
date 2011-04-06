@@ -27,7 +27,7 @@ namespace NMG.Core.Reader
             conn.Open();
             using (conn)
             {
-                using (SqlCommand tableDetailsCommand = conn.CreateCommand())
+                using (var tableDetailsCommand = conn.CreateCommand())
                 {
                     tableDetailsCommand.CommandText = string.Format(
                         @"
@@ -48,31 +48,19 @@ namespace NMG.Core.Reader
                         where c.table_name = '{0}'
                         order by c.table_name, c.ordinal_position",
                         table.Name, owner);
-                    using (SqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
+                    using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         while (sqlDataReader.Read())
                         {
                             string columnName = sqlDataReader.GetString(0);
                             string dataType = sqlDataReader.GetString(1);
-                            bool isNullable = sqlDataReader.GetString(2).Equals("YES",
-                                                                                StringComparison.
-                                                                                    CurrentCultureIgnoreCase);
+                            bool isNullable = sqlDataReader.GetString(2).Equals("YES", StringComparison.CurrentCultureIgnoreCase);
                             var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
                             var numericPrecision = sqlDataReader["numeric_precision"] as int?;
                             var numericScale = sqlDataReader["numeric_scale"] as int?;
 
-                            bool isPrimaryKey =
-                                (!sqlDataReader.IsDBNull(3)
-                                     ? sqlDataReader.GetString(3).Equals(
-                                         SqlServerConstraintType.PrimaryKey.ToString(),
-                                         StringComparison.CurrentCultureIgnoreCase)
-                                     : false);
-                            bool isForeignKey =
-                                (!sqlDataReader.IsDBNull(3)
-                                     ? sqlDataReader.GetString(3).Equals(
-                                         SqlServerConstraintType.ForeignKey.ToString(),
-                                         StringComparison.CurrentCultureIgnoreCase)
-                                     : false);
+                            bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
+                            bool isForeignKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
 
                             var m = new DataTypeMapper();
 
@@ -85,8 +73,7 @@ namespace NMG.Core.Reader
                                                 //IsPrimaryKey(selectedTableName.Name, columnName)
                                                 IsForeignKey = isForeignKey,
                                                 // IsFK()
-                                                MappedDataType =
-                                                    m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
+                                                MappedDataType = m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
                                                 DataLength = characterMaxLenth
                                             });
 

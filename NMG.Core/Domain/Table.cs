@@ -56,7 +56,7 @@ namespace NMG.Core.Domain
         public int? DataLength { get; set; }
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
-       
+        public string ForeignKeyEntity { get; set; }
     }
 
     public class ForeignKeyColumn : Column
