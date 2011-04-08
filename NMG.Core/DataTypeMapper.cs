@@ -6,7 +6,7 @@ namespace NMG.Core
     {
         public Type MapFromDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
-            if (dataType == "DATE" || dataType == "datetime" || dataType == "TIMESTAMP" ||
+            if (dataType == "DATE" ||dataType == "date" || dataType == "datetime" || dataType == "TIMESTAMP" ||
                 dataType == "TIMESTAMP WITH TIME ZONE" || dataType == "TIMESTAMP WITH LOCAL TIME ZONE" ||
                 dataType == "smalldatetime")
             {
@@ -16,7 +16,7 @@ namespace NMG.Core
             {
                 return typeof(long);
             }
-            if (dataType == "int" || dataType == "INTERVAL YEAR TO MONTH" || dataType == "BINARY_INTEGER")
+            if (dataType == "int" || dataType == "INTERVAL YEAR TO MONTH" || dataType == "BINARY_INTEGER" || dataType.Contains("int"))
             {
                 return typeof(int);
             }
