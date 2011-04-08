@@ -36,7 +36,7 @@ namespace NMG.Tests.Fluent
                                  IsPrimaryKey = false,
                                  MappedDataType = "string"
                              };
-            Assert.That(mapper.Map(column, new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Name).Not.Nullable().Column(\"Name\");"));
+            Assert.That(mapper.Map(column, new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Name).Column(\"Name\").Not.Nullable().Length(16);"));
         }
     }
 }

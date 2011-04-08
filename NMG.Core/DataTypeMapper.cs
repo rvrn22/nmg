@@ -16,6 +16,14 @@ namespace NMG.Core
             {
                 return typeof(long);
             }
+            if (dataType == "smallint")
+            {
+                return typeof(Int16);
+            }
+            if (dataType == "tinyint")
+            {
+                return typeof(Byte);
+            }
             if (dataType == "int" || dataType == "INTERVAL YEAR TO MONTH" || dataType == "BINARY_INTEGER" || dataType.Contains("int"))
             {
                 return typeof(int);
@@ -49,17 +57,9 @@ namespace NMG.Core
             {
                 return typeof(Single);
             }
-            if (dataType == "smallint")
-            {
-                return typeof(Int16);
-            }
             if (dataType == "uniqueidentifier")
             {
                 return typeof(Guid);
-            }
-            if (dataType == "tinyint")
-            {
-                return typeof(Byte);
             }
 
             // CHAR, CLOB, NCLOB, NCHAR, XMLType, VARCHAR2, nchar, ntext
