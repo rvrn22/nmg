@@ -4,6 +4,7 @@ namespace NMG.Core.Domain
     {
         Oracle,
         SqlServer,
-        PostgreSQL
+        PostgreSQL, 
+        MySQL
     }
 }
