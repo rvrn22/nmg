@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NMG.Core.Domain;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
 
@@ -79,11 +77,6 @@ namespace NMG.Core.Reader
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
             }
             finally
             {
