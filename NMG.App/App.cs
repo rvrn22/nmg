@@ -119,6 +119,9 @@ namespace NHibernateMappingGenerator
                 case ServerType.SqlServer:
                     connStrTextBox.Text = StringConstants.SQL_CONN_STR_TEMPLATE;
                     break;
+                case ServerType.MySQL:
+                    connStrTextBox.Text = StringConstants.MYSQL_CONN_STR_TEMPLATE;
+                    break;
                 default:
                     connStrTextBox.Text = StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
                     break;
