@@ -16,6 +16,10 @@ namespace NMG.Core
             {
                 metadataReader = new SqlServerMetadataReader(connectionStr);
             }
+            else if (serverType == ServerType.MySQL)
+            {
+                metadataReader = new MysqlMetadataReader(connectionStr);
+            }
             else
             {
                 metadataReader = new NpgsqlMetadataReader(connectionStr);
