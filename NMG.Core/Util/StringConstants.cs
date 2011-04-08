@@ -9,5 +9,8 @@
 
         public static string POSTGRESQL_CONN_STR_TEMPLATE =
             "server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=password;";
+
+        public static string MYSQL_CONN_STR_TEMPLATE =
+            "Server=localhost;Port=3306;Database=letrunghieu;Uid=root;Pwd=a;";
     }
 }
