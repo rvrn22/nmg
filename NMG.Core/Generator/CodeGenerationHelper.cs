@@ -6,11 +6,17 @@ namespace NMG.Core.Generator
 {
     public class CodeGenerationHelper
     {
-        public CodeCompileUnit GetCodeCompileUnit(string nameSpace, string className)
+        public CodeCompileUnit GetCodeCompileUnit(string nameSpace, string className, params bool[] isCastle )
         {
             var codeCompileUnit = new CodeCompileUnit();
             var codeNamespace = new CodeNamespace(nameSpace);
             var codeTypeDeclaration = new CodeTypeDeclaration(className);
+            if (null != isCastle && isCastle.Length > 0  && Convert.ToBoolean(isCastle[0]))
+            {
+                var codeAttributeDeclaration = new CodeAttributeDeclaration("ActiveRecord");
+                codeTypeDeclaration.BaseTypes.Add(new CodeTypeReference("ActiveRecordValidationBase<" + className + ">"));
+                codeTypeDeclaration.CustomAttributes.Add(codeAttributeDeclaration);
+            }
             codeNamespace.Types.Add(codeTypeDeclaration);
             codeCompileUnit.Namespaces.Add(codeNamespace);
             return codeCompileUnit;

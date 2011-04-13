@@ -335,11 +335,20 @@ namespace NHibernateMappingGenerator
                     loopState.Break();
                     Thread.Sleep(1000);
                 }
-                table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
+                //table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
+                string name = "";
+                if (ownersComboBox.InvokeRequired)
+                {
+                    ownersComboBox.Invoke(new MethodInvoker(delegate { name = ownersComboBox.SelectedItem.ToString(); }));
+                }
+                else
+                {
+                    name = ownersComboBox.SelectedItem.ToString();
+                }
+                table.Columns = metadataReader.GetTableDetails(table, name);
                 Generate(table, true);
             });
-        }		
-
+        }       
         private void Generate(Table table, bool generateAll)
         {
             ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, generateAll);
@@ -355,10 +364,18 @@ namespace NHibernateMappingGenerator
         private ApplicationPreferences GetApplicationPreferences(Table tableName, bool all)
         {
             string sequence = string.Empty;
-
-            if (sequencesComboBox.SelectedItem != null && !all)
+            object sequenceName = null;
+            if (sequencesComboBox.InvokeRequired)
             {
-                sequence = sequencesComboBox.SelectedItem.ToString();
+                sequencesComboBox.Invoke(new MethodInvoker(delegate { sequenceName = sequencesComboBox.SelectedItem; }));
+            }
+            else
+            {
+                sequenceName = sequencesComboBox.SelectedItem;
+            }
+            if (sequenceName != null && !all)
+            {
+                sequence = sequenceName.ToString();
             }
 
             var folderPath = AddSlashToFolderPath(folderTextBox.Text);
@@ -366,10 +383,18 @@ namespace NHibernateMappingGenerator
             {
                 Directory.CreateDirectory(folderPath);
             }
-            
+            object serverType = null;
+            if (serverTypeComboBox.InvokeRequired)
+            {
+                serverTypeComboBox.Invoke(new MethodInvoker(delegate { serverType = serverTypeComboBox.SelectedItem; }));
+            }
+            else
+            {
+                serverType = serverTypeComboBox.SelectedItem;
+            }
             var applicationPreferences = new ApplicationPreferences
                                              {
-                                                 ServerType = (ServerType) serverTypeComboBox.SelectedItem,
+                                                 ServerType = (ServerType)serverType,
                                                  FolderPath = folderPath,
                                                  TableName = tableName.Name,
                                                  NameSpace = nameSpaceTextBox.Text,

@@ -28,7 +28,8 @@ namespace NMG.Core.Generator
         {
             var codeGenerationHelper = new CodeGenerationHelper();
             // This is where we construct the constructor
-            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Table.Name.GetFormattedText().MakeSingular());
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Table.Name.GetFormattedText().MakeSingular(),true);
+            
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
             newType.IsPartial = applicationPreferences.GeneratePartialClasses;
@@ -124,10 +125,10 @@ namespace NMG.Core.Generator
 
         private static string AddStandardHeader(string entireContent)
         {
+            entireContent = "using Castle.ActiveRecord; \n" + entireContent;
             entireContent = "using System; \n" + entireContent;
             entireContent = "using System.Text; \n" + entireContent;
             entireContent = "using System.Collections.Generic; \n" + entireContent;
-            entireContent = "using System; \n" + entireContent;
             return entireContent;
         }
 
