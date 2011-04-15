@@ -90,20 +90,28 @@ namespace NMG.Core.Reader
         {
             var owners = new List<string>();
             var conn = new MySqlConnection(connectionStr);
+            
             conn.Open();
-            using (conn)
+            try
             {
-                var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = @"select distinct table_schema from information_schema.tables
+                using (conn)
+                {
+                    var tableCommand = conn.CreateCommand();
+                    tableCommand.CommandText = @"select distinct table_schema from information_schema.tables
                                                 union
                                                 select schema_name from information_schema.schemata
                                                 ";
-                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (sqlDataReader.Read())
-                {
-                    var ownerName = sqlDataReader.GetString(0);
-                    owners.Add(ownerName);
+                    var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                    while (sqlDataReader.Read())
+                    {
+                        var ownerName = sqlDataReader.GetString(0);
+                        owners.Add(ownerName);
+                    }
                 }
+            }
+            finally
+            {
+                conn.Close();
             }
 
             return owners;
@@ -114,16 +122,23 @@ namespace NMG.Core.Reader
             var tables = new List<Table>();
             var conn = new MySqlConnection(connectionStr);
             conn.Open();
-            using (conn)
+            try
             {
-                var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
-                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (sqlDataReader.Read())
+                using (conn)
                 {
-                    var tableName = sqlDataReader.GetString(0);
-                    tables.Add(new Table { Name = tableName });
+                    var tableCommand = conn.CreateCommand();
+                    tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
+                    var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                    while (sqlDataReader.Read())
+                    {
+                        var tableName = sqlDataReader.GetString(0);
+                        tables.Add(new Table { Name = tableName });
+                    }
                 }
+            }
+            finally
+            {
+                conn.Close();
             }
             tables.Sort((x, y) => x.Name.CompareTo(y.Name));
             return tables;
@@ -137,24 +152,31 @@ namespace NMG.Core.Reader
             var conn = new MySqlConnection(connectionStr);
             conn.Open();
             string tableName = "";
-            using (conn)
+            try
             {
-                MySqlCommand seqCommand = conn.CreateCommand();
-                seqCommand.CommandText = @"select 
+                using (conn)
+                {
+                    MySqlCommand seqCommand = conn.CreateCommand();
+                    seqCommand.CommandText = @"select 
                 b.sequence_name
                 from
                 information_schema.columns a
                 inner join information_schema.sequences b on a.column_default like 'nextval(\''||b.sequence_name||'%'
                 where
                 a.table_schema='" + owner + "' and a.table_name='" + tablename + "' and a.column_name='" + column + "'";
-                MySqlDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                    MySqlDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
 
-                while (seqReader.Read())
-                {
-                    tableName = seqReader.GetString(0);
+                    while (seqReader.Read())
+                    {
+                        tableName = seqReader.GetString(0);
 
-                    // sequences.Add(tableName);
+                        // sequences.Add(tableName);
+                    }
                 }
+            }
+            finally
+            {
+                conn.Close();
             }
             return tableName;
         }
@@ -163,17 +185,24 @@ namespace NMG.Core.Reader
             var sequences = new List<string>();
             var conn = new MySqlConnection(connectionStr);
             conn.Open();
-            using (conn)
+            try
             {
-                MySqlCommand seqCommand = conn.CreateCommand();
-                seqCommand.CommandText = "select sequence_name from information_schema.sequences";
-                MySqlDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (seqReader.Read())
+                using (conn)
                 {
-                    string tableName = seqReader.GetString(0);
+                    MySqlCommand seqCommand = conn.CreateCommand();
+                    seqCommand.CommandText = "select sequence_name from information_schema.sequences";
+                    MySqlDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
+                    while (seqReader.Read())
+                    {
+                        string tableName = seqReader.GetString(0);
 
-                    sequences.Add(tableName);
+                        sequences.Add(tableName);
+                    }
                 }
+            }
+            finally
+            {
+                conn.Close();
             }
             return sequences;
         }
@@ -236,11 +265,14 @@ namespace NMG.Core.Reader
         {
             var conn = new MySqlConnection(connectionStr);
             conn.Open();
-            using (conn)
+            object referencedTableName;
+            try
             {
-                MySqlCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format(
-                    @"SELECT
+                using (conn)
+                {
+                    MySqlCommand tableCommand = conn.CreateCommand();
+                    tableCommand.CommandText = String.Format(
+                        @"SELECT
                     ke.referenced_table_name parent,
                     ke.table_name child,
                     ke.constraint_name
@@ -250,11 +282,15 @@ namespace NMG.Core.Reader
                     ke.referenced_table_name IS NOT NULL and ke.table_name = '{0}' and ke.column_name = '{1}'
                     ORDER BY
                     ke.table_name",
-                    selectedTableName, columnName);
-                object referencedTableName = tableCommand.ExecuteScalar();
-
-                return (string)referencedTableName;
+                        selectedTableName, columnName);
+                    referencedTableName = tableCommand.ExecuteScalar();
+                }
             }
+            finally
+            {
+                conn.Close();
+            }
+            return (string)referencedTableName;
         }
 
 
@@ -265,47 +301,46 @@ namespace NMG.Core.Reader
             var hasManyRelationships = new List<HasMany>();
             var conn = new MySqlConnection(connectionStr);
             conn.Open();
-            using (conn)
+            try
             {
-                using (var command = new MySqlCommand())
+                using (conn)
                 {
-                    command.Connection = conn;
-                    command.CommandText =
-                        String.Format(
-                            @"
-                        select DISTINCT
-	                         b.TABLE_NAME,
-	                         c.TABLE_NAME
-                        from
-	                        INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
-	                        on
-	                        a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
-	                        a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
-	                        on
-	                        a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
-	                        a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
-                        where
-	                        b.TABLE_NAME = '{0}'
-                        order by
-	                        1,2",
-                            table.Name);
-                    MySqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var command = new MySqlCommand())
                     {
-                        hasManyRelationships.Add(new HasMany
-                        {
-                            Reference = reader.GetString(1)
-                        });
-                    }
+                        command.Connection = conn;
+                        command.CommandText =
+                            String.Format(
+                                @"
+                          SELECT
+                    ke.referenced_table_name parent,
+                    ke.table_name child,
+                    ke.constraint_name
+                    FROM
+                    information_schema.KEY_COLUMN_USAGE ke
+                    WHERE
+                    ke.referenced_table_name = '{0}' and ke.constraint_schema = '{1}'
+                    ORDER BY
+                    ke.table_name",
+                                table.Name, conn.Database);
+                        MySqlDataReader reader = command.ExecuteReader();
 
-                    return hasManyRelationships;
+                        while (reader.Read())
+                        {
+                            hasManyRelationships.Add(new HasMany
+                            {
+                                Reference = reader.GetString(1)
+                            });
+                        }
+
+                     
+                    }
                 }
             }
+            finally
+            {
+                conn.Close();
+            }
+            return hasManyRelationships;
         }
     }
   
