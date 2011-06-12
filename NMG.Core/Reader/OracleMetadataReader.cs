@@ -166,8 +166,8 @@ namespace NMG.Core.Reader
             conn.Open();
             using (conn)
             {
-                OracleCommand seqCommand = conn.CreateCommand();
-                seqCommand.CommandText = "select * from all_sequences";
+                var seqCommand = conn.CreateCommand();
+                seqCommand.CommandText = "select sequence_name from all_sequences";
                 OracleDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
                 while (seqReader.Read())
                 {
