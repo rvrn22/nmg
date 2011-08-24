@@ -24,6 +24,7 @@ namespace NMG.Core
 
         public string Sequence { get; set; }
         public bool IsFluent { get; set; }
+        public bool IsNhFluent { get; set; }
         public bool IsCastle { get; set; }
         public bool GeneratePartialClasses { get; set; }
         public string Prefix { get; set; }
@@ -43,7 +44,7 @@ namespace NMG.Core
                                       FieldGenerationConvention = FieldGenerationConvention.AutoProperty,
                                       FieldNamingConvention = FieldNamingConvention.SameAsDatabase,
                                       Prefix = string.Empty,
-                                      IsFluent = true,
+                                      IsNhFluent = true,
                                       Language = Language.CSharp,
                                   };
             return preferences;

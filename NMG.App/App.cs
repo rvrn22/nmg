@@ -22,11 +22,12 @@ namespace NHibernateMappingGenerator
         {
             InitializeComponent();
             ownersComboBox.SelectedIndexChanged += OwnersSelectedIndexChanged;
-            tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
+//            tablesComboBox.SelectedIndexChanged += TablesSelectedIndexChanged;
+            tablesListBox.SelectedIndexChanged += TablesListSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             dbTableDetailsGridView.DataError += DataError;
             BindData();
-            tablesComboBox.Enabled = false;
+//            tablesComboBox.Enabled = false;
             sequencesComboBox.Enabled = false;
             Closing += App_Closing;
 			worker = new BackgroundWorker {WorkerSupportsCancellation = true};
@@ -35,6 +36,11 @@ namespace NHibernateMappingGenerator
         private Language LanguageSelected
         {
             get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
+        }
+
+        public bool IsNhFluent
+        {
+            get { return nhFluentMappingStyle.Checked; }
         }
 
         public bool IsFluent
@@ -157,14 +163,17 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void TablesSelectedIndexChanged(object sender, EventArgs e)
+        private void TablesListSelectedIndexChanged(object sender, EventArgs e)
         {
 			errorLabel.Text = string.Empty;
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
-                entityNameTextBox.Text = tablesComboBox.SelectedItem.ToString();
-                PopulateTableDetails();
+                if (tablesListBox.SelectedItems.Count == 1)
+                {
+                    entityNameTextBox.Text = tablesListBox.SelectedItem.ToString();
+                    PopulateTableDetails();
+                }
             }
             catch (Exception ex) 
 			{
@@ -179,7 +188,7 @@ namespace NHibernateMappingGenerator
         private void PopulateTableDetails()
         {
             errorLabel.Text = string.Empty;
-            var selectedTable = (Table) tablesComboBox.SelectedItem;
+            var selectedTable = (Table) tablesListBox.SelectedItem;
             try
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
@@ -197,8 +206,10 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
-                tablesComboBox.DataSource = null;
-                tablesComboBox.Items.Clear();
+                tablesListBox.DataSource = null;
+                tablesListBox.Items.Clear();
+//                tablesComboBox.DataSource = null;
+//                tablesComboBox.Items.Clear();
                 sequencesComboBox.Items.Clear();
 
                 metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem,
@@ -226,7 +237,8 @@ namespace NHibernateMappingGenerator
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            tablesComboBox.DataBindings.Clear();
+//            tablesComboBox.DataBindings.Clear();
+            tablesListBox.DataBindings.Clear();
 
             try
             {
@@ -236,12 +248,15 @@ namespace NHibernateMappingGenerator
                 }
 
                 var tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
-                tablesComboBox.DataSource = tables;
+//                tablesComboBox.DataSource = tables;
+                tablesListBox.DataSource = tables;
                 var hasTables = tables.Count > 0;
-                tablesComboBox.Enabled = hasTables;
+//                tablesComboBox.Enabled = hasTables;
+                tablesListBox.Enabled = hasTables;
                 if (hasTables)
                 {
-                    tablesComboBox.SelectedIndex = 0;
+//                    tablesComboBox.SelectedIndex = 0;
+                    tablesListBox.SelectedIndex = 0;
                 }
                 if(metadataReader.GetSequences()!=null)
                 sequencesComboBox.Items.AddRange(metadataReader.GetSequences().ToArray());
@@ -267,18 +282,21 @@ namespace NHibernateMappingGenerator
         private void GenerateClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
-            object selectedItem = tablesComboBox.SelectedItem;
-            if (selectedItem == null || dbTableDetailsGridView.DataSource == null)
+            var selectedItems = tablesListBox.SelectedItems;
+            if (selectedItems.Count == 0)
             {
-                errorLabel.Text = @"Please select a table above to generate the mapping files.";
+                errorLabel.Text = @"Please select table(s) above to generate the mapping files.";
                 return;
             }
             try
             {
-                errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
-                var table = (Table) selectedItem;
-                table.EntityName = entityNameTextBox.Text;
-                Generate(table, false);
+                foreach (var selectedItem in selectedItems)
+                {
+                    errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
+                    var table = (Table)selectedItem;
+                    table.EntityName = entityNameTextBox.Text;
+                    Generate(table, false);                
+                }
                 errorLabel.Text = @"Generated all files successfully.";
             }
             catch (Exception ex)
@@ -290,7 +308,7 @@ namespace NHibernateMappingGenerator
         private void GenerateAllClicked(object sender, EventArgs e)
         {
             errorLabel.Text = string.Empty;
-			var items = tablesComboBox.Items;
+			var items = tablesListBox.Items;
             if (items.Count == 0)
             {
                 errorLabel.Text = @"Please connect to a database to populate the tables first.";
@@ -326,7 +344,7 @@ namespace NHibernateMappingGenerator
 
         private void DoWork(object sender, DoWorkEventArgs e)
         {
-            var items = tablesComboBox.Items;
+            var items = tablesListBox.Items;
             Parallel.ForEach(items.Cast<Table>(), (table, loopState) =>
             {
                 if(worker != null && worker.CancellationPending && !loopState.IsStopped)
@@ -405,6 +423,7 @@ namespace NHibernateMappingGenerator
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
+                                                 IsNhFluent = IsNhFluent,
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = GeneratePartialClasses,
                                                  GenerateWCFDataContract = GenerateWCFDataContract,

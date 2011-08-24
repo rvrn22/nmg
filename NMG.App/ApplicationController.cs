@@ -10,6 +10,7 @@ namespace NHibernateMappingGenerator
         private readonly CastleGenerator castleGenerator;
         private readonly CodeGenerator codeGenerator;
         private readonly FluentGenerator fluentGenerator;
+        private readonly NHFluentGenerator nhFluentGenerator;
         private readonly MappingGenerator mappingGenerator;
         private readonly ContractGenerator contractGenerator;
 
@@ -18,6 +19,7 @@ namespace NHibernateMappingGenerator
             this.applicationPreferences = applicationPreferences;
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
+            nhFluentGenerator = new NHFluentGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
             contractGenerator = new ContractGenerator(applicationPreferences, table);
             if (applicationPreferences.ServerType == ServerType.Oracle)
@@ -33,7 +35,11 @@ namespace NHibernateMappingGenerator
         public void Generate()
         {
             codeGenerator.Generate();
-            if (applicationPreferences.IsFluent)
+            if (applicationPreferences.IsNhFluent)
+            {
+                nhFluentGenerator.Generate();
+            }
+            else if (applicationPreferences.IsFluent)
             {
                 fluentGenerator.Generate();
             }

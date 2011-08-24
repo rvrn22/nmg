@@ -35,7 +35,6 @@ namespace NHibernateMappingGenerator
             this.connStrTextBox = new System.Windows.Forms.TextBox();
             this.dbConnStrLabel = new System.Windows.Forms.Label();
             this.connectBtn = new System.Windows.Forms.Button();
-            this.tablesComboBox = new System.Windows.Forms.ComboBox();
             this.sequencesComboBox = new System.Windows.Forms.ComboBox();
             this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
             this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,6 +61,7 @@ namespace NHibernateMappingGenerator
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.basicSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.tablesListBox = new System.Windows.Forms.ListBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -73,12 +73,14 @@ namespace NHibernateMappingGenerator
             this.lblOwner = new System.Windows.Forms.Label();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.wcfDataContractCheckBox = new System.Windows.Forms.CheckBox();
             this.partialClassesCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.propertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.fieldRadioBtn = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.nhFluentMappingStyle = new System.Windows.Forms.RadioButton();
             this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
             this.hbmMappingOption = new System.Windows.Forms.RadioButton();
@@ -92,7 +94,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.wcfDataContractCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -135,15 +136,6 @@ namespace NHibernateMappingGenerator
             this.connectBtn.UseVisualStyleBackColor = true;
             this.connectBtn.Click += new System.EventHandler(this.connectBtnClicked);
             // 
-            // tablesComboBox
-            // 
-            this.tablesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.tablesComboBox.FormattingEnabled = true;
-            this.tablesComboBox.Location = new System.Drawing.Point(154, 71);
-            this.tablesComboBox.Name = "tablesComboBox";
-            this.tablesComboBox.Size = new System.Drawing.Size(449, 21);
-            this.tablesComboBox.TabIndex = 3;
-            // 
             // sequencesComboBox
             // 
             this.sequencesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -169,11 +161,10 @@ namespace NHibernateMappingGenerator
             this.isForeignKey,
             this.isNullable,
             this.isUniqueKey});
-            this.dbTableDetailsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dbTableDetailsGridView.Location = new System.Drawing.Point(3, 16);
+            this.dbTableDetailsGridView.Location = new System.Drawing.Point(243, 16);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
-            this.dbTableDetailsGridView.Size = new System.Drawing.Size(1057, 331);
+            this.dbTableDetailsGridView.Size = new System.Drawing.Size(817, 331);
             this.dbTableDetailsGridView.TabIndex = 5;
             // 
             // columnName
@@ -364,6 +355,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.tablesListBox);
             this.groupBox6.Controls.Add(this.dbTableDetailsGridView);
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(3, 106);
@@ -371,6 +363,16 @@ namespace NHibernateMappingGenerator
             this.groupBox6.Size = new System.Drawing.Size(1063, 350);
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
+            // 
+            // tablesListBox
+            // 
+            this.tablesListBox.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tablesListBox.FormattingEnabled = true;
+            this.tablesListBox.Location = new System.Drawing.Point(3, 16);
+            this.tablesListBox.Name = "tablesListBox";
+            this.tablesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.tablesListBox.Size = new System.Drawing.Size(234, 331);
+            this.tablesListBox.TabIndex = 6;
             // 
             // groupBox5
             // 
@@ -437,7 +439,6 @@ namespace NHibernateMappingGenerator
             this.groupBox4.Controls.Add(this.dbConnStrLabel);
             this.groupBox4.Controls.Add(this.serverTypeComboBox);
             this.groupBox4.Controls.Add(this.connStrTextBox);
-            this.groupBox4.Controls.Add(this.tablesComboBox);
             this.groupBox4.Controls.Add(this.connectBtn);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
@@ -448,8 +449,8 @@ namespace NHibernateMappingGenerator
             // 
             // pOracleOnlyOptions
             // 
-            this.pOracleOnlyOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pOracleOnlyOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pOracleOnlyOptions.Controls.Add(this.label5);
             this.pOracleOnlyOptions.Controls.Add(this.sequencesComboBox);
             this.pOracleOnlyOptions.Location = new System.Drawing.Point(603, 54);
@@ -500,6 +501,16 @@ namespace NHibernateMappingGenerator
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Other Options";
+            // 
+            // wcfDataContractCheckBox
+            // 
+            this.wcfDataContractCheckBox.AutoSize = true;
+            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(6, 43);
+            this.wcfDataContractCheckBox.Name = "wcfDataContractCheckBox";
+            this.wcfDataContractCheckBox.Size = new System.Drawing.Size(171, 17);
+            this.wcfDataContractCheckBox.TabIndex = 1;
+            this.wcfDataContractCheckBox.Text = "Generate WCF Data Contracts";
+            this.wcfDataContractCheckBox.UseVisualStyleBackColor = true;
             // 
             // partialClassesCheckBox
             // 
@@ -557,6 +568,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.nhFluentMappingStyle);
             this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
@@ -566,6 +578,17 @@ namespace NHibernateMappingGenerator
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Mapping Style";
+            // 
+            // nhFluentMappingStyle
+            // 
+            this.nhFluentMappingStyle.AutoSize = true;
+            this.nhFluentMappingStyle.Location = new System.Drawing.Point(6, 88);
+            this.nhFluentMappingStyle.Name = "nhFluentMappingStyle";
+            this.nhFluentMappingStyle.Size = new System.Drawing.Size(135, 17);
+            this.nhFluentMappingStyle.TabIndex = 9;
+            this.nhFluentMappingStyle.TabStop = true;
+            this.nhFluentMappingStyle.Text = "NH 3.2 Fluent Mapping";
+            this.nhFluentMappingStyle.UseVisualStyleBackColor = true;
             // 
             // castleMappingOption
             // 
@@ -708,16 +731,6 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // wcfDataContractCheckBox
-            // 
-            this.wcfDataContractCheckBox.AutoSize = true;
-            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(6, 43);
-            this.wcfDataContractCheckBox.Name = "wcfDataContractCheckBox";
-            this.wcfDataContractCheckBox.Size = new System.Drawing.Size(171, 17);
-            this.wcfDataContractCheckBox.TabIndex = 1;
-            this.wcfDataContractCheckBox.Text = "Generate WCF Data Contracts";
-            this.wcfDataContractCheckBox.UseVisualStyleBackColor = true;
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -758,7 +771,6 @@ namespace NHibernateMappingGenerator
         private System.Windows.Forms.TextBox connStrTextBox;
         private System.Windows.Forms.Label dbConnStrLabel;
         private System.Windows.Forms.Button connectBtn;
-        private System.Windows.Forms.ComboBox tablesComboBox;
         private System.Windows.Forms.ComboBox sequencesComboBox;
         private System.Windows.Forms.DataGridView dbTableDetailsGridView;
         private System.Windows.Forms.Label errorLabel;
@@ -815,7 +827,9 @@ namespace NHibernateMappingGenerator
         private Panel pOracleOnlyOptions;
         private ProgressBar progressBar;
         private Button cancelButton;
-        private CheckBox wcfDataContractCheckBox;		
+        private CheckBox wcfDataContractCheckBox;
+        private RadioButton nhFluentMappingStyle;
+        private ListBox tablesListBox;		
     }
 }
 

@@ -86,6 +86,7 @@
     <Compile Include="Generator\CastleGenerator.cs" />
     <Compile Include="Generator\CodeGenerationHelper.cs" />
     <Compile Include="Generator\ContractGenerator.cs" />
+    <Compile Include="Generator\NHFluentGenerator.cs" />
     <Compile Include="Generator\FluentGenerator.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />
     <Compile Include="Generator\CodeGenerator.cs" />
