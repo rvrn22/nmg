@@ -10,7 +10,7 @@ namespace NMG.Core.Generator
 {
     public class NHFluentGenerator : AbstractCodeGenerator
     {
-        private const string TABS = "\t\t\t";
+        
         private readonly ApplicationPreferences applicationPreferences;
 
         public NHFluentGenerator(ApplicationPreferences applicationPreferences, Table table)
@@ -49,7 +49,7 @@ namespace NMG.Core.Generator
 
             if(UsesSequence)
             {
-                constructor.Statements.Add(new CodeSnippetStatement(String.Format("\t\t\tId(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
+                constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
                     Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, applicationPreferences.Sequence)));
             }
             else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
@@ -92,7 +92,7 @@ namespace NMG.Core.Generator
             var dataTypeMapper = new DataTypeMapper();
             bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
             string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
-            return new CodeSnippetStatement(string.Format("\t\t\tId(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
+            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
         }
 
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, ITextFormatter formatter)

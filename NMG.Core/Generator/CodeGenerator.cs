@@ -29,7 +29,7 @@ namespace NMG.Core.Generator
         public CodeCompileUnit GetCompileUnit()
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, Formatter.FormatSingular(Table.Name));
+			var compileUnit = codeGenerationHelper.GetCodeCompileUnitWithInheritanceAndInterface(nameSpace, Formatter.FormatSingular(Table.Name), applicationPreferences.InheritenceAndInterfaces);
 
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
@@ -48,9 +48,11 @@ namespace NMG.Core.Generator
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.References)));
             }
 
+			var instantiationStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
             {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty("IList<" + Formatter.FormatSingular(hasMany.Reference) + ">",Formatter.FormatPlural(hasMany.Reference)));
+				newType.Members.Add(codeGenerationHelper.CreateAutoProperty(applicationPreferences.ForeignEntityCollectionType + "<" + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference)));
+				instantiationStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(applicationPreferences.ForeignEntityCollectionType), Formatter.FormatSingular(hasMany.Reference))));
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
@@ -58,8 +60,9 @@ namespace NMG.Core.Generator
                 var mapFromDbType = mapper.MapFromDBType(column.DataType, null, null, null);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable));
             }
-            
-            var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
+
+			var constructor = new CodeConstructor { Attributes = MemberAttributes.Public};
+			constructor.Statements.AddRange(instantiationStatements);
             newType.Members.Add(constructor);
             return compileUnit;
         }

@@ -46,7 +46,7 @@ namespace NMG.Core.Generator
                     foreach (var foreignKeyTable in tableDetails.HasManyRelationships)
                     {
                         var fkEntityName = foreignKeyTable.Reference.MakeSingular();
-                        newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute("IList<" + fkEntityName + ">", foreignKeyTable.ReferenceColumn));
+						newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(applicationData.ForeignEntityCollectionType + "<" + fkEntityName + ">", foreignKeyTable.ReferenceColumn));
                     }
 
                     var primaryKeyType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, null, null);

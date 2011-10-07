@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -8,7 +9,7 @@ namespace NHibernateMappingGenerator
 {
     public class ApplicationSettings
     {
-        public string ConnectionString { get; set; }
+    	public string ConnectionString { get; set; }
         public ServerType ServerType { get; set; }
         public string NameSpace { get; set; }
         public string AssemblyName { get; set; }
@@ -19,7 +20,15 @@ namespace NHibernateMappingGenerator
         public FieldGenerationConvention FieldGenerationConvention { get; set; }
         public string FolderPath { get; set; }
 
-        public void Save()
+		public string ForeignEntityCollectionType { get; set; }
+		public string InheritenceAndInterfaces { get; set; } 
+
+        public FieldNamingConvention FieldNamingConvention { get; set; }
+		public string Prefix { get; set; }
+        public bool IsNhFluent { get; set; }
+        public bool IsCastle { get; set; }
+
+		public void Save()
         {
             var streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);
             XmlSerializer xmlSerializer;

@@ -17,12 +17,28 @@ namespace NMG.Core.Generator
                 codeTypeDeclaration.BaseTypes.Add(new CodeTypeReference("ActiveRecordValidationBase<" + className + ">"));
                 codeTypeDeclaration.CustomAttributes.Add(codeAttributeDeclaration);
             }
+
             codeNamespace.Types.Add(codeTypeDeclaration);
             codeCompileUnit.Namespaces.Add(codeNamespace);
             return codeCompileUnit;
         }
 
-        public CodeMemberProperty CreateProperty(Type type, string propertyName)
+		public CodeCompileUnit GetCodeCompileUnitWithInheritanceAndInterface(string nameSpace, string className, string inheritanceAndInterface, params bool[] isCastle)
+		{
+			var codeCompileUnit = GetCodeCompileUnit(nameSpace, className, isCastle);
+			if(!string.IsNullOrEmpty(inheritanceAndInterface)) {
+				foreach( CodeNamespace ns in codeCompileUnit.Namespaces) 
+				{
+					foreach ( CodeTypeDeclaration type in ns.Types) 
+					{
+						foreach (var classOrInterface in inheritanceAndInterface.Split(',')) type.BaseTypes.Add(new CodeTypeReference(classOrInterface.Replace("<T>", "<" + className + ">").Trim()));
+					}
+				}
+			}
+			return codeCompileUnit;
+		}
+
+    	public CodeMemberProperty CreateProperty(Type type, string propertyName)
         {
             var codeMemberProperty = new CodeMemberProperty
                                          {
@@ -122,5 +138,12 @@ namespace NMG.Core.Generator
             };
             return codeMemberProperty;
         }
+
+    	public string InstatiationObject(string foreignEntityCollectionType)
+    	{
+			if (foreignEntityCollectionType.Contains("List")) return "List";
+			if (foreignEntityCollectionType.Contains("Set")) return "HashedSet";
+    		return foreignEntityCollectionType;
+    	}
     }
 }

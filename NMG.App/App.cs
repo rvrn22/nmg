@@ -76,13 +76,28 @@ namespace NHibernateMappingGenerator
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
 				folderTextBox.Text = applicationSettings.FolderPath;
-            }
+            	textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
+            	comboBoxForeignCollection.Text = applicationSettings.ForeignEntityCollectionType;
+
+            	fluentMappingOption.Checked = applicationSettings.IsFluent;
+            	nhFluentMappingStyle.Checked = applicationSettings.IsNhFluent;
+            	castleMappingOption.Checked = applicationSettings.IsCastle;
+
+				prefixRadioButton.Checked = !string.IsNullOrEmpty(applicationSettings.Prefix);
+				prefixTextBox.Text = applicationSettings.Prefix;
+				camelCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
+				pascalCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.PascalCase);
+				sameAsDBRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
+
+				sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked && !camelCasedRadioButton.Checked);
+			}
             else
             {
                 autoPropertyRadioBtn.Checked = true;
                 sameAsDBRadioButton.Checked = true;
                 cSharpRadioButton.Checked = true;
                 fluentMappingOption.Checked = true;
+            	comboBoxForeignCollection.Text = "IList";
             }
             if (!prefixRadioButton.Checked)
             {
@@ -106,7 +121,13 @@ namespace NHibernateMappingGenerator
                                               Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
                                               IsFluent = fluentMappingOption.Checked,
                                               IsAutoProperty = autoPropertyRadioBtn.Checked,
-											  FolderPath = folderTextBox.Text
+											  FolderPath = folderTextBox.Text,
+											  InheritenceAndInterfaces = textBoxInheritence.Text,
+											  ForeignEntityCollectionType = comboBoxForeignCollection.Text,
+											  FieldNamingConvention = GetFieldNamingConvention(),
+                                              Prefix = prefixTextBox.Text,
+											  IsNhFluent = IsNhFluent,
+											  IsCastle = IsCastle
                                           };
 
             applicationSettings.Save();
@@ -427,7 +448,9 @@ namespace NHibernateMappingGenerator
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = GeneratePartialClasses,
                                                  GenerateWCFDataContract = GenerateWCFDataContract,
-                                                 ConnectionString = connStrTextBox.Text,                                                 
+                                                 ConnectionString = connStrTextBox.Text,
+												 ForeignEntityCollectionType = comboBoxForeignCollection.Text,
+												 InheritenceAndInterfaces = textBoxInheritence.Text
                                              };
 
             return applicationPreferences;
@@ -470,6 +493,12 @@ namespace NHibernateMappingGenerator
             {
                 worker.CancelAsync();
             }
-        }		
+        }
+
+		private void advanceSettingsTabPage_Click(object sender, EventArgs e) {
+
+		}
+
+		
     }
 }

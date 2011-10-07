@@ -29,7 +29,10 @@ namespace NMG.Core
         public bool GeneratePartialClasses { get; set; }
         public string Prefix { get; set; }
 
-        public Language Language { get; set; }
+		public string ForeignEntityCollectionType { get; set; }
+		public string InheritenceAndInterfaces { get; set; }
+		
+		public Language Language { get; set; }
         public FieldNamingConvention FieldNamingConvention { get; set; }
         public FieldGenerationConvention FieldGenerationConvention { get; set; }
 
@@ -46,6 +49,8 @@ namespace NMG.Core
                                       Prefix = string.Empty,
                                       IsNhFluent = true,
                                       Language = Language.CSharp,
+									  ForeignEntityCollectionType = "IList",
+									  InheritenceAndInterfaces = ""
                                   };
             return preferences;
         }
