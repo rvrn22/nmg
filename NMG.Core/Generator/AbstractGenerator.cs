@@ -13,9 +13,10 @@ namespace NMG.Core.Generator
         protected string sequenceName;
         protected string tableName;
 		protected const string TABS = "\t\t\t";
+    	protected string ClassNamePrefix { get; set;}
 
         protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                    string sequenceName, Table table, ApplicationPreferences applicationPreferences)
+                                    string sequenceName, Table table, ApplicationPreferences appPrefs)
         {
             this.filePath = filePath;
             this.tableName = tableName;
@@ -23,8 +24,9 @@ namespace NMG.Core.Generator
             this.assemblyName = assemblyName;
             this.sequenceName = sequenceName;
             Table = table;
-            Formatter = TextFormatterFactory.GetTextFormatter(applicationPreferences);
+            Formatter = TextFormatterFactory.GetTextFormatter(appPrefs);
         }
+
 
         public bool UsesSequence
         {

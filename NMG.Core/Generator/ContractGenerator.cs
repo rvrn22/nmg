@@ -8,60 +8,60 @@ namespace NMG.Core.Generator
 {
     public class ContractGenerator : AbstractCodeGenerator
     {
-        private readonly ApplicationPreferences applicationData;
-        private readonly Table tableDetails;
-        private readonly string entityName;
+        private readonly ApplicationPreferences appPrefs;
+        private readonly Table table;
 
-        public ContractGenerator(ApplicationPreferences applicationData, Table tableDetails)  : base(applicationData.FolderPath, applicationData.TableName, applicationData.NameSpace, applicationData.AssemblyName, applicationData.Sequence, tableDetails, applicationData)
+        public ContractGenerator(ApplicationPreferences appPrefs, Table table)  : 
+			base(appPrefs.FolderPath, appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
-            this.applicationData = applicationData;
-            this.tableDetails = tableDetails;
-            entityName = applicationData.EntityName;
+            this.appPrefs = appPrefs;
+            this.table = table;
         }
 
         public override void Generate()
         {
-            string className = Formatter.FormatSingular(Table.Name) + "Data";
-            var compileUnit = GetCompileUnit();
+			string className = appPrefs.ClassNamePrefix + Formatter.FormatSingular(Table.Name) + "Data";
+			var compileUnit = GetCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
             WriteToFile(generateCode, className);
         }
 
-        public CodeCompileUnit GetCompileUnit()
+		public CodeCompileUnit GetCompileUnit(string className)
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, entityName);
+			var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);
             
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
 
-            var nameArgument = new CodeAttributeArgument("Name", new CodeSnippetExpression("\""+ applicationData.EntityName + "\" "));
+			var nameArgument = new CodeAttributeArgument("Name", new CodeSnippetExpression("\"" + className + "\" "));
             var nameSpaceArgument = new CodeAttributeArgument("Namespace", new CodeSnippetExpression("\"\""));
             newType.CustomAttributes = new CodeAttributeDeclarationCollection {new CodeAttributeDeclaration("DataContract", nameArgument, nameSpaceArgument)};
 
-            foreach (var columnDetail in tableDetails.Columns)
+            foreach (var column in table.Columns)
             {
-                if(columnDetail.IsPrimaryKey)
+                if(column.IsPrimaryKey)
                 {
-                    foreach (var foreignKeyTable in tableDetails.HasManyRelationships)
+                    foreach (var foreignKeyTable in table.HasManyRelationships)
                     {
-                        var fkEntityName = foreignKeyTable.Reference.MakeSingular();
-						newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(applicationData.ForeignEntityCollectionType + "<" + fkEntityName + ">", foreignKeyTable.ReferenceColumn));
+						var fkEntityName = appPrefs.ClassNamePrefix + foreignKeyTable.Reference.MakeSingular().GetPreferenceFormattedText(appPrefs);
+						newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute("IList<" + fkEntityName + ">", foreignKeyTable.Reference.MakePlural().GetPreferenceFormattedText(appPrefs)));
                     }
 
-                    var primaryKeyType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, null, null);
+                    var primaryKeyType = mapper.MapFromDBType(column.DataType, column.DataLength, null, null);
                     newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(primaryKeyType.Name, "Id"));
                     continue;
                 }
-                if(columnDetail.IsForeignKey)
+				if (column.IsForeignKey)
                 {
-                    var typeName = columnDetail.ForeignKeyEntity.MakeSingular();
-                    var codeMemberProperty = codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(typeName, columnDetail.Name);
+                	var fKey = table.ForeignKeyReferenceForColumn(column);
+					var typeName = appPrefs.ClassNamePrefix + fKey.MakeSingular().GetPreferenceFormattedText(appPrefs);
+					var codeMemberProperty = codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(typeName, fKey.MakeSingular().GetPreferenceFormattedText(appPrefs));
                     newType.Members.Add(codeMemberProperty);
                     continue;
                 }
-                var propertyName = columnDetail.Name.GetPreferenceFormattedText(applicationData);
-                var mapFromDbType = mapper.MapFromDBType(columnDetail.DataType, columnDetail.DataLength, null, null);
+                var propertyName = column.Name.GetPreferenceFormattedText(appPrefs);
+                var mapFromDbType = mapper.MapFromDBType(column.DataType, column.DataLength, null, null);
 
                 newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(mapFromDbType.Name, propertyName));
             }
@@ -70,7 +70,7 @@ namespace NMG.Core.Generator
 
         protected override string AddStandardHeader(string entireContent)
         {
-            entireContent = string.Format("using {0};", applicationData.NameSpace) + Environment.NewLine + entireContent;
+            entireContent = string.Format("using {0};", appPrefs.NameSpace) + Environment.NewLine + entireContent;
             return base.AddStandardHeader(entireContent);
         }
 

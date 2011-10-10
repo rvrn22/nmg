@@ -37,13 +37,6 @@ namespace NHibernateMappingGenerator
 			this.connectBtn = new System.Windows.Forms.Button();
 			this.sequencesComboBox = new System.Windows.Forms.ComboBox();
 			this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
-			this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.errorLabel = new System.Windows.Forms.Label();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderTextBox = new System.Windows.Forms.TextBox();
@@ -98,6 +91,15 @@ namespace NHibernateMappingGenerator
 			this.prefixLabel = new System.Windows.Forms.Label();
 			this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
 			this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
+			this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.textBoxClassNamePrefix = new System.Windows.Forms.TextBox();
+			this.labelCLassNamePrefix = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
 			this.mainTabControl.SuspendLayout();
 			this.basicSettingsTabPage.SuspendLayout();
@@ -172,50 +174,6 @@ namespace NHibernateMappingGenerator
 			this.dbTableDetailsGridView.RowHeadersVisible = false;
 			this.dbTableDetailsGridView.Size = new System.Drawing.Size(817, 331);
 			this.dbTableDetailsGridView.TabIndex = 5;
-			// 
-			// columnName
-			// 
-			this.columnName.DataPropertyName = "Name";
-			this.columnName.HeaderText = "Column Name";
-			this.columnName.Name = "columnName";
-			this.columnName.ReadOnly = true;
-			// 
-			// columnDataType
-			// 
-			this.columnDataType.HeaderText = "Data Type";
-			this.columnDataType.Name = "columnDataType";
-			this.columnDataType.ReadOnly = true;
-			// 
-			// cSharpType
-			// 
-			this.cSharpType.HeaderText = "C# Type";
-			this.cSharpType.Name = "cSharpType";
-			this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			// 
-			// isPrimaryKey
-			// 
-			this.isPrimaryKey.HeaderText = "Primary Key";
-			this.isPrimaryKey.Name = "isPrimaryKey";
-			this.isPrimaryKey.ReadOnly = true;
-			// 
-			// isForeignKey
-			// 
-			this.isForeignKey.HeaderText = "Foreign Key";
-			this.isForeignKey.Name = "isForeignKey";
-			this.isForeignKey.ReadOnly = true;
-			// 
-			// isNullable
-			// 
-			this.isNullable.HeaderText = "Nullable";
-			this.isNullable.Name = "isNullable";
-			this.isNullable.ReadOnly = true;
-			// 
-			// isUniqueKey
-			// 
-			this.isUniqueKey.HeaderText = "Unique Key";
-			this.isUniqueKey.Name = "isUniqueKey";
-			this.isUniqueKey.ReadOnly = true;
 			// 
 			// errorLabel
 			// 
@@ -504,14 +462,16 @@ namespace NHibernateMappingGenerator
 			this.groupBox8.Controls.Add(this.wcfDataContractCheckBox);
 			this.groupBox8.Controls.Add(this.labelForeignEntity);
 			this.groupBox8.Controls.Add(this.partialClassesCheckBox);
+			this.groupBox8.Controls.Add(this.labelCLassNamePrefix);
 			this.groupBox8.Controls.Add(this.labelInheritence);
+			this.groupBox8.Controls.Add(this.textBoxClassNamePrefix);
 			this.groupBox8.Controls.Add(this.textBoxInheritence);
 			this.groupBox8.Location = new System.Drawing.Point(212, 152);
 			this.groupBox8.Name = "groupBox8";
 			this.groupBox8.Size = new System.Drawing.Size(515, 140);
 			this.groupBox8.TabIndex = 6;
 			this.groupBox8.TabStop = false;
-			this.groupBox8.Text = "Other Options";
+			this.groupBox8.Text = "Fluent Options";
 			// 
 			// comboBoxForeignCollection
 			// 
@@ -779,6 +739,66 @@ namespace NHibernateMappingGenerator
 			this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
 			this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
 			// 
+			// columnName
+			// 
+			this.columnName.DataPropertyName = "Name";
+			this.columnName.HeaderText = "Column Name";
+			this.columnName.Name = "columnName";
+			this.columnName.ReadOnly = true;
+			// 
+			// columnDataType
+			// 
+			this.columnDataType.HeaderText = "Data Type";
+			this.columnDataType.Name = "columnDataType";
+			this.columnDataType.ReadOnly = true;
+			// 
+			// cSharpType
+			// 
+			this.cSharpType.HeaderText = "C# Type";
+			this.cSharpType.Name = "cSharpType";
+			this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			// 
+			// isPrimaryKey
+			// 
+			this.isPrimaryKey.HeaderText = "Primary Key";
+			this.isPrimaryKey.Name = "isPrimaryKey";
+			this.isPrimaryKey.ReadOnly = true;
+			// 
+			// isForeignKey
+			// 
+			this.isForeignKey.HeaderText = "Foreign Key";
+			this.isForeignKey.Name = "isForeignKey";
+			this.isForeignKey.ReadOnly = true;
+			// 
+			// isNullable
+			// 
+			this.isNullable.HeaderText = "Nullable";
+			this.isNullable.Name = "isNullable";
+			this.isNullable.ReadOnly = true;
+			// 
+			// isUniqueKey
+			// 
+			this.isUniqueKey.HeaderText = "Unique Key";
+			this.isUniqueKey.Name = "isUniqueKey";
+			this.isUniqueKey.ReadOnly = true;
+			// 
+			// textBoxClassNamePrefic
+			// 
+			this.textBoxClassNamePrefix.Location = new System.Drawing.Point(104, 110);
+			this.textBoxClassNamePrefix.Name = "textBoxClassNamePrefix";
+			this.textBoxClassNamePrefix.Size = new System.Drawing.Size(98, 20);
+			this.textBoxClassNamePrefix.TabIndex = 4;
+			// 
+			// labelCLassNamePrefix
+			// 
+			this.labelCLassNamePrefix.AutoSize = true;
+			this.labelCLassNamePrefix.Location = new System.Drawing.Point(6, 113);
+			this.labelCLassNamePrefix.Name = "labelCLassNamePrefix";
+			this.labelCLassNamePrefix.Size = new System.Drawing.Size(95, 13);
+			this.labelCLassNamePrefix.TabIndex = 5;
+			this.labelCLassNamePrefix.Text = "Class Name Prefix:";
+			// 
 			// App
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -858,14 +878,7 @@ namespace NHibernateMappingGenerator
         private RadioButton fieldRadioBtn;
         private RadioButton autoPropertyRadioBtn;
         private Label label6;
-        private TextBox entityNameTextBox;
-        private DataGridViewTextBoxColumn columnName;
-        private DataGridViewTextBoxColumn columnDataType;
-        private DataGridViewComboBoxColumn cSharpType;
-        private DataGridViewCheckBoxColumn isPrimaryKey;
-        private DataGridViewCheckBoxColumn isForeignKey;
-        private DataGridViewCheckBoxColumn isUniqueKey;
-        private DataGridViewCheckBoxColumn isNullable;
+		private TextBox entityNameTextBox;
         private RadioButton castleMappingOption;
         private ComboBox ownersComboBox;
         private Label lblOwner;
@@ -881,7 +894,16 @@ namespace NHibernateMappingGenerator
 		private Label labelInheritence;
 		private TextBox textBoxInheritence;
 		private ComboBox comboBoxForeignCollection;
-		private Label labelForeignEntity;		
+		private Label labelForeignEntity;
+		private DataGridViewTextBoxColumn columnName;
+		private DataGridViewTextBoxColumn columnDataType;
+		private DataGridViewComboBoxColumn cSharpType;
+		private DataGridViewCheckBoxColumn isPrimaryKey;
+		private DataGridViewCheckBoxColumn isForeignKey;
+		private DataGridViewCheckBoxColumn isNullable;
+		private DataGridViewCheckBoxColumn isUniqueKey;
+		private Label labelCLassNamePrefix;
+		private TextBox textBoxClassNamePrefix;		
     }
 }
 

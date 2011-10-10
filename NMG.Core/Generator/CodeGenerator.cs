@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
@@ -11,30 +12,31 @@ namespace NMG.Core.Generator
 {
     public class CodeGenerator : AbstractGenerator
     {
-        private readonly ApplicationPreferences applicationPreferences;
+        private readonly ApplicationPreferences appPrefs;
         private readonly Language language;
 
-        public CodeGenerator(ApplicationPreferences applicationPreferences, Table table) : base( applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public CodeGenerator(ApplicationPreferences appPrefs, Table table) : base( appPrefs.FolderPath, appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
-            this.applicationPreferences = applicationPreferences;
-            language = applicationPreferences.Language;
+            this.appPrefs = appPrefs;
+            language = appPrefs.Language;
         }
 
         public override void Generate()
         {
-            var compileUnit = GetCompileUnit();
-            WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
+			var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name));
+			var compileUnit = GetCompileUnit(className);
+			WriteToFile(compileUnit, className);
         }
 
-        public CodeCompileUnit GetCompileUnit()
+    	public CodeCompileUnit GetCompileUnit(string className)
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-			var compileUnit = codeGenerationHelper.GetCodeCompileUnitWithInheritanceAndInterface(nameSpace, Formatter.FormatSingular(Table.Name), applicationPreferences.InheritenceAndInterfaces);
+			var compileUnit = codeGenerationHelper.GetCodeCompileUnitWithInheritanceAndInterface(nameSpace, className, appPrefs.InheritenceAndInterfaces);
 
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
             
-            newType.IsPartial = applicationPreferences.GeneratePartialClasses;
+            newType.IsPartial = appPrefs.GeneratePartialClasses;
 
             foreach (var pk in Table.PrimaryKey.Columns)
             {
@@ -45,14 +47,14 @@ namespace NMG.Core.Generator
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.References)));
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.References)));
             }
 
 			var instantiationStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
             {
-				newType.Members.Add(codeGenerationHelper.CreateAutoProperty(applicationPreferences.ForeignEntityCollectionType + "<" + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference)));
-				instantiationStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(applicationPreferences.ForeignEntityCollectionType), Formatter.FormatSingular(hasMany.Reference))));
+				newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ForeignEntityCollectionType + "<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference)));
+				instantiationStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
@@ -70,7 +72,7 @@ namespace NMG.Core.Generator
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
         {
             var provider = GetCodeDomProvider();
-            var sourceFile = GetCompleteFilePath(provider, className.MakeSingular());
+            var sourceFile = GetCompleteFilePath(provider, className);
             using (provider)
             {
                 var streamWriter = new StreamWriter(sourceFile);

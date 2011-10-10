@@ -12,7 +12,8 @@ namespace NMG.Core.Domain
             Add(typeof (Int32).FullName);
             Add(typeof (Int64).FullName);
 
-            Add(typeof (double).FullName);
+			Add(typeof(double).FullName);
+			Add(typeof(decimal).FullName);
 
             Add(typeof (DateTime).FullName);
             Add(typeof (TimeSpan).FullName);

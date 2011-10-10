@@ -1,3 +1,4 @@
+using System;
 using NMG.Core.Domain;
 
 namespace NMG.Core
@@ -31,16 +32,17 @@ namespace NMG.Core
 
 		public string ForeignEntityCollectionType { get; set; }
 		public string InheritenceAndInterfaces { get; set; }
-		
+		public string ClassNamePrefix { get; set; }
+
 		public Language Language { get; set; }
         public FieldNamingConvention FieldNamingConvention { get; set; }
         public FieldGenerationConvention FieldGenerationConvention { get; set; }
 
         public string EntityName { get; set; }
 
-        public bool GenerateWCFDataContract { get; set; }
+        public bool GenerateWcfDataContract { get; set; }
 
-        public static ApplicationPreferences Default()
+    	public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences
                                   {

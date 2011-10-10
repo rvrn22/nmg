@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NMG.Core.Domain
 {
@@ -7,8 +8,6 @@ namespace NMG.Core.Domain
     /// </summary>
     public class Table
     {
-        private string name;
-
         public Table()
         {
             ForeignKeys = new List<ForeignKey>();
@@ -16,25 +15,24 @@ namespace NMG.Core.Domain
             HasManyRelationships = new List<HasMany>();
         }
 
-        public string Name
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(EntityName) ? name : EntityName;
-            }
-            set { name = value; }
-        }
+		public string Name { get; set; }
         public string Owner { get; set; }
-        public PrimaryKey PrimaryKey { get; set; }
-        public IList<ForeignKey> ForeignKeys { get; set; }
+    	public PrimaryKey PrimaryKey { get; set; }
+
+    	public IList<ForeignKey> ForeignKeys { get; set; }
         public IList<Column> Columns { get; set; }
         public IList<HasMany> HasManyRelationships { get; set; }
-        public string EntityName { get; set; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+		public string ForeignKeyReferenceForColumn(Column column)
+		{
+			if (ForeignKeys != null) {
+				var fKey = ForeignKeys.Where(fk => fk.Name == column.Name).FirstOrDefault();
+				if (fKey != null) return fKey.References;
+			}
+			return string.Format("/* TODO: UNKNOWN FOREIGN ENTITY for {0}*/", column.Name);
+		}
+
+    	public override string ToString() { return Name; }
     }
 
     public class HasMany
@@ -56,7 +54,6 @@ namespace NMG.Core.Domain
         public int? DataLength { get; set; }
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
-        public string ForeignKeyEntity { get; set; }
     }
 
     public class ForeignKeyColumn : Column
@@ -126,5 +123,7 @@ namespace NMG.Core.Domain
         /// Defines what table the foreign key references.
         /// </summary>
         public string References { get; set; }
+
+		public override string ToString() { return Name; }
     }
 }

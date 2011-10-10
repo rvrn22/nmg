@@ -21,14 +21,17 @@ namespace NHibernateMappingGenerator
         public string FolderPath { get; set; }
 
 		public string ForeignEntityCollectionType { get; set; }
-		public string InheritenceAndInterfaces { get; set; } 
+		public string InheritenceAndInterfaces { get; set; }
+		public string ClassNamePrefix { get; set; }
+		public bool GenerateWcfContracts { get; set; }
+		public bool GeneratePartialClasses { get; set; }
 
         public FieldNamingConvention FieldNamingConvention { get; set; }
 		public string Prefix { get; set; }
         public bool IsNhFluent { get; set; }
         public bool IsCastle { get; set; }
 
-		public void Save()
+    	public void Save()
         {
             var streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);
             XmlSerializer xmlSerializer;

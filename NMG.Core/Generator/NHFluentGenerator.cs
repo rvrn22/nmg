@@ -11,22 +11,22 @@ namespace NMG.Core.Generator
     public class NHFluentGenerator : AbstractCodeGenerator
     {
         
-        private readonly ApplicationPreferences applicationPreferences;
+        private readonly ApplicationPreferences appPrefs;
 
-        public NHFluentGenerator(ApplicationPreferences applicationPreferences, Table table)
+        public NHFluentGenerator(ApplicationPreferences appPrefs, Table table)
             : base(
-                applicationPreferences.FolderPath, applicationPreferences.TableName,
-                applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table,
-                applicationPreferences)
+                appPrefs.FolderPath, appPrefs.TableName,
+                appPrefs.NameSpace,
+                appPrefs.AssemblyName, appPrefs.Sequence, table,
+                appPrefs)
         {
-            this.applicationPreferences = applicationPreferences;
-            language = this.applicationPreferences.Language;
+            this.appPrefs = appPrefs;
+            language = this.appPrefs.Language;
         }
 
         public override void Generate()
         {
-            string className = Formatter.FormatSingular(Table.Name) + "Map";
+			string className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
             CodeCompileUnit compileUnit = GetCompleteCompileUnit(className);
             string generateCode = GenerateCode(compileUnit, className);
             WriteToFile(generateCode, className);
@@ -39,9 +39,9 @@ namespace NMG.Core.Generator
 
             var newType = compileUnit.Namespaces[0].Types[0];
             
-            newType.IsPartial = applicationPreferences.GeneratePartialClasses;
+            newType.IsPartial = appPrefs.GeneratePartialClasses;
 
-            newType.BaseTypes.Add("ClassMap<" + Formatter.FormatSingular(Table.Name) + ">");
+			newType.BaseTypes.Add("ClassMap<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(Table.Name) + ">");
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
@@ -50,7 +50,7 @@ namespace NMG.Core.Generator
             if(UsesSequence)
             {
                 constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
-                    Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, applicationPreferences.Sequence)));
+                    Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, appPrefs.Sequence)));
             }
             else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
@@ -63,7 +63,7 @@ namespace NMG.Core.Generator
 
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", Formatter.FormatSingular(fk.References), fk.Name)));
+				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", Formatter.FormatSingular(fk.References), fk.Name )));
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))

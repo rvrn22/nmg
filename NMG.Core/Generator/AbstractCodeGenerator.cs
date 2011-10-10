@@ -14,8 +14,8 @@ namespace NMG.Core.Generator
         protected Language language;
 
         protected AbstractCodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                        string sequenceName, Table table, ApplicationPreferences applicationPreferences)
-            : base(filePath, tableName, nameSpace, assemblyName, sequenceName, table, applicationPreferences)
+                                        string sequenceName, Table table, ApplicationPreferences appPrefs)
+            : base(filePath, tableName, nameSpace, assemblyName, sequenceName, table, appPrefs)
         {
             
         }

@@ -51,7 +51,7 @@ namespace NHibernateMappingGenerator
             {
                 mappingGenerator.Generate();
             }
-            if(applicationPreferences.GenerateWCFDataContract)
+            if(applicationPreferences.GenerateWcfDataContract)
             {
                 contractGenerator.Generate();
             }

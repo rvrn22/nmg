@@ -17,7 +17,9 @@ namespace NHibernateMappingGenerator
     {
         private IMetadataReader metadataReader;
 		private readonly BackgroundWorker worker;
-		
+		private IList<Column> gridData;
+		private ApplicationSettings applicationSettings;
+
         public App()
         {
             InitializeComponent();
@@ -48,16 +50,6 @@ namespace NHibernateMappingGenerator
             get { return fluentMappingOption.Checked; }
         }
 
-        public bool GeneratePartialClasses
-        {
-            get { return partialClassesCheckBox.Checked; }
-        }
-
-        public bool GenerateWCFDataContract
-        {
-            get { return wcfDataContractCheckBox.Checked; }
-        }
-
         public bool IsCastle
         {
             get { return castleMappingOption.Checked; }
@@ -65,29 +57,32 @@ namespace NHibernateMappingGenerator
 
         protected override void OnLoad(EventArgs e)
         {
-            var applicationSettings = ApplicationSettings.Load();
-            if (applicationSettings != null)
+            var appSettings = ApplicationSettings.Load();
+            if (appSettings != null)
             {
-                serverTypeComboBox.SelectedItem = applicationSettings.ServerType;
-                connStrTextBox.Text = applicationSettings.ConnectionString;
-                nameSpaceTextBox.Text = applicationSettings.NameSpace;
-                assemblyNameTextBox.Text = applicationSettings.AssemblyName;
-                fluentMappingOption.Checked = applicationSettings.IsFluent;
-                cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
-                autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
-				folderTextBox.Text = applicationSettings.FolderPath;
-            	textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
-            	comboBoxForeignCollection.Text = applicationSettings.ForeignEntityCollectionType;
+                serverTypeComboBox.SelectedItem = appSettings.ServerType;
+                connStrTextBox.Text = appSettings.ConnectionString;
+                nameSpaceTextBox.Text = appSettings.NameSpace;
+                assemblyNameTextBox.Text = appSettings.AssemblyName;
+                fluentMappingOption.Checked = appSettings.IsFluent;
+                cSharpRadioButton.Checked = appSettings.Language == Language.CSharp;
+                autoPropertyRadioBtn.Checked = appSettings.IsAutoProperty;
+				folderTextBox.Text = appSettings.FolderPath;
+            	textBoxInheritence.Text = appSettings.InheritenceAndInterfaces;
+            	comboBoxForeignCollection.Text = appSettings.ForeignEntityCollectionType;
+            	textBoxClassNamePrefix.Text = appSettings.ClassNamePrefix;
+				wcfDataContractCheckBox.Checked = appSettings.GenerateWcfContracts;
+            	partialClassesCheckBox.Checked = appSettings.GeneratePartialClasses;
 
-            	fluentMappingOption.Checked = applicationSettings.IsFluent;
-            	nhFluentMappingStyle.Checked = applicationSettings.IsNhFluent;
-            	castleMappingOption.Checked = applicationSettings.IsCastle;
+            	fluentMappingOption.Checked = appSettings.IsFluent;
+            	nhFluentMappingStyle.Checked = appSettings.IsNhFluent;
+            	castleMappingOption.Checked = appSettings.IsCastle;
 
-				prefixRadioButton.Checked = !string.IsNullOrEmpty(applicationSettings.Prefix);
-				prefixTextBox.Text = applicationSettings.Prefix;
-				camelCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
-				pascalCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.PascalCase);
-				sameAsDBRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
+				prefixRadioButton.Checked = !string.IsNullOrEmpty(appSettings.Prefix);
+				prefixTextBox.Text = appSettings.Prefix;
+				camelCasedRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
+				pascalCasedRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.PascalCase);
+				sameAsDBRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
 
 				sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked && !camelCasedRadioButton.Checked);
 			}
@@ -107,33 +102,40 @@ namespace NHibernateMappingGenerator
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            errorLabel.Text = string.Format("Error in column {0}. Detail : {1}", e.ColumnIndex, e.Exception.Message);
+			errorLabel.Text = string.Format("Error in column {0} of row {1} - {3}. Detail : {2}", e.ColumnIndex, e.RowIndex, e.Exception.Message, (gridData != null ? gridData[e.RowIndex].Name : ""));
         }
 
         private void App_Closing(object sender, CancelEventArgs e)
         {
-            var applicationSettings = new ApplicationSettings
-                                          {
-                                              ConnectionString = connStrTextBox.Text,
-                                              ServerType = (ServerType) serverTypeComboBox.SelectedItem,
-                                              NameSpace = nameSpaceTextBox.Text,
-                                              AssemblyName = assemblyNameTextBox.Text,
-                                              Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
-                                              IsFluent = fluentMappingOption.Checked,
-                                              IsAutoProperty = autoPropertyRadioBtn.Checked,
-											  FolderPath = folderTextBox.Text,
-											  InheritenceAndInterfaces = textBoxInheritence.Text,
-											  ForeignEntityCollectionType = comboBoxForeignCollection.Text,
-											  FieldNamingConvention = GetFieldNamingConvention(),
-                                              Prefix = prefixTextBox.Text,
-											  IsNhFluent = IsNhFluent,
-											  IsCastle = IsCastle
-                                          };
-
-            applicationSettings.Save();
+			applicationSettings = CaptureApplicationSettings();
+        	applicationSettings.Save();
         }
 
-        private void ServerTypeSelected(object sender, EventArgs e)
+		private ApplicationSettings CaptureApplicationSettings()
+    	{
+    		return new ApplicationSettings
+    		                      	{
+    		                      		ConnectionString = connStrTextBox.Text,
+    		                      		ServerType = (ServerType) serverTypeComboBox.SelectedItem,
+    		                      		NameSpace = nameSpaceTextBox.Text,
+    		                      		AssemblyName = assemblyNameTextBox.Text,
+    		                      		Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
+    		                      		IsFluent = fluentMappingOption.Checked,
+    		                      		IsAutoProperty = autoPropertyRadioBtn.Checked,
+    		                      		FolderPath = folderTextBox.Text,
+    		                      		InheritenceAndInterfaces = textBoxInheritence.Text,
+    		                      		ForeignEntityCollectionType = comboBoxForeignCollection.Text,
+    		                      		FieldNamingConvention = GetFieldNamingConvention(),
+    		                      		Prefix = prefixTextBox.Text,
+    		                      		IsNhFluent = IsNhFluent,
+    		                      		IsCastle = IsCastle,
+    		                      		ClassNamePrefix = textBoxClassNamePrefix.Text,
+										GeneratePartialClasses = partialClassesCheckBox.Checked,
+										GenerateWcfContracts =  wcfDataContractCheckBox.Checked
+    		                      	};
+    	}
+
+    	private void ServerTypeSelected(object sender, EventArgs e)
         {
             pOracleOnlyOptions.Hide();
 
@@ -173,7 +175,6 @@ namespace NHibernateMappingGenerator
         private void OwnersSelectedIndexChanged(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-
             try
             {
                 PopulateTablesAndSequences();
@@ -189,12 +190,14 @@ namespace NHibernateMappingGenerator
 			errorLabel.Text = string.Empty;
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
-                if (tablesListBox.SelectedItems.Count == 1)
-                {
-                    entityNameTextBox.Text = tablesListBox.SelectedItem.ToString();
-                    PopulateTableDetails();
-                }
+				Cursor.Current = Cursors.WaitCursor;
+				int? lastTableSelectedIndex = LastTableSelected();
+				if (lastTableSelectedIndex!=null){
+					var selectedItem = tablesListBox.Items[lastTableSelectedIndex.Value];
+					entityNameTextBox.Text = selectedItem.ToString();
+					var table = selectedItem as Table;
+					if (table != null) PopulateTableDetails(table);
+				}
             }
             catch (Exception ex) 
 			{
@@ -206,14 +209,30 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void PopulateTableDetails()
+		IList<int> _cachedTableListSelection = new List<int>();
+
+		private int? LastTableSelected() 
+		{
+			int? lastTableIndex = null;	
+			foreach(int i in tablesListBox.SelectedIndices)
+			{
+				if (_cachedTableListSelection.Contains(i)) continue;
+				lastTableIndex = i;
+				break;
+			}
+			_cachedTableListSelection.Clear();
+			foreach (int i in tablesListBox.SelectedIndices) _cachedTableListSelection.Add(i);
+			return lastTableIndex;
+		}
+
+		private void PopulateTableDetails(Table selectedTable)
         {
             errorLabel.Text = string.Empty;
-            var selectedTable = (Table) tablesListBox.SelectedItem;
             try
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
-                dbTableDetailsGridView.DataSource = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
+				gridData = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
+				dbTableDetailsGridView.DataSource = gridData;
             }
             catch (Exception ex)
             {
@@ -314,9 +333,9 @@ namespace NHibernateMappingGenerator
                 foreach (var selectedItem in selectedItems)
                 {
                     errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
-                    var table = (Table)selectedItem;
-                    table.EntityName = entityNameTextBox.Text;
-                    Generate(table, false);                
+                    var table = (Table) selectedItem;
+					metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
+					Generate(table, false, CaptureApplicationSettings());                
                 }
                 errorLabel.Text = @"Generated all files successfully.";
             }
@@ -342,9 +361,9 @@ namespace NHibernateMappingGenerator
                 {
                     progressBar.Maximum = 100;
                     progressBar.Value = 10;
-                    worker.DoWork += DoWork;
+					worker.DoWork += DoWork;
                     worker.RunWorkerCompleted += WorkerCompleted;
-                    worker.RunWorkerAsync();
+					worker.RunWorkerAsync(CaptureApplicationSettings());
                 }
                 finally
                 {
@@ -365,7 +384,8 @@ namespace NHibernateMappingGenerator
 
         private void DoWork(object sender, DoWorkEventArgs e)
         {
-            var items = tablesListBox.Items;
+			var appSettings = e.Argument as ApplicationSettings; 
+			var items = tablesListBox.Items;
             Parallel.ForEach(items.Cast<Table>(), (table, loopState) =>
             {
                 if(worker != null && worker.CancellationPending && !loopState.IsStopped)
@@ -374,7 +394,6 @@ namespace NHibernateMappingGenerator
                     loopState.Break();
                     Thread.Sleep(1000);
                 }
-                //table.Columns = metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                 string name = "";
                 if (ownersComboBox.InvokeRequired)
                 {
@@ -384,13 +403,14 @@ namespace NHibernateMappingGenerator
                 {
                     name = ownersComboBox.SelectedItem.ToString();
                 }
-                table.Columns = metadataReader.GetTableDetails(table, name);
-                Generate(table, true);
+                metadataReader.GetTableDetails(table, name);
+				Generate(table, true, appSettings);
             });
         }       
-        private void Generate(Table table, bool generateAll)
+        
+		private void Generate(Table table, bool generateAll, ApplicationSettings appSettings)
         {
-            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, generateAll);
+			ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, generateAll, appSettings);
             var applicationController = new ApplicationController(applicationPreferences, table);
             applicationController.Generate();
         }
@@ -400,7 +420,7 @@ namespace NHibernateMappingGenerator
             prefixLabel.Visible = prefixTextBox.Visible = prefixRadioButton.Checked;
         }
 
-        private ApplicationPreferences GetApplicationPreferences(Table tableName, bool all)
+		private ApplicationPreferences GetApplicationPreferences(Table tableName, bool all, ApplicationSettings appSettings)
         {
             string sequence = string.Empty;
             object sequenceName = null;
@@ -446,11 +466,12 @@ namespace NHibernateMappingGenerator
                                                  IsFluent = IsFluent,
                                                  IsNhFluent = IsNhFluent,
                                                  IsCastle = IsCastle,
-                                                 GeneratePartialClasses = GeneratePartialClasses,
-                                                 GenerateWCFDataContract = GenerateWCFDataContract,
-                                                 ConnectionString = connStrTextBox.Text,
-												 ForeignEntityCollectionType = comboBoxForeignCollection.Text,
-												 InheritenceAndInterfaces = textBoxInheritence.Text
+                                                 GeneratePartialClasses = appSettings.GeneratePartialClasses,
+                                                 GenerateWcfDataContract = appSettings.GenerateWcfContracts,
+                                                 ConnectionString = appSettings.ConnectionString,
+												 ForeignEntityCollectionType = appSettings.ForeignEntityCollectionType,
+												 InheritenceAndInterfaces = appSettings.InheritenceAndInterfaces,
+												 ClassNamePrefix = appSettings.ClassNamePrefix
                                              };
 
             return applicationPreferences;

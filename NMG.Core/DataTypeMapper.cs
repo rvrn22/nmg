@@ -12,7 +12,7 @@ namespace NMG.Core
             {
                 return typeof(DateTime);
             }
-            if (dataType == "NUMBER" || dataType == "LONG" || dataType == "bigint")
+			if (dataType == "NUMBER" || dataType == "LONG" || dataType == "bigint" )
             {
                 return typeof(long);
             }
@@ -28,7 +28,7 @@ namespace NMG.Core
             {
                 return typeof(int);
             }
-            if (dataType == "BINARY_DOUBLE" || dataType == "float")
+			if (dataType == "BINARY_DOUBLE" || dataType == "float" || dataType == "numeric")
             {
                 return typeof(double);
             }
