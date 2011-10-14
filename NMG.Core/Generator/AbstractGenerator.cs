@@ -12,7 +12,7 @@ namespace NMG.Core.Generator
         protected string nameSpace;
         protected string sequenceName;
         protected string tableName;
-		protected const string TABS = "\t\t\t";
+		internal const string TABS = "\t\t\t";
     	protected string ClassNamePrefix { get; set;}
 
         protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName,

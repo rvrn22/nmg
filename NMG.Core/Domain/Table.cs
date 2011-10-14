@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,13 +24,16 @@ namespace NMG.Core.Domain
         public IList<Column> Columns { get; set; }
         public IList<HasMany> HasManyRelationships { get; set; }
 
+		/// <summary>
+		/// Given a column from this table, if it is a foreign key return the name of the table it references.
+		/// </summary>
 		public string ForeignKeyReferenceForColumn(Column column)
 		{
 			if (ForeignKeys != null) {
 				var fKey = ForeignKeys.Where(fk => fk.Name == column.Name).FirstOrDefault();
 				if (fKey != null) return fKey.References;
 			}
-			return string.Format("/* TODO: UNKNOWN FOREIGN ENTITY for {0}*/", column.Name);
+			return string.Format("/* TODO: UNKNOWN FOREIGN ENTITY for column {0} */", column.Name);
 		}
 
     	public override string ToString() { return Name; }
@@ -37,9 +41,26 @@ namespace NMG.Core.Domain
 
     public class HasMany
     {
-        public string Reference { get; set; }
-        public string ReferenceColumn { get; set; }
-    }
+		public HasMany() {
+			AllReferenceColumns = new List<string>();
+		}
+
+		/// <summary>
+		/// An identifier for a constraint so that we might detect from querying the database whether a relationship has one is a composite key.
+		/// </summary>
+		public string ConstraintName { get; set; }
+		public string Reference { get; set; }
+
+		/// <summary>
+		/// In support of relationships that use composite keys.
+		/// </summary>
+		public IList<string> AllReferenceColumns { get; set; }
+
+		/// <summary>
+		/// Provide the first (and very often the only) column used to define a foreign key relationship.
+		/// </summary>
+		public string ReferenceColumn { get { return AllReferenceColumns.Count > 0 ? AllReferenceColumns[0] : ""; } }
+	}
 
     /// <summary>
     /// Defines a database column entity;
@@ -54,11 +75,7 @@ namespace NMG.Core.Domain
         public int? DataLength { get; set; }
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
-    }
-
-    public class ForeignKeyColumn : Column
-    {
-        public string References { get; set; }
+		public string ConstraintName { get; set; }
     }
 
     public interface IPrimaryKey
@@ -124,6 +141,22 @@ namespace NMG.Core.Domain
         /// </summary>
         public string References { get; set; }
 
-		public override string ToString() { return Name; }
+    	private string _uniquePropertyName;
+
+    	/// <summary>
+		/// When one table has multiple fields that represent different relationships to the same foreign entity, it is required to give them unique names.
+		/// </summary>
+		public string UniquePropertyName
+    	{
+			get { return string.IsNullOrEmpty(_uniquePropertyName) ? References : _uniquePropertyName; }
+    		set { _uniquePropertyName = value; }
+    	}
+
+		/// <summary>
+		/// A foreign key may be one of multiple columns of a composite key to a foreign entity
+		/// </summary>
+		public string[] AllColumnsNamesForTheSameConstraint { get; set; }
+
+    	public override string ToString() { return Name; }
     }
 }

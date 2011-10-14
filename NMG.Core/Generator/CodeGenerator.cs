@@ -1,12 +1,10 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
-using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {
@@ -47,14 +45,14 @@ namespace NMG.Core.Generator
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.References)));
+				newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName)));
             }
 
-			var instantiationStatements = new CodeStatementCollection();
+			var constructorStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
             {
 				newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ForeignEntityCollectionType + "<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference)));
-				instantiationStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+				constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
@@ -64,7 +62,7 @@ namespace NMG.Core.Generator
             }
 
 			var constructor = new CodeConstructor { Attributes = MemberAttributes.Public};
-			constructor.Statements.AddRange(instantiationStatements);
+			constructor.Statements.AddRange(constructorStatements);
             newType.Members.Add(constructor);
             return compileUnit;
         }
@@ -89,7 +87,7 @@ namespace NMG.Core.Generator
             CleanupGeneratedFile(sourceFile);
         }
 
-        private static void CleanupGeneratedFile(string sourceFile)
+        private void CleanupGeneratedFile(string sourceFile)
         {
             string entireContent;
             using (var reader = new StreamReader(sourceFile))
@@ -121,12 +119,13 @@ namespace NMG.Core.Generator
             return entireContent;
         }
 
-        private static string AddStandardHeader(string entireContent)
+        private string AddStandardHeader(string entireContent)
         {
             entireContent = "using System; \n" + entireContent;
             entireContent = "using System.Text; \n" + entireContent;
-            entireContent = "using System.Collections.Generic; \n" + entireContent;
-            return entireContent;
+			entireContent = "using System.Collections.Generic; \n" + entireContent;
+			if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections")) entireContent = "using Iesi.Collections.Generic; \n" + entireContent;
+			return entireContent;
         }
 
         private static string RemoveComments(string entireContent)

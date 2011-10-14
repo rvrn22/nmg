@@ -21,14 +21,13 @@ namespace NMG.Tests
             var mapper = new DataTypeMapper();
 
             AssertMappedTypes(mapper, typeof (int), "int", "INTERVAL YEAR TO MONTH", "BINARY_INTEGER");
-            AssertMappedTypes(mapper, typeof (DateTime), "DATE", "datetime", "TIMESTAMP", "TIMESTAMP WITH TIME ZONE",
-                              "TIMESTAMP WITH LOCAL TIME ZONE", "smalldatetime");
-            AssertMappedTypes(mapper, typeof (long), "NUMBER", "nchar", "LONG", "bigint");
-            AssertMappedTypes(mapper, typeof (double), "BINARY_DOUBLE", "float");
+            AssertMappedTypes(mapper, typeof (DateTime), "DATE", "datetime", "TIMESTAMP", "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH LOCAL TIME ZONE", "smalldatetime");
+			AssertMappedTypes(mapper, typeof(long), "NUMBER","LONG", "bigint");
+			AssertMappedTypes(mapper, typeof(string), "nchar");
+			AssertMappedTypes(mapper, typeof(double), "BINARY_DOUBLE", "float");
             AssertMappedTypes(mapper, typeof (float), "BINARY_FLOAT", "FLOAT");
             AssertMappedTypes(mapper, typeof (decimal), "decimal", "money", "smallmoney");
-            AssertMappedTypes(mapper, typeof (byte[]), "BLOB", "BFILE *", "LONG RAW", "binary", "varbinary", "image",
-                              "timestamp");
+            AssertMappedTypes(mapper, typeof (byte[]), "BLOB", "BFILE *", "LONG RAW", "binary", "varbinary", "image", "timestamp");
 
 
             Assert.AreEqual(typeof (TimeSpan), mapper.MapFromDBType("INTERVAL DAY TO SECOND", null, null, null));

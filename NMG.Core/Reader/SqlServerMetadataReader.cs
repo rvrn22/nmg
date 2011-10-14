@@ -31,7 +31,7 @@ namespace NMG.Core.Reader
                 {
                     tableDetailsCommand.CommandText = string.Format(
 						@"
-                        SELECT distinct c.column_name, c .data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position
+                        SELECT distinct c.column_name, c .data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
                         from information_schema.columns c
                             left outer join (
                                 information_schema.constraint_column_usage ccu
@@ -74,7 +74,8 @@ namespace NMG.Core.Reader
                                                 IsForeignKey = isForeignKey,
                                                 // IsFK()
                                                 MappedDataType = m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
-                                                DataLength = characterMaxLenth
+                                                DataLength = characterMaxLenth,
+												ConstraintName = sqlDataReader["constraint_name"].ToString()
                                             });
 
                             table.Columns = columns;
@@ -176,19 +177,33 @@ namespace NMG.Core.Reader
 
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
-            var tempForeignKeys = new List<ForeignKey>();
+			var constraints = table.Columns.Where(x => x.IsForeignKey.Equals(true)).Select(x => x.ConstraintName).Distinct().ToList();
+			var foreignKeys = new List<ForeignKey>(); 
+			constraints.ForEach(c =>
+			                    	{
+			                    		var fkColumns = table.Columns.Where(x => x.ConstraintName.Equals(c)).ToArray();
+			                    		var fk = new ForeignKey
+			                    		         	{
+			                    		         		Name = fkColumns[0].Name,
+			                    		         		References = GetForeignKeyReferenceTableName(table.Name, fkColumns[0].Name),
+														AllColumnsNamesForTheSameConstraint = fkColumns.Select(f=>f.Name).ToArray()
+			                    		         	};
+										foreignKeys.Add(fk);
+			                    	});
 
-            foreach (var foreignKey in foreignKeys)
-            {
-                tempForeignKeys.Add(new ForeignKey
-                                        {
-                                            Name = foreignKey.Name,
-                                            References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
-                                        });
-            }
 
-            return tempForeignKeys;
+        	var referencesUsedMoreThanOnce = foreignKeys.Select(f => f.References).Distinct()
+				.GroupJoin(foreignKeys, a=>a, b=>b.References, (a,b)=> new { References = a, Count = b.Count() } )
+				.Where(@t=>@t.Count > 1)
+				.Select(@t=>@t.References);
+
+			foreignKeys.Join(referencesUsedMoreThanOnce, a=>a.References, b=>b, (a,b)=>a).ToList()
+				.ForEach(fk=>
+				         	{
+				         		fk.UniquePropertyName = fk.Name + "_" + fk.References;
+				         	});
+
+        	return foreignKeys;
         }
 
         private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
@@ -232,11 +247,12 @@ namespace NMG.Core.Reader
                     command.Connection = conn;
                     command.CommandText =
                         String.Format(
-                            @"
+							@"
                         SELECT DISTINCT 
                             PK_TABLE = b.TABLE_NAME,
                             FK_TABLE = c.TABLE_NAME,
-                            FK_COLUMN_NAME = d.COLUMN_NAME
+                            FK_COLUMN_NAME = d.COLUMN_NAME,
+                            CONSTRAINT_NAME = a.CONSTRAINT_NAME
                         FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a 
                           JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS b ON a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA AND a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME 
                           JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS c ON a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA AND a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
@@ -248,11 +264,21 @@ namespace NMG.Core.Reader
 
                     while (reader.Read())
                     {
-                        hasManyRelationships.Add(new HasMany
-                                                     {
-                                                         Reference = reader.GetString(1),
-                                                         ReferenceColumn = reader["FK_COLUMN_NAME"].ToString()
-                                                     });
+                    	var constraintName = reader["CONSTRAINT_NAME"].ToString();
+                    	var fkColumnName = reader["FK_COLUMN_NAME"].ToString();
+                    	var existing = hasManyRelationships.Where(hm => hm.ConstraintName == constraintName).FirstOrDefault();
+						if(existing==null){
+							var newHasManyItem = new HasMany
+							              	{
+							              		ConstraintName = constraintName,
+							              		Reference = reader.GetString(1)
+							              	};
+							newHasManyItem.AllReferenceColumns.Add(fkColumnName);
+	                        hasManyRelationships.Add(newHasManyItem);
+							
+						} else {
+							existing.AllReferenceColumns.Add(fkColumnName);
+						}
                     }
 
                     return hasManyRelationships;

@@ -63,8 +63,13 @@ namespace NMG.Core.Generator
 
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", Formatter.FormatSingular(fk.References), fk.Name )));
-            }
+            	var referencesSnippet = string.Format("References(x => x.{0})", Formatter.FormatSingular(fk.UniquePropertyName));
+				var columnsSnippet = fk.AllColumnsNamesForTheSameConstraint.Length == 1 ?
+					string.Format(".Column(\"{0}\");", fk.Name) :
+					string.Format(".Columns({0});", fk.AllColumnsNamesForTheSameConstraint.Aggregate("new string[] { ", (a,b) => a+"\""+b+"\", ", c=>c.Substring(0, c.Length - 2) + " }" ));
+				
+				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "{0}{1}", referencesSnippet, columnsSnippet)));
+			}
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
@@ -72,10 +77,9 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
-            foreach (var hasMany in Table.HasManyRelationships)
-            {
-                constructor.Statements.Add(new OneToMany(Formatter).Create(hasMany.Reference));
-            }
+			Table.HasManyRelationships.ToList().ForEach(x =>
+				constructor.Statements.Add(new OneToMany(Formatter).Create(x))
+				);
 
             newType.Members.Add(constructor);
             return compileUnit;
@@ -100,7 +104,7 @@ namespace NMG.Core.Generator
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
             foreach (var pkColumn in primaryKey.Columns)
             {
-                keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0})", formatter.FormatText(pkColumn.Name)));
+				keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0}, \"{1}\")", formatter.FormatText(pkColumn.Name), pkColumn.Name));
             }
 
             return new CodeSnippetStatement(TABS + string.Format("CompositeId(){0};", keyPropertyBuilder));
