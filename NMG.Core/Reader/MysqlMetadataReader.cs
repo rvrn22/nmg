@@ -257,7 +257,6 @@ namespace NMG.Core.Reader
                     References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
                 });
             }
-
             return tempForeignKeys;
         }
 
@@ -272,10 +271,7 @@ namespace NMG.Core.Reader
                 {
                     MySqlCommand tableCommand = conn.CreateCommand();
                     tableCommand.CommandText = String.Format(
-                        @"SELECT
-                    ke.referenced_table_name parent,
-                    ke.table_name child,
-                    ke.constraint_name
+                        @"SELECT ke.referenced_table_name parent, ke.table_name child, ke.constraint_name
                     FROM
                     information_schema.KEY_COLUMN_USAGE ke
                     WHERE
@@ -292,8 +288,6 @@ namespace NMG.Core.Reader
             }
             return (string)referencedTableName;
         }
-
-
 
         // http://blog.sqlauthority.com/2006/11/01/sql-server-query-to-display-foreign-key-relationships-and-name-of-the-constraint-for-each-table-in-database/
         private IList<HasMany> DetermineHasManyRelationships(Table table)

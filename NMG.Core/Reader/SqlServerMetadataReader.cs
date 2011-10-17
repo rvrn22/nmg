@@ -25,12 +25,11 @@ namespace NMG.Core.Reader
             var columns = new List<Column>();
             var conn = new SqlConnection(connectionStr);
             conn.Open();
-            using (conn)
-            {
-                using (var tableDetailsCommand = conn.CreateCommand())
-                {
-                    tableDetailsCommand.CommandText = string.Format(
-						@"
+			try {
+				using (conn) {
+					using (var tableDetailsCommand = conn.CreateCommand()) {
+						tableDetailsCommand.CommandText = string.Format(
+							@"
                         SELECT distinct c.column_name, c .data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
                         from information_schema.columns c
                             left outer join (
@@ -47,45 +46,48 @@ namespace NMG.Core.Reader
                             )
                         where c.table_name = '{0}'
                         order by c.table_name, c.ordinal_position",
-                        table.Name, owner);
-                    using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
-                    {
-                        while (sqlDataReader.Read())
-                        {
-                            string columnName = sqlDataReader.GetString(0);
-                            string dataType = sqlDataReader.GetString(1);
-                            bool isNullable = sqlDataReader.GetString(2).Equals("YES", StringComparison.CurrentCultureIgnoreCase);
-                            var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
-                            var numericPrecision = sqlDataReader["numeric_precision"] as int?;
-                            var numericScale = sqlDataReader["numeric_scale"] as int?;
+							table.Name, owner);
 
-                            bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
-                            bool isForeignKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
+						using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default)) {
+							while (sqlDataReader.Read()) {
+								string columnName = sqlDataReader.GetString(0);
+								string dataType = sqlDataReader.GetString(1);
+								bool isNullable = sqlDataReader.GetString(2).Equals("YES", StringComparison.CurrentCultureIgnoreCase);
+								var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
+								var numericPrecision = sqlDataReader["numeric_precision"] as int?;
+								var numericScale = sqlDataReader["numeric_scale"] as int?;
 
-                            var m = new DataTypeMapper();
+								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
+								bool isForeignKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
 
-                            columns.Add(new Column
-                                            {
-                                                Name = columnName,
-                                                DataType = dataType,
-                                                IsNullable = isNullable,
-                                                IsPrimaryKey = isPrimaryKey,
-                                                //IsPrimaryKey(selectedTableName.Name, columnName)
-                                                IsForeignKey = isForeignKey,
-                                                // IsFK()
-                                                MappedDataType = m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
-                                                DataLength = characterMaxLenth,
-												ConstraintName = sqlDataReader["constraint_name"].ToString()
-                                            });
+								var m = new DataTypeMapper();
 
-                            table.Columns = columns;
-                        }
-                        table.PrimaryKey = DeterminePrimaryKeys(table);
-                        table.ForeignKeys = DetermineForeignKeyReferences(table);
-                        table.HasManyRelationships = DetermineHasManyRelationships(table);
-                    }
-                }
-            }
+								columns.Add(new Column
+												{
+													Name = columnName,
+													DataType = dataType,
+													IsNullable = isNullable,
+													IsPrimaryKey = isPrimaryKey,
+													//IsPrimaryKey(selectedTableName.Name, columnName)
+													IsForeignKey = isForeignKey,
+													// IsFK()
+													MappedDataType = m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
+													DataLength = characterMaxLenth,
+													ConstraintName = sqlDataReader["constraint_name"].ToString()
+												});
+
+								table.Columns = columns;
+							}
+							table.PrimaryKey = DeterminePrimaryKeys(table);
+							table.ForeignKeys = DetermineForeignKeyReferences(table);
+							table.HasManyRelationships = DetermineHasManyRelationships(table);
+						}
+					}
+				}
+			} finally {
+				conn.Close();
+			}
+			
             return columns;
         }
 
@@ -94,18 +96,19 @@ namespace NMG.Core.Reader
             var owners = new List<string>();
             var conn = new SqlConnection(connectionStr);
             conn.Open();
-            using (conn)
-            {
-                var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA";
-                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (sqlDataReader.Read())
-                {
-                    var ownerName = sqlDataReader.GetString(0);
-                    owners.Add(ownerName);
-                }
-            }
-
+			try {
+				using (conn) {
+					var tableCommand = conn.CreateCommand();
+					tableCommand.CommandText = "SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA";
+					var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+					while (sqlDataReader.Read()) {
+						var ownerName = sqlDataReader.GetString(0);
+						owners.Add(ownerName);
+					}
+				}
+			} finally {
+				conn.Close();
+			}
             return owners;
         }
 
@@ -114,18 +117,20 @@ namespace NMG.Core.Reader
             var tables = new List<Table>();
             var conn = new SqlConnection(connectionStr);
             conn.Open();
-            using (conn)
-            {
-                var tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
-                var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (sqlDataReader.Read())
-                {
-                    var tableName = sqlDataReader.GetString(0);
-                    tables.Add(new Table {Name = tableName});
-                }
-            }
-            tables.Sort((x, y) => x.Name.CompareTo(y.Name));
+			try {
+				using (conn) {
+					var tableCommand = conn.CreateCommand();
+					tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
+					var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
+					while (sqlDataReader.Read()) {
+						var tableName = sqlDataReader.GetString(0);
+						tables.Add(new Table { Name = tableName });
+					}
+				}
+				tables.Sort((x, y) => x.Name.CompareTo(y.Name));
+			} finally {
+				conn.Close();
+			}
             return tables;
         }
 
@@ -191,30 +196,22 @@ namespace NMG.Core.Reader
 										foreignKeys.Add(fk);
 			                    	});
 
-
-        	var referencesUsedMoreThanOnce = foreignKeys.Select(f => f.References).Distinct()
-				.GroupJoin(foreignKeys, a=>a, b=>b.References, (a,b)=> new { References = a, Count = b.Count() } )
-				.Where(@t=>@t.Count > 1)
-				.Select(@t=>@t.References);
-
-			foreignKeys.Join(referencesUsedMoreThanOnce, a=>a.References, b=>b, (a,b)=>a).ToList()
-				.ForEach(fk=>
-				         	{
-				         		fk.UniquePropertyName = fk.Name + "_" + fk.References;
-				         	});
+        	Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 
         	return foreignKeys;
         }
 
-        private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
+    	private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
         {
-            var conn = new SqlConnection(connectionStr);
+    		object referencedTableName;
+			
+			var conn = new SqlConnection(connectionStr);
             conn.Open();
-            using (conn)
-            {
-                SqlCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format(
-                    @"
+			try {
+				using (conn) {
+					SqlCommand tableCommand = conn.CreateCommand();
+					tableCommand.CommandText = String.Format(
+						@"
                         select pk_table = pk.table_name
                         from information_schema.referential_constraints c
                         inner join information_schema.table_constraints fk on c.constraint_name = fk.constraint_name
@@ -227,11 +224,13 @@ namespace NMG.Core.Reader
                         where i1.constraint_type = 'PRIMARY KEY'
                         ) pt on pt.table_name = pk.table_name
                         where fk.table_name = '{0}' and cu.column_name = '{1}'",
-                    selectedTableName, columnName);
-                object referencedTableName = tableCommand.ExecuteScalar();
-
-                return (string) referencedTableName;
-            }
+						selectedTableName, columnName);
+					referencedTableName = tableCommand.ExecuteScalar();
+				}
+			} finally {
+				conn.Close();
+			}
+			return (string)referencedTableName;
         }
 
         // http://blog.sqlauthority.com/2006/11/01/sql-server-query-to-display-foreign-key-relationships-and-name-of-the-constraint-for-each-table-in-database/
@@ -240,14 +239,13 @@ namespace NMG.Core.Reader
             var hasManyRelationships = new List<HasMany>();
             var conn = new SqlConnection(connectionStr);
             conn.Open();
-            using (conn)
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = conn;
-                    command.CommandText =
-                        String.Format(
-							@"
+			try {
+				using (conn) {
+					using (var command = new SqlCommand()) {
+						command.Connection = conn;
+						command.CommandText =
+							String.Format(
+								@"
                         SELECT DISTINCT 
                             PK_TABLE = b.TABLE_NAME,
                             FK_TABLE = c.TABLE_NAME,
@@ -259,31 +257,32 @@ namespace NMG.Core.Reader
                           JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE d on a.CONSTRAINT_NAME = d.CONSTRAINT_NAME
                         WHERE b.TABLE_NAME = '{0}'
                         ORDER BY 1,2",
-                            table.Name);
-                    SqlDataReader reader = command.ExecuteReader();
+								table.Name);
+						SqlDataReader reader = command.ExecuteReader();
 
-                    while (reader.Read())
-                    {
-                    	var constraintName = reader["CONSTRAINT_NAME"].ToString();
-                    	var fkColumnName = reader["FK_COLUMN_NAME"].ToString();
-                    	var existing = hasManyRelationships.Where(hm => hm.ConstraintName == constraintName).FirstOrDefault();
-						if(existing==null){
-							var newHasManyItem = new HasMany
-							              	{
-							              		ConstraintName = constraintName,
-							              		Reference = reader.GetString(1)
-							              	};
-							newHasManyItem.AllReferenceColumns.Add(fkColumnName);
-	                        hasManyRelationships.Add(newHasManyItem);
-							
-						} else {
-							existing.AllReferenceColumns.Add(fkColumnName);
+						while (reader.Read()) {
+							var constraintName = reader["CONSTRAINT_NAME"].ToString();
+							var fkColumnName = reader["FK_COLUMN_NAME"].ToString();
+							var existing = hasManyRelationships.Where(hm => hm.ConstraintName == constraintName).FirstOrDefault();
+							if (existing == null) {
+								var newHasManyItem = new HasMany
+												{
+													ConstraintName = constraintName,
+													Reference = reader.GetString(1)
+												};
+								newHasManyItem.AllReferenceColumns.Add(fkColumnName);
+								hasManyRelationships.Add(newHasManyItem);
+
+							} else {
+								existing.AllReferenceColumns.Add(fkColumnName);
+							}
 						}
-                    }
-
-                    return hasManyRelationships;
-                }
-            }
+					}
+				}
+			} finally {
+				conn.Close();
+			}
+			return hasManyRelationships;
         }
     }
 }

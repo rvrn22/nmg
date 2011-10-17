@@ -33,10 +33,26 @@ namespace NMG.Core.Domain
 				var fKey = ForeignKeys.Where(fk => fk.Name == column.Name).FirstOrDefault();
 				if (fKey != null) return fKey.References;
 			}
-			return string.Format("/* TODO: UNKNOWN FOREIGN ENTITY for column {0} */", column.Name);
+			return String.Format("/* TODO: UNKNOWN FOREIGN ENTITY for column {0} */", column.Name);
 		}
 
     	public override string ToString() { return Name; }
+
+		/// <summary>
+		/// When one table has multiple fields that represent different relationships to the same foreign entity, it is required to give them unique names.
+		/// </summary>
+    	public static void SetUniqueNamesForForeignKeyProperties(IEnumerable<ForeignKey> foreignKeys) {
+    		var referencesUsedMoreThanOnce = foreignKeys.Select(f => f.References).Distinct()
+    			.GroupJoin(foreignKeys, a=>a, b=>b.References, (a,b)=> new { References = a, Count = b.Count() } )
+    			.Where(@t=>t.Count > 1)
+    			.Select(@t=>t.References);
+
+    		foreignKeys.Join(referencesUsedMoreThanOnce, a=>a.References, b=>b, (a,b)=>a).ToList()
+    			.ForEach(fk=>
+    			{
+    				fk.UniquePropertyName = fk.Name + "_" + fk.References;
+    			});
+    	}
     }
 
     public class HasMany
@@ -59,7 +75,9 @@ namespace NMG.Core.Domain
 		/// <summary>
 		/// Provide the first (and very often the only) column used to define a foreign key relationship.
 		/// </summary>
-		public string ReferenceColumn { get { return AllReferenceColumns.Count > 0 ? AllReferenceColumns[0] : ""; } }
+		public string ReferenceColumn { 
+			get { return AllReferenceColumns.Count > 0 ? AllReferenceColumns[0] : ""; }
+			set { AllReferenceColumns = new List<string>{value};   }   }
 	}
 
     /// <summary>
