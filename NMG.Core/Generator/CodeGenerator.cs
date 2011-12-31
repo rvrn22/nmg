@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace NMG.Core.Generator
         private readonly ApplicationPreferences appPrefs;
         private readonly Language language;
 
-        public CodeGenerator(ApplicationPreferences appPrefs, Table table) : base( appPrefs.FolderPath, appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
+        public CodeGenerator(ApplicationPreferences appPrefs, Table table) : base( appPrefs.FolderPath, "Domain", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = appPrefs.Language;
@@ -121,10 +122,10 @@ namespace NMG.Core.Generator
 
         private string AddStandardHeader(string entireContent)
         {
-            entireContent = "using System; \n" + entireContent;
-            entireContent = "using System.Text; \n" + entireContent;
-			entireContent = "using System.Collections.Generic; \n" + entireContent;
-			if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections")) entireContent = "using Iesi.Collections.Generic; \n" + entireContent;
+            entireContent = "using System;" + Environment.NewLine + entireContent;
+            entireContent = "using System.Text;" + Environment.NewLine + entireContent;
+            entireContent = "using System.Collections.Generic;" + Environment.NewLine + entireContent;
+            if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections")) entireContent = "using Iesi.Collections.Generic;" + Environment.NewLine + entireContent;
 			return entireContent;
         }
 

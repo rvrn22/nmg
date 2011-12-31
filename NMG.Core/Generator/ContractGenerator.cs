@@ -11,8 +11,7 @@ namespace NMG.Core.Generator
         private readonly ApplicationPreferences appPrefs;
         private readonly Table table;
 
-        public ContractGenerator(ApplicationPreferences appPrefs, Table table)  : 
-			base(appPrefs.FolderPath, appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
+        public ContractGenerator(ApplicationPreferences appPrefs, Table table)  : base(appPrefs.FolderPath, "Contract", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             this.table = table;

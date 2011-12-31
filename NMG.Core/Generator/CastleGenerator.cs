@@ -1,3 +1,4 @@
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -13,7 +14,7 @@ namespace NMG.Core.Generator
     {
         private readonly ApplicationPreferences applicationPreferences;
 
-        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
         }
@@ -125,10 +126,10 @@ namespace NMG.Core.Generator
 
         private static string AddStandardHeader(string entireContent)
         {
-            entireContent = "using Castle.ActiveRecord; \n" + entireContent;
-            entireContent = "using System; \n" + entireContent;
-            entireContent = "using System.Text; \n" + entireContent;
-            entireContent = "using System.Collections.Generic; \n" + entireContent;
+            entireContent = "using Castle.ActiveRecord;" + Environment.NewLine + entireContent;
+            entireContent = "using System;" + Environment.NewLine + entireContent;
+            entireContent = "using System.Text;" + Environment.NewLine + entireContent;
+            entireContent = "using System.Collections.Generic;" + Environment.NewLine + entireContent;
             return entireContent;
         }
 

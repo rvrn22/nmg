@@ -13,16 +13,14 @@ namespace NMG.Core.Generator
     {
         protected Language language;
 
-        protected AbstractCodeGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                        string sequenceName, Table table, ApplicationPreferences appPrefs)
-            : base(filePath, tableName, nameSpace, assemblyName, sequenceName, table, appPrefs)
+        protected AbstractCodeGenerator(string filePath, string additionalFolder, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table, ApplicationPreferences appPrefs)
+            : base(filePath, additionalFolder, tableName, nameSpace, assemblyName, sequenceName, table, appPrefs)
         {
-            
         }
 
         public string GenerateCode(CodeCompileUnit compileUnit, string className)
         {
-            CodeDomProvider provider = GetCodeDomProvider();
+            var provider = GetCodeDomProvider();
             var stringBuilder = new StringBuilder();
             using (provider)
             {
@@ -34,7 +32,7 @@ namespace NMG.Core.Generator
 
         protected void WriteToFile(string content, string fileName)
         {
-            CodeDomProvider provider = GetCodeDomProvider();
+            var provider = GetCodeDomProvider();
             string sourceFile = GetCompleteFilePath(provider, fileName);
             using (provider)
             {
@@ -61,9 +59,9 @@ namespace NMG.Core.Generator
 
         protected virtual string AddStandardHeader(string entireContent)
         {
-            entireContent = "using System.Text; \n" + entireContent;
-            entireContent = "using System.Collections.Generic; \n" + entireContent;
-            entireContent = "using System; \n" + entireContent;
+            entireContent = "using System.Text; " + Environment.NewLine + entireContent;
+            entireContent = "using System.Collections.Generic; " + Environment.NewLine + entireContent;
+            entireContent = "using System; " + Environment.NewLine + entireContent;
             return entireContent;
         }
 

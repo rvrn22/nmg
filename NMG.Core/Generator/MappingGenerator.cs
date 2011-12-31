@@ -6,10 +6,7 @@ namespace NMG.Core.Generator
 {
     public abstract class MappingGenerator : AbstractGenerator
     {
-        protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table)
-            : base(
-                applicationPreferences.FolderPath, applicationPreferences.TableName, applicationPreferences.NameSpace,
-                applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        protected MappingGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
         }
 

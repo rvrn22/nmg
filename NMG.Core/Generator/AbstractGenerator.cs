@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 
@@ -15,10 +16,17 @@ namespace NMG.Core.Generator
 		internal const string TABS = "\t\t\t";
     	protected string ClassNamePrefix { get; set;}
 
-        protected AbstractGenerator(string filePath, string tableName, string nameSpace, string assemblyName,
-                                    string sequenceName, Table table, ApplicationPreferences appPrefs)
+        protected AbstractGenerator(string filePath, string specificFolder, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table, ApplicationPreferences appPrefs)
         {
             this.filePath = filePath;
+            if(appPrefs.GenerateInFolders)
+            {
+                this.filePath = Path.Combine(filePath, specificFolder);
+                if(!this.filePath.EndsWith("/"))
+                {
+                    this.filePath = this.filePath + "/";
+                }
+            }
             this.tableName = tableName;
             this.nameSpace = nameSpace;
             this.assemblyName = assemblyName;
@@ -26,7 +34,6 @@ namespace NMG.Core.Generator
             Table = table;
             Formatter = TextFormatterFactory.GetTextFormatter(appPrefs);
         }
-
 
         public bool UsesSequence
         {

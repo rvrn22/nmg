@@ -1,4 +1,3 @@
-using System;
 using NMG.Core.Domain;
 
 namespace NMG.Core
@@ -42,7 +41,9 @@ namespace NMG.Core
 
         public bool GenerateWcfDataContract { get; set; }
 
-    	public static ApplicationPreferences Default()
+        public bool GenerateInFolders { get; set; }
+
+        public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences
                                   {

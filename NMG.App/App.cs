@@ -85,6 +85,8 @@ namespace NHibernateMappingGenerator
 				sameAsDBRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
 
 				sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked && !camelCasedRadioButton.Checked);
+
+                generateInFoldersCheckBox.Checked = appSettings.GenerateInFolders;
 			}
             else
             {
@@ -131,7 +133,8 @@ namespace NHibernateMappingGenerator
     		                      		IsCastle = IsCastle,
     		                      		ClassNamePrefix = textBoxClassNamePrefix.Text,
 										GeneratePartialClasses = partialClassesCheckBox.Checked,
-										GenerateWcfContracts =  wcfDataContractCheckBox.Checked
+										GenerateWcfContracts =  wcfDataContractCheckBox.Checked,
+                                        GenerateInFolders = generateInFoldersCheckBox.Checked
     		                      	};
     	}
 
@@ -209,7 +212,7 @@ namespace NHibernateMappingGenerator
             }
         }
 
-		IList<int> _cachedTableListSelection = new List<int>();
+        readonly IList<int> _cachedTableListSelection = new List<int>();
 
 		private int? LastTableSelected() 
 		{
@@ -442,6 +445,12 @@ namespace NHibernateMappingGenerator
             {
                 Directory.CreateDirectory(folderPath);
             }
+            if(appSettings.GenerateInFolders)
+            {
+                Directory.CreateDirectory(folderPath + "Contract");
+                Directory.CreateDirectory(folderPath + "Domain");
+                Directory.CreateDirectory(folderPath + "Mapping");
+            }
             object serverType = null;
             if (serverTypeComboBox.InvokeRequired)
             {
@@ -471,6 +480,7 @@ namespace NHibernateMappingGenerator
                                                  ConnectionString = appSettings.ConnectionString,
 												 ForeignEntityCollectionType = appSettings.ForeignEntityCollectionType,
 												 InheritenceAndInterfaces = appSettings.InheritenceAndInterfaces,
+                                                 GenerateInFolders = appSettings.GenerateInFolders,
 												 ClassNamePrefix = appSettings.ClassNamePrefix
                                              };
 

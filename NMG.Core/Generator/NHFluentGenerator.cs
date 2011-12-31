@@ -10,15 +10,9 @@ namespace NMG.Core.Generator
 {
     public class NHFluentGenerator : AbstractCodeGenerator
     {
-        
         private readonly ApplicationPreferences appPrefs;
 
-        public NHFluentGenerator(ApplicationPreferences appPrefs, Table table)
-            : base(
-                appPrefs.FolderPath, appPrefs.TableName,
-                appPrefs.NameSpace,
-                appPrefs.AssemblyName, appPrefs.Sequence, table,
-                appPrefs)
+        public NHFluentGenerator(ApplicationPreferences appPrefs, Table table) : base(appPrefs.FolderPath, "Mapping", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = this.appPrefs.Language;
@@ -26,9 +20,9 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-			string className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
-            CodeCompileUnit compileUnit = GetCompleteCompileUnit(className);
-            string generateCode = GenerateCode(compileUnit, className);
+			var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
+            var compileUnit = GetCompleteCompileUnit(className);
+            var generateCode = GenerateCode(compileUnit, className);
             WriteToFile(generateCode, className);
         }
 

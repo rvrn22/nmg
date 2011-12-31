@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -31,13 +30,14 @@ namespace NHibernateMappingGenerator
         public bool IsNhFluent { get; set; }
         public bool IsCastle { get; set; }
 
-    	public void Save()
+        public bool GenerateInFolders { get; set; }
+
+        public void Save()
         {
             var streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);
-            XmlSerializer xmlSerializer;
             using (streamWriter)
             {
-                xmlSerializer = new XmlSerializer(typeof (ApplicationSettings));
+                var xmlSerializer = new XmlSerializer(typeof (ApplicationSettings));
                 xmlSerializer.Serialize(streamWriter, this);
             }
         }

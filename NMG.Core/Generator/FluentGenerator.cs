@@ -11,15 +11,9 @@ namespace NMG.Core.Generator
 {
     public class FluentGenerator : AbstractCodeGenerator
     {
-        
         private readonly ApplicationPreferences appPrefs;
 
-        public FluentGenerator(ApplicationPreferences appPrefs, Table table)
-            : base(
-                appPrefs.FolderPath, appPrefs.TableName,
-                appPrefs.NameSpace,
-                appPrefs.AssemblyName, appPrefs.Sequence, table,
-                appPrefs)
+        public FluentGenerator(ApplicationPreferences appPrefs, Table table) : base(appPrefs.FolderPath, "Mapping", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = this.appPrefs.Language;
@@ -27,9 +21,9 @@ namespace NMG.Core.Generator
 
         public override void Generate()
         {
-			string className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
-            CodeCompileUnit compileUnit = GetCompleteCompileUnit(className);
-            string generateCode = GenerateCode(compileUnit, className);
+			var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
+            var compileUnit = GetCompleteCompileUnit(className);
+            var generateCode = GenerateCode(compileUnit, className);
             WriteToFile(generateCode, className);
         }
 
@@ -136,7 +130,7 @@ namespace NMG.Core.Generator
         	var hasManySnippet = string.Format("HasMany(x => x.{0})", Formatter.FormatPlural(hasMany.Reference));
         	var keySnippet = hasMany.AllReferenceColumns.Count == 1 ? 
 				string.Format(".KeyColumn(\"{0}\")", hasMany.ReferenceColumn) : 
-				string.Format(".KeyColumns({0})", hasMany.AllReferenceColumns.Aggregate("new string[] { ", (a, b) => a + "\"" + b + "\", ", (c) => c.Substring(0, c.Length - 2) + " }"));
+				string.Format(".KeyColumns({0})", hasMany.AllReferenceColumns.Aggregate("new string[] { ", (a, b) => a + "\"" + b + "\", ", c => c.Substring(0, c.Length - 2) + " }"));
 
 			return new CodeSnippetStatement(string.Format(AbstractGenerator.TABS + "{0}{1};", hasManySnippet, keySnippet));
 		}
