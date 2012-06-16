@@ -72,6 +72,8 @@ namespace NHibernateMappingGenerator
             this.ownersComboBox = new System.Windows.Forms.ComboBox();
             this.lblOwner = new System.Windows.Forms.Label();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.generateInFoldersCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.comboBoxForeignCollection = new System.Windows.Forms.ComboBox();
             this.wcfDataContractCheckBox = new System.Windows.Forms.CheckBox();
@@ -100,8 +102,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.generateInFoldersCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -110,12 +110,12 @@ namespace NHibernateMappingGenerator
             this.groupBox4.SuspendLayout();
             this.pOracleOnlyOptions.SuspendLayout();
             this.advanceSettingsTabPage.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox9.SuspendLayout();
             this.SuspendLayout();
             // 
             // connStrTextBox
@@ -159,8 +159,9 @@ namespace NHibernateMappingGenerator
             // 
             this.dbTableDetailsGridView.AllowUserToAddRows = false;
             this.dbTableDetailsGridView.AllowUserToDeleteRows = false;
-            this.dbTableDetailsGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dbTableDetailsGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dbTableDetailsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dbTableDetailsGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dbTableDetailsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -175,7 +176,7 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(243, 16);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
-            this.dbTableDetailsGridView.Size = new System.Drawing.Size(817, 331);
+            this.dbTableDetailsGridView.Size = new System.Drawing.Size(910, 331);
             this.dbTableDetailsGridView.TabIndex = 5;
             // 
             // columnName
@@ -348,7 +349,7 @@ namespace NHibernateMappingGenerator
             this.mainTabControl.Location = new System.Drawing.Point(0, 0);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(1077, 723);
+            this.mainTabControl.Size = new System.Drawing.Size(1173, 723);
             this.mainTabControl.TabIndex = 19;
             // 
             // basicSettingsTabPage
@@ -359,7 +360,7 @@ namespace NHibernateMappingGenerator
             this.basicSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.basicSettingsTabPage.Name = "basicSettingsTabPage";
             this.basicSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.basicSettingsTabPage.Size = new System.Drawing.Size(1069, 697);
+            this.basicSettingsTabPage.Size = new System.Drawing.Size(1165, 697);
             this.basicSettingsTabPage.TabIndex = 1;
             this.basicSettingsTabPage.Text = "Basic";
             this.basicSettingsTabPage.UseVisualStyleBackColor = true;
@@ -371,7 +372,7 @@ namespace NHibernateMappingGenerator
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(3, 106);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(1063, 350);
+            this.groupBox6.Size = new System.Drawing.Size(1159, 350);
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
             // 
@@ -381,7 +382,7 @@ namespace NHibernateMappingGenerator
             this.tablesListBox.FormattingEnabled = true;
             this.tablesListBox.Location = new System.Drawing.Point(3, 16);
             this.tablesListBox.Name = "tablesListBox";
-            this.tablesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.tablesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.tablesListBox.Size = new System.Drawing.Size(234, 331);
             this.tablesListBox.TabIndex = 6;
             // 
@@ -404,7 +405,7 @@ namespace NHibernateMappingGenerator
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox5.Location = new System.Drawing.Point(3, 456);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1063, 238);
+            this.groupBox5.Size = new System.Drawing.Size(1159, 238);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             // 
@@ -420,9 +421,11 @@ namespace NHibernateMappingGenerator
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(3, 184);
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(3, 199);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1054, 13);
+            this.progressBar.Size = new System.Drawing.Size(1150, 13);
             this.progressBar.TabIndex = 21;
             // 
             // label6
@@ -454,7 +457,7 @@ namespace NHibernateMappingGenerator
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(1063, 103);
+            this.groupBox4.Size = new System.Drawing.Size(1159, 103);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
             // 
@@ -466,7 +469,7 @@ namespace NHibernateMappingGenerator
             this.pOracleOnlyOptions.Controls.Add(this.sequencesComboBox);
             this.pOracleOnlyOptions.Location = new System.Drawing.Point(603, 54);
             this.pOracleOnlyOptions.Name = "pOracleOnlyOptions";
-            this.pOracleOnlyOptions.Size = new System.Drawing.Size(463, 43);
+            this.pOracleOnlyOptions.Size = new System.Drawing.Size(559, 43);
             this.pOracleOnlyOptions.TabIndex = 20;
             // 
             // ownersComboBox
@@ -503,6 +506,26 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
             this.advanceSettingsTabPage.Click += new System.EventHandler(this.advanceSettingsTabPage_Click);
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.generateInFoldersCheckBox);
+            this.groupBox9.Location = new System.Drawing.Point(7, 299);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(200, 100);
+            this.groupBox9.TabIndex = 8;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Files";
+            // 
+            // generateInFoldersCheckBox
+            // 
+            this.generateInFoldersCheckBox.AutoSize = true;
+            this.generateInFoldersCheckBox.Location = new System.Drawing.Point(7, 20);
+            this.generateInFoldersCheckBox.Name = "generateInFoldersCheckBox";
+            this.generateInFoldersCheckBox.Size = new System.Drawing.Size(172, 17);
+            this.generateInFoldersCheckBox.TabIndex = 0;
+            this.generateInFoldersCheckBox.Text = "Group generated files in folders";
+            this.generateInFoldersCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox8
             // 
@@ -803,31 +826,11 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.generateInFoldersCheckBox);
-            this.groupBox9.Location = new System.Drawing.Point(7, 299);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(200, 100);
-            this.groupBox9.TabIndex = 8;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Files";
-            // 
-            // checkBox1
-            // 
-            this.generateInFoldersCheckBox.AutoSize = true;
-            this.generateInFoldersCheckBox.Location = new System.Drawing.Point(7, 20);
-            this.generateInFoldersCheckBox.Name = "generateInFoldersCheckBox";
-            this.generateInFoldersCheckBox.Size = new System.Drawing.Size(172, 17);
-            this.generateInFoldersCheckBox.TabIndex = 0;
-            this.generateInFoldersCheckBox.Text = "Group generated files in folders";
-            this.generateInFoldersCheckBox.UseVisualStyleBackColor = true;
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1077, 723);
+            this.ClientSize = new System.Drawing.Size(1173, 723);
             this.Controls.Add(this.mainTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "App";
@@ -844,6 +847,8 @@ namespace NHibernateMappingGenerator
             this.pOracleOnlyOptions.ResumeLayout(false);
             this.pOracleOnlyOptions.PerformLayout();
             this.advanceSettingsTabPage.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -854,8 +859,6 @@ namespace NHibernateMappingGenerator
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             this.ResumeLayout(false);
 
         }
