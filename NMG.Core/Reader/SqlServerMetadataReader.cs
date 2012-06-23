@@ -58,8 +58,8 @@ namespace NMG.Core.Reader
 								var numericPrecision = sqlDataReader["numeric_precision"] as int?;
 								var numericScale = sqlDataReader["numeric_scale"] as int?;
 
-								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
-								bool isForeignKey = (!sqlDataReader.IsDBNull(3) ? sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase) : false);
+								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
+								bool isForeignKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 
 								var m = new DataTypeMapper();
 
@@ -72,7 +72,7 @@ namespace NMG.Core.Reader
 													//IsPrimaryKey(selectedTableName.Name, columnName)
 													IsForeignKey = isForeignKey,
 													// IsFK()
-													MappedDataType = m.MapFromDBType(dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
+													MappedDataType = m.MapFromDBType(ServerType.SqlServer, dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
 													DataLength = characterMaxLenth,
 													ConstraintName = sqlDataReader["constraint_name"].ToString()
 												});
@@ -128,27 +128,27 @@ namespace NMG.Core.Reader
 						tables.Add(new Table { Name = tableName });
 					}
 				}
-				tables.Sort((x, y) => x.Name.CompareTo(y.Name));
+				tables.Sort((x, y) => String.CompareOrdinal(x.Name, y.Name));
 			} finally {
 				conn.Close();
 			}
 			return tables;
 		}
 
-		public List<string> GetSequences()
-		{
-			return new List<string>();
-		}
+        public List<string> GetSequences(string owner)
+        {
+            return new List<string>();
+        }
 
 		#endregion
 
 		private static PrimaryKey DeterminePrimaryKeys(Table table)
 		{
-			IEnumerable<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
+			IList<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
 			if (primaryKeys.Count() == 1)
 			{
-				Column c = primaryKeys.First();
+				var c = primaryKeys.First();
 				var key = new PrimaryKey
 							  {
 								  Type = PrimaryKeyType.PrimaryKey,
@@ -264,7 +264,7 @@ namespace NMG.Core.Reader
 						while (reader.Read()) {
 							var constraintName = reader["CONSTRAINT_NAME"].ToString();
 							var fkColumnName = reader["FK_COLUMN_NAME"].ToString();
-							var existing = hasManyRelationships.Where(hm => hm.ConstraintName == constraintName).FirstOrDefault();
+							var existing = hasManyRelationships.FirstOrDefault(hm => hm.ConstraintName == constraintName);
 							if (existing == null) {
 								var newHasManyItem = new HasMany
 												{

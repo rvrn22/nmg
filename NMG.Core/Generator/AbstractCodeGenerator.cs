@@ -74,8 +74,8 @@ namespace NMG.Core.Generator
 
         private string GetCompleteFilePath(CodeDomProvider provider, string entityFileName)
         {
-            if (!filePath.EndsWith("\\"))
-                filePath += "\\";
+            if (!filePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                filePath += Path.DirectorySeparatorChar;
             string fileName = filePath + entityFileName;
             return provider.FileExtension[0] == '.'
                        ? fileName + provider.FileExtension

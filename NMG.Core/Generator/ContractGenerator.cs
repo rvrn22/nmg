@@ -47,7 +47,7 @@ namespace NMG.Core.Generator
 						newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute("IList<" + fkEntityName + ">", foreignKeyTable.Reference.MakePlural().GetPreferenceFormattedText(appPrefs)));
                     }
 
-                    var primaryKeyType = mapper.MapFromDBType(column.DataType, column.DataLength, null, null);
+                    var primaryKeyType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                     newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(primaryKeyType.Name, "Id"));
                     continue;
                 }
@@ -60,7 +60,7 @@ namespace NMG.Core.Generator
                     continue;
                 }
                 var propertyName = column.Name.GetPreferenceFormattedText(appPrefs);
-                var mapFromDbType = mapper.MapFromDBType(column.DataType, column.DataLength, null, null);
+                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
 
                 newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(mapFromDbType.Name, propertyName));
             }

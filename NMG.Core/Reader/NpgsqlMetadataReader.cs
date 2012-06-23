@@ -104,7 +104,7 @@ inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||
                                     IsForeignKey = isForeignKey,                                    
                                     // IsFK()
                                     MappedDataType =
-                                        m.MapFromDBType(dataType, null, null, null).ToString(),
+                                        m.MapFromDBType(ServerType.PostgreSQL, dataType, null, null, null).ToString(),
                                     //DataLength = dataLength
                                 });
 
@@ -161,7 +161,7 @@ inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||
                 tables.Sort((x, y) => x.Name.CompareTo(y.Name));
                 return tables;
             }
-            public List<string> GetSequences()
+            public List<string> GetSequences(string owner)
             {
                 return null;
             }

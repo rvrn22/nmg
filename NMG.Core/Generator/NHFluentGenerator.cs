@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq;
 using System.Text;
 using NMG.Core.Domain;
+using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {
@@ -34,6 +36,26 @@ namespace NMG.Core.Generator
             newType.Members.Add(constructor);
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + tableName + "\");"));
             constructor.Statements.Add(GetIdMapCodeSnippetStatement());
+
+            if(UsesSequence)
+            {
+                constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
+                    Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, appPrefs.Sequence)));
+            }
+            else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+            {
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
+            }
+
+            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
+            {
+            	var referencesSnippet = string.Format("References(x => x.{0})", Formatter.FormatSingular(fk.UniquePropertyName));
+				var columnsSnippet = fk.AllColumnsNamesForTheSameConstraint.Length == 1 ?
+					string.Format(".Column(\"{0}\");", fk.Name) :
+					string.Format(".Columns({0});", fk.AllColumnsNamesForTheSameConstraint.Aggregate("new string[] { ", (a,b) => a+"\""+b+"\", ", c=>c.Substring(0, c.Length - 2) + " }" ));
+				
+				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "{0}{1}", referencesSnippet, columnsSnippet)));
+			}
 
             foreach (var columnDetail in Table.Columns)
             {
@@ -69,6 +91,14 @@ namespace NMG.Core.Generator
             entireContent = "using NHibernate.Mapping.ByCode;" + Environment.NewLine + entireContent;
             entireContent = string.Format("using {0};", nameSpace) + Environment.NewLine + entireContent;
             return base.AddStandardHeader(entireContent);
+        }
+
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(ApplicationPreferences appPrefs, string pkColumnName, string pkColumnType, ITextFormatter formatter)
+        {
+            var dataTypeMapper = new DataTypeMapper();
+            bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(appPrefs.ServerType, pkColumnType, null, null, null)).IsTypeIntegral();
+            string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
+            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
         }
 
         private string MapNhStyle(Column column)

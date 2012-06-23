@@ -65,7 +65,7 @@ namespace NMG.Core.Reader
                                     IsForeignKey = isForeignKey,
                                     // IsFK()
                                     MappedDataType =
-                                        m.MapFromDBType(dataType, null, null, null).ToString(),
+                                        m.MapFromDBType(ServerType.MySQL, dataType, null, null, null).ToString(),
                                     //DataLength = dataLength
                                 });
 
@@ -143,7 +143,7 @@ namespace NMG.Core.Reader
             tables.Sort((x, y) => x.Name.CompareTo(y.Name));
             return tables;
         }
-        public List<string> GetSequences()
+        public List<string> GetSequences(string owner)
         {
             return null;
         }

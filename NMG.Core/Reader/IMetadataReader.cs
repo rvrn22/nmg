@@ -8,7 +8,7 @@ namespace NMG.Core.Reader
         IList<Column> GetTableDetails(Table table, string owner);
         List<Table> GetTables(string owner);
         IList<string> GetOwners();
-        List<string> GetSequences();
+        List<string> GetSequences(string owner);
        //List<string> GetSequences(List<Table> table);
         //List<string> GetForeignKeyTables(string columnName);
     }

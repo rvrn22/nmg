@@ -12,7 +12,7 @@ namespace NMG.Core.Domain
             ColumnName = columnName;
             DataType = dataType;
             IsNullable = isNullable;
-            MappedType = new DataTypeMapper().MapFromDBType(DataType, DataLength, DataPrecision, DataScale).Name;
+            MappedType = new DataTypeMapper().MapFromDBType(ServerType.SqlServer, DataType, DataLength, DataPrecision, DataScale).Name;
         }
 
         public bool IsNullable { get; private set; }

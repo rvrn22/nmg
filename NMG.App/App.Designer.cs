@@ -31,7 +31,7 @@ namespace NHibernateMappingGenerator
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(App));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof (App));
             this.connStrTextBox = new System.Windows.Forms.TextBox();
             this.dbConnStrLabel = new System.Windows.Forms.Label();
             this.connectBtn = new System.Windows.Forms.Button();
@@ -87,11 +87,14 @@ namespace NHibernateMappingGenerator
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.propertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.fieldRadioBtn = new System.Windows.Forms.RadioButton();
+            this.useLazyLoadingCheckBox = new System.Windows.Forms.CheckBox();
+            this.includeForeignKeysCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.nhFluentMappingStyle = new System.Windows.Forms.RadioButton();
             this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
             this.hbmMappingOption = new System.Windows.Forms.RadioButton();
+            this.byCodeMappingOption = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.vbRadioButton = new System.Windows.Forms.RadioButton();
             this.cSharpRadioButton = new System.Windows.Forms.RadioButton();
@@ -622,6 +625,8 @@ namespace NHibernateMappingGenerator
             this.groupBox7.Controls.Add(this.autoPropertyRadioBtn);
             this.groupBox7.Controls.Add(this.propertyRadioBtn);
             this.groupBox7.Controls.Add(this.fieldRadioBtn);
+            this.groupBox7.Controls.Add(this.useLazyLoadingCheckBox);
+            this.groupBox7.Controls.Add(this.includeForeignKeysCheckBox);
             this.groupBox7.Location = new System.Drawing.Point(6, 152);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(200, 140);
@@ -638,6 +643,24 @@ namespace NHibernateMappingGenerator
             this.autoPropertyRadioBtn.TabIndex = 6;
             this.autoPropertyRadioBtn.Text = "Auto Property";
             this.autoPropertyRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // useLazyLoadingCheckBox
+            // 
+            this.useLazyLoadingCheckBox.AutoSize = true;
+            this.useLazyLoadingCheckBox.Location = new System.Drawing.Point(6, 85);
+            this.useLazyLoadingCheckBox.Name = "useLazyLoadingCheckBox";
+            this.useLazyLoadingCheckBox.Size = new System.Drawing.Size(89, 17);
+            this.useLazyLoadingCheckBox.Text = "Use Lazy Loading";
+            this.useLazyLoadingCheckBox.UseVisualStyleBackColor = true;
+            //
+            //includeForeignKeysCheckBox
+            //
+            this.includeForeignKeysCheckBox.AutoSize = true;
+            this.includeForeignKeysCheckBox.Location = new System.Drawing.Point(6, 105);
+            this.includeForeignKeysCheckBox.Name = "includeForeignKeysCheckBox";
+            this.includeForeignKeysCheckBox.Size = new System.Drawing.Size(89, 17);
+            this.includeForeignKeysCheckBox.Text = "Include Foreign Keys";
+            this.includeForeignKeysCheckBox.UseVisualStyleBackColor = true;
             // 
             // propertyRadioBtn
             // 
@@ -667,6 +690,7 @@ namespace NHibernateMappingGenerator
             this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
+            this.groupBox3.Controls.Add(this.byCodeMappingOption);
             this.groupBox3.Location = new System.Drawing.Point(527, 6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 140);
@@ -717,7 +741,17 @@ namespace NHibernateMappingGenerator
             this.hbmMappingOption.TabStop = true;
             this.hbmMappingOption.Text = ".hbm.xml file";
             this.hbmMappingOption.UseVisualStyleBackColor = true;
+            //
+            // byCodeMappingOption
+            //
             // 
+            this.byCodeMappingOption.AutoSize = true;
+            this.byCodeMappingOption.Location = new System.Drawing.Point(6, 110);
+            this.byCodeMappingOption.Name = "byCodeMappingOption";
+            this.byCodeMappingOption.Size = new System.Drawing.Size(98, 17);
+            this.byCodeMappingOption.TabStop = true;
+            this.byCodeMappingOption.Text = "By Code Mapping";
+            this.byCodeMappingOption.UseVisualStyleBackColor = true;
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.vbRadioButton);
@@ -832,7 +866,9 @@ namespace NHibernateMappingGenerator
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1173, 723);
             this.Controls.Add(this.mainTabControl);
+#if !MONO            
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+#endif            
             this.Name = "App";
             this.Text = "NHibernate Mapping Generator";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -899,6 +935,7 @@ namespace NHibernateMappingGenerator
         private GroupBox groupBox3;
         private RadioButton fluentMappingOption;
         private RadioButton hbmMappingOption;
+        private RadioButton byCodeMappingOption;
         private GroupBox groupBox4;
         private GroupBox groupBox5;
         private GroupBox groupBox6;
@@ -907,7 +944,7 @@ namespace NHibernateMappingGenerator
         private RadioButton fieldRadioBtn;
         private RadioButton autoPropertyRadioBtn;
         private Label label6;
-		private TextBox entityNameTextBox;
+        private TextBox entityNameTextBox;
         private RadioButton castleMappingOption;
         private ComboBox ownersComboBox;
         private Label lblOwner;
@@ -919,22 +956,24 @@ namespace NHibernateMappingGenerator
         private Button cancelButton;
         private CheckBox wcfDataContractCheckBox;
         private RadioButton nhFluentMappingStyle;
-		private ListBox tablesListBox;
-		private Label labelInheritence;
-		private TextBox textBoxInheritence;
-		private ComboBox comboBoxForeignCollection;
-		private Label labelForeignEntity;
-		private DataGridViewTextBoxColumn columnName;
-		private DataGridViewTextBoxColumn columnDataType;
-		private DataGridViewComboBoxColumn cSharpType;
-		private DataGridViewCheckBoxColumn isPrimaryKey;
-		private DataGridViewCheckBoxColumn isForeignKey;
-		private DataGridViewCheckBoxColumn isNullable;
-		private DataGridViewCheckBoxColumn isUniqueKey;
-		private Label labelCLassNamePrefix;
-		private TextBox textBoxClassNamePrefix;
+        private ListBox tablesListBox;
+        private Label labelInheritence;
+        private TextBox textBoxInheritence;
+        private ComboBox comboBoxForeignCollection;
+        private Label labelForeignEntity;
+        private DataGridViewTextBoxColumn columnName;
+        private DataGridViewTextBoxColumn columnDataType;
+        private DataGridViewComboBoxColumn cSharpType;
+        private DataGridViewCheckBoxColumn isPrimaryKey;
+        private DataGridViewCheckBoxColumn isForeignKey;
+        private DataGridViewCheckBoxColumn isNullable;
+        private DataGridViewCheckBoxColumn isUniqueKey;
+        private Label labelCLassNamePrefix;
+        private TextBox textBoxClassNamePrefix;
         private GroupBox groupBox9;
-        private CheckBox generateInFoldersCheckBox;		
+        private CheckBox generateInFoldersCheckBox;
+        private CheckBox useLazyLoadingCheckBox;
+        private CheckBox includeForeignKeysCheckBox;
     }
 }
 

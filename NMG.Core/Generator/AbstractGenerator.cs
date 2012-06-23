@@ -22,9 +22,9 @@ namespace NMG.Core.Generator
             if(appPrefs.GenerateInFolders)
             {
                 this.filePath = Path.Combine(filePath, specificFolder);
-                if(!this.filePath.EndsWith("/"))
+                if(!this.filePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 {
-                    this.filePath = this.filePath + "/";
+                    this.filePath = this.filePath + Path.DirectorySeparatorChar;
                 }
             }
             this.tableName = tableName;

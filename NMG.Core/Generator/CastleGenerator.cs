@@ -36,7 +36,7 @@ namespace NMG.Core.Generator
             newType.IsPartial = applicationPreferences.GeneratePartialClasses;
             foreach (var pk in Table.PrimaryKey.Columns)
             {
-                var mapFromDbType = mapper.MapFromDBType(pk.DataType, null, null, null);
+                var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
 
                 var declaration = new CodeAttributeDeclaration("PrimaryKey");
                 declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(pk.Name)));
@@ -61,7 +61,7 @@ namespace NMG.Core.Generator
                     declaration.Arguments.Add(new CodeAttributeArgument("NotNull", new CodePrimitiveExpression(true)));
                 }
 
-                var mapFromDbType = mapper.MapFromDBType(property.DataType, null, null, null);
+                var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, property.DataType, property.DataLength, property.DataPrecision, property.DataScale);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), property.Name.GetFormattedText(), declaration));
             }
 

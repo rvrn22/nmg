@@ -94,6 +94,8 @@ namespace NMG.Core.Domain
         public string MappedDataType { get; set; }
         public bool IsNullable { get; set; }
 		public string ConstraintName { get; set; }
+        public int? DataPrecision { get; set; }
+        public int? DataScale { get; set; }
     }
 
     public interface IPrimaryKey

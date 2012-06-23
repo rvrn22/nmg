@@ -50,16 +50,15 @@ namespace NMG.Core.Reader
         public IList<Column> GetTableDetails(Table table, string owner)
         {
             var columns = new List<Column>();
-            var conn = new OracleConnection(connectionStr);
-            conn.Open();
-            using (conn)
+            using (var conn = new OracleConnection(connectionStr))
             {
+                conn.Open();
                 using (OracleCommand tableCommand = conn.CreateCommand())
                 {
                     tableCommand.CommandText =
-                        String.Format(
-                            @"
-                             SELECT tc.column_name AS column_name, tc.data_type AS data_type, tc.nullable AS NULLABLE, nvl(c.constraint_type,'CHANGE THIS IN CODE') AS constraint_type, data_length, data_precision, data_scale
+                          @"SELECT tc.column_name AS column_name, tc.data_type AS data_type, tc.nullable AS NULLABLE, 
+                                    nvl(c.constraint_type,'CHANGE THIS IN CODE') AS constraint_type, 
+                                    data_length, data_precision, data_scale
                             from all_tab_columns tc
                                 left outer join (
                                         all_cons_columns cc
@@ -69,51 +68,45 @@ namespace NMG.Core.Reader
                                             and c.constraint_type <> 'C'
                                         )
                                     ) on (
-                                        tc.owner = cc.owner and cc.owner = '{1}'
+                                        tc.owner = cc.owner
                                         and tc.table_name = cc.table_name
                                         and tc.column_name = cc.column_name
                                     )
-                                where tc.table_name = '{0}'
-                            order by tc.table_name, cc.position nulls last, tc.column_id",
-                            table.Name, owner);
+                                where tc.table_name = :table_name and tc.owner = :owner
+                            order by tc.table_name, cc.position nulls last, tc.column_id";
+                    tableCommand.Parameters.Add("table_name", table.Name);
+                    tableCommand.Parameters.Add("owner", owner);
                     using (OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
                     {
                         var m = new DataTypeMapper();
                         while (oracleDataReader.Read())
                         {
-                            var dataLength = oracleDataReader["data_length"] as int?;
-                            var dataPrecision = oracleDataReader["data_precision"] as int?;
-                            var dataScale = oracleDataReader["data_scale"] as int?;
+                            var constraintType = oracleDataReader.GetOracleString(3).Value;
+                            int? dataLength = oracleDataReader.IsDBNull(4) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(4).Value);
+                            int? dataPrecision = oracleDataReader.IsDBNull(5) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(5).Value);
+                            int? dataScale = oracleDataReader.IsDBNull(6) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(6).Value);
 
                             columns.Add(new Column
                                             {
-                                                Name = oracleDataReader["column_name"].ToString(),
-                                                DataType = oracleDataReader["data_type"].ToString(),
-                                                IsNullable =
-                                                    oracleDataReader["nullable"].ToString().Equals("Y",
-                                                                                                   StringComparison.
-                                                                                                       CurrentCultureIgnoreCase),
-                                                IsPrimaryKey =
-                                                    ConstraintTypeResolver.IsPrimaryKey(
-                                                        oracleDataReader["constraint_type"].ToString()),
-                                                IsForeignKey =
-                                                    ConstraintTypeResolver.IsForeignKey(
-                                                        oracleDataReader["constraint_type"].ToString()),
-                                                IsUnique =
-                                                    ConstraintTypeResolver.IsUnique(
-                                                        oracleDataReader["constraint_type"].ToString()),
-                                                MappedDataType =
-                                                    m.MapFromDBType(oracleDataReader["data_type"].ToString(), dataLength, dataPrecision, dataScale).ToString(),
-                                                DataLength = dataLength
+                                                Name = oracleDataReader.GetOracleString(0).Value,
+                                                DataType = oracleDataReader.GetOracleString(1).Value,
+                                                IsNullable = string.Equals(oracleDataReader.GetOracleString(2).Value, "Y", StringComparison.OrdinalIgnoreCase),
+                                                IsPrimaryKey = ConstraintTypeResolver.IsPrimaryKey(constraintType),
+                                                IsForeignKey = ConstraintTypeResolver.IsForeignKey(constraintType),
+                                                IsUnique = ConstraintTypeResolver.IsUnique(constraintType),
+                                                MappedDataType = m.MapFromDBType(ServerType.Oracle, oracleDataReader.GetOracleString(1).Value, dataLength, dataPrecision, dataScale).ToString(),
+                                                DataLength = dataLength,
+                                                DataPrecision = dataPrecision,
+                                                DataScale = dataScale
                                             });
-
-                            table.Columns = columns;
                         }
+                        table.Columns = columns;
                         table.PrimaryKey = DeterminePrimaryKeys(table);
                         table.ForeignKeys = DetermineForeignKeyReferences(table);
                         table.HasManyRelationships = DetermineHasManyRelationships(table);
                     }
                 }
+                conn.Close();
             }
 
             return columns;
@@ -126,54 +119,66 @@ namespace NMG.Core.Reader
             conn.Open();
             using (conn)
             {
-                OracleCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format("select table_name from all_tables where owner = '{0}'", owner);
-                    // where owner = 'HR'
-                OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (oracleDataReader.Read())
+                using (OracleCommand tableCommand = conn.CreateCommand())
                 {
-                    string tableName = oracleDataReader.GetString(0);
-                    tables.Add(new Table {Name = tableName});
+                    tableCommand.CommandText = "select table_name from all_tables where owner = :table_name order by table_name";
+                    tableCommand.Parameters.Add(new OracleParameter("table_name", owner));
+                    using (OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (oracleDataReader.Read())
+                        {
+                            string tableName = oracleDataReader.GetString(0);
+                            tables.Add(new Table {Name = tableName});
+                        }
+                    }
                 }
             }
-            tables.Sort((x, y) => x.Name.CompareTo(y.Name));
             return tables;
         }
 
         public IList<string> GetOwners()
         {
             var owners = new List<string>();
-            var conn = new OracleConnection(connectionStr);
-            conn.Open();
-            using (conn)
+            using (var conn = new OracleConnection(connectionStr))
             {
-                OracleCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = "select username from all_users order by username";
-                OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (oracleDataReader.Read())
+                conn.Open();
+                using (OracleCommand tableCommand = conn.CreateCommand())
                 {
-                    string owner = oracleDataReader.GetString(0);
-                    owners.Add(owner);
+                    tableCommand.CommandText = "select username from all_users order by username";
+                    using (OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (oracleDataReader.Read())
+                        {
+                            string owner = oracleDataReader.GetString(0);
+                            owners.Add(owner);
+                        }
+                    }
                 }
+                conn.Close();
             }
             return owners;
         }
 
-        public List<string> GetSequences()
+        public List<string> GetSequences(string owner)
         {
             var sequences = new List<string>();
-            var conn = new OracleConnection(connectionStr);
-            conn.Open();
-            using (conn)
+            using (var conn = new OracleConnection(connectionStr))
             {
-                var seqCommand = conn.CreateCommand();
-                seqCommand.CommandText = "select sequence_name from all_sequences";
-                OracleDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                while (seqReader.Read())
+                conn.Open();
+                using (var seqCommand = conn.CreateCommand())
                 {
-                    string tableName = seqReader.GetString(0);
-                    sequences.Add(tableName);
+                    seqCommand.CommandText = "select sequence_name from all_sequences where sequence_owner = :owner order by sequence_name";
+                    seqCommand.Parameters.Add(new OracleParameter("owner", owner));
+                    using (OracleDataReader seqReader = seqCommand.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (seqReader.Read())
+                        {
+                            string tableName = seqReader.GetString(0);
+                            sequences.Add(tableName);
+                        }
+                    }
                 }
+                conn.Close();
             }
             return sequences;
         }
@@ -233,21 +238,22 @@ namespace NMG.Core.Reader
                 {
                     command.Connection = conn;
                     command.CommandText =
-                        String.Format(
-                            @"
-                        select c.table_name
-                        from   all_constraints p
-                        join   all_constraints c on c.r_constraint_name = p.constraint_name
-                                                 and c.r_owner = p.owner
-                        where p.table_name = '{0}'",
-                            table.Name);
+@"SELECT R.TABLE_NAME, COL.COLUMN_NAME
+FROM ALL_CONSTRAINTS C, ALL_CONSTRAINTS R, ALL_CONS_COLUMNS COL
+WHERE C.TABLE_NAME = :TABLE_NAME
+  AND C.CONSTRAINT_NAME = R.R_CONSTRAINT_NAME
+  AND R.CONSTRAINT_NAME = COL.CONSTRAINT_NAME
+  AND R.TABLE_NAME = COL.TABLE_NAME
+  AND R.OWNER = COL.OWNER";
+                    command.Parameters.Add(new OracleParameter("TABLE_NAME", table.Name));
                     OracleDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
                         hasManyRelationships.Add(new HasMany
                                                      {
-                                                         Reference = reader.GetString(0)
+                                                         Reference = reader.GetString(0),
+                                                         ReferenceColumn = reader.GetString(1)
                                                      });
                     }
 
@@ -266,14 +272,7 @@ namespace NMG.Core.Reader
                 var key = new PrimaryKey
                               {
                                   Type = PrimaryKeyType.PrimaryKey,
-                                  Columns =
-                                      {
-                                          new Column
-                                              {
-                                                  DataType = c.DataType,
-                                                  Name = c.Name
-                                              }
-                                      }
+                                  Columns = new List<Column> { c }
                               };
                 return key;
             }
@@ -285,11 +284,7 @@ namespace NMG.Core.Reader
                               };
                 foreach (Column primaryKey in primaryKeys)
                 {
-                    key.Columns.Add(new Column
-                                        {
-                                            DataType = primaryKey.DataType,
-                                            Name = primaryKey.Name
-                                        });
+                    key.Columns.Add(primaryKey);
                 }
                 return key;
             }
@@ -316,7 +311,7 @@ namespace NMG.Core.Reader
                     selectedTableName, columnName);
                 object referencedTableName = tableCommand.ExecuteScalar();
 
-                return (string) referencedTableName;
+                return (string)referencedTableName;
             }
         }
     }

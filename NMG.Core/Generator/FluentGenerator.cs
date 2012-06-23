@@ -49,7 +49,7 @@ namespace NMG.Core.Generator
             }
             else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }
             else
             {
@@ -81,10 +81,10 @@ namespace NMG.Core.Generator
             return base.AddStandardHeader(entireContent);
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(string pkColumnName, string pkColumnType, ITextFormatter formatter)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(ApplicationPreferences appPrefs, string pkColumnName, string pkColumnType, ITextFormatter formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
-            bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(pkColumnType, null, null, null)).IsTypeIntegral();
+            bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(appPrefs.ServerType, pkColumnType, null, null, null)).IsTypeIntegral();
             string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");",
                                                        formatter.FormatText(pkColumnName),
