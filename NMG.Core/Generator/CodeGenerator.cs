@@ -15,7 +15,8 @@ namespace NMG.Core.Generator
         private readonly ApplicationPreferences appPrefs;
         private readonly Language language;
 
-        public CodeGenerator(ApplicationPreferences appPrefs, Table table) : base( appPrefs.FolderPath, "Domain", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
+        public CodeGenerator(ApplicationPreferences appPrefs, Table table)
+            : base(appPrefs.FolderPath, "Domain", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = appPrefs.Language;
@@ -35,9 +36,91 @@ namespace NMG.Core.Generator
 
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
-            
+
             newType.IsPartial = appPrefs.GeneratePartialClasses;
 
+            CreateProperties(codeGenerationHelper, mapper, newType);
+
+            var constructorStatements = new CodeStatementCollection();
+            foreach (var hasMany in Table.HasManyRelationships)
+            {
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ForeignEntityCollectionType + "<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
+                constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+            }
+
+            var constructor = new CodeConstructor { Attributes = MemberAttributes.Public };
+            constructor.Statements.AddRange(constructorStatements);
+            newType.Members.Add(constructor);
+            return compileUnit;
+        }
+
+        private void CreateProperties(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
+        {
+            switch (appPrefs.FieldGenerationConvention)
+            {
+                case FieldGenerationConvention.Field:
+                    CreateFields(codeGenerationHelper, mapper, newType);
+                    break;
+                case FieldGenerationConvention.Property:
+                    CreateFullProperties(codeGenerationHelper, mapper, newType);
+                    break;
+                case FieldGenerationConvention.AutoProperty:
+                    CreateAutoProperties(codeGenerationHelper, mapper, newType);
+                    break;
+            }
+        }
+
+        private void CreateFields(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
+        {
+            foreach (var pk in Table.PrimaryKey.Columns)
+            {
+                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(pk.Name), true));
+            }
+
+            // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
+            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
+            {
+                newType.Members.Add(codeGenerationHelper.CreateField(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName)));
+            }
+
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            {
+                if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
+                    continue;
+                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(column.Name), true, column.IsNullable));
+            }
+        }
+
+        private void CreateFullProperties(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
+        {
+            foreach (var pk in Table.PrimaryKey.Columns)
+            {
+                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(pk.Name), true));
+                newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(pk.Name), appPrefs.UseLazy));
+            }
+
+            // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
+            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
+            {
+                newType.Members.Add(codeGenerationHelper.CreateField(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName)));
+                newType.Members.Add(codeGenerationHelper.CreateProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
+            }
+
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            {
+                if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
+                    continue;
+                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(column.Name), true, column.IsNullable));
+                newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
+            }
+        }
+
+        private void CreateAutoProperties(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
+        {
             foreach (var pk in Table.PrimaryKey.Columns)
             {
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
@@ -57,18 +140,6 @@ namespace NMG.Core.Generator
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
             }
-            
-            var constructorStatements = new CodeStatementCollection();
-            foreach (var hasMany in Table.HasManyRelationships)
-            {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ForeignEntityCollectionType + "<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
-                constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
-            }
-
-            var constructor = new CodeConstructor { Attributes = MemberAttributes.Public};
-            constructor.Statements.AddRange(constructorStatements);
-            newType.Members.Add(constructor);
-            return compileUnit;
         }
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
@@ -83,7 +154,7 @@ namespace NMG.Core.Generator
                 {
                     using (streamWriter)
                     {
-                        var options = new CodeGeneratorOptions {BlankLinesBetweenMembers = false};
+                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = false };
                         provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
                     }
                 }

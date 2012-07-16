@@ -40,7 +40,7 @@ namespace NMG.Core.Generator
             return codeCompileUnit;
         }
 
-        public CodeMemberProperty CreateProperty(Type type, string propertyName)
+        public CodeMemberProperty CreateProperty(Type type, string propertyName, bool useLazy = true)
         {
             var codeMemberProperty = new CodeMemberProperty
                                          {
@@ -59,6 +59,62 @@ namespace NMG.Core.Generator
             var assignStatement = new CodeAssignStatement(codeFieldReferenceExpression,
                                                           new CodePropertySetValueReferenceExpression());
             codeMemberProperty.SetStatements.Add(assignStatement);
+            if (!useLazy)
+                codeMemberProperty.Attributes = codeMemberProperty.Attributes | MemberAttributes.Final;
+            return codeMemberProperty;
+        }
+
+        public CodeMemberProperty CreateProperty(string typeName, string propertyName, bool useLazy = true)
+        {
+            var codeMemberProperty = new CodeMemberProperty
+            {
+                Name = propertyName,
+                HasGet = true,
+                HasSet = true,
+                Attributes = MemberAttributes.Public,
+                Type = new CodeTypeReference(typeName)
+            };
+
+            string fieldName = propertyName.MakeFirstCharLowerCase();
+            var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+                                                                                fieldName);
+            var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
+            codeMemberProperty.GetStatements.Add(returnStatement);
+            var assignStatement = new CodeAssignStatement(codeFieldReferenceExpression,
+                                                          new CodePropertySetValueReferenceExpression());
+            codeMemberProperty.SetStatements.Add(assignStatement);
+            if (!useLazy)
+                codeMemberProperty.Attributes = codeMemberProperty.Attributes | MemberAttributes.Final;
+            return codeMemberProperty;
+        }
+
+        public CodeMemberProperty CreateProperty(Type type, string propertyName, bool fieldIsNull, bool useLazy = true)
+        {
+            bool setFieldAsNullable = fieldIsNull && IsNullable(type);
+            var codeMemberProperty = new CodeMemberProperty
+            {
+                Name = propertyName,
+                HasGet = true,
+                HasSet = true,
+                Attributes = MemberAttributes.Public,
+                Type =
+                     (setFieldAsNullable
+                          ? new CodeTypeReference(typeof(Nullable))
+                          : new CodeTypeReference(type))
+            };
+            if (setFieldAsNullable)
+                codeMemberProperty.Type.TypeArguments.Add(type);
+
+            string fieldName = propertyName.MakeFirstCharLowerCase();
+            var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+                                                                                fieldName);
+            var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
+            codeMemberProperty.GetStatements.Add(returnStatement);
+            var assignStatement = new CodeAssignStatement(codeFieldReferenceExpression,
+                                                          new CodePropertySetValueReferenceExpression());
+            codeMemberProperty.SetStatements.Add(assignStatement);
+            if (!useLazy)
+                codeMemberProperty.Attributes = codeMemberProperty.Attributes | MemberAttributes.Final;
             return codeMemberProperty;
         }
 
@@ -66,7 +122,7 @@ namespace NMG.Core.Generator
         {
             bool setFieldAsNullable = fieldIsNull && IsNullable(type);
             if (setFieldAsNullable)
-                type = typeof (Nullable<>).MakeGenericType(type);
+                type = typeof(Nullable<>).MakeGenericType(type);
             var codeMemberProperty = new CodeMemberProperty
                                          {
                                              Name = propertyName,
@@ -115,7 +171,38 @@ namespace NMG.Core.Generator
 
         public CodeMemberField CreateField(Type type, string fieldName)
         {
-            return new CodeMemberField(type, fieldName);
+            var codeMemberField = new CodeMemberField(type, fieldName);
+            return codeMemberField;
+        }
+
+        public CodeMemberField CreateField(string typeName, string fieldName)
+        {
+            var codeMemberField = new CodeMemberField(typeName, fieldName);
+            return codeMemberField;
+        }
+
+        public CodeMemberField CreateField(Type type, string fieldName, bool isFirstCharLowerCase)
+        {
+            string firstCharLowerCaseFieldName = fieldName.MakeFirstCharLowerCase();
+            var codeMemberField = new CodeMemberField(type, firstCharLowerCaseFieldName);
+            return codeMemberField;
+        }
+
+        public CodeMemberField CreateField(Type type, string fieldName, bool isFirstCharLowerCase, bool fieldIsNull)
+        {
+            bool setFieldAsNullable = fieldIsNull && IsNullable(type);
+            string firstCharLowerCaseFieldName = fieldName.MakeFirstCharLowerCase();
+            CodeMemberField codeMemberField = new CodeMemberField
+            {
+                Name = firstCharLowerCaseFieldName,
+                Type =
+                   (setFieldAsNullable
+                        ? new CodeTypeReference(typeof(Nullable))
+                        : new CodeTypeReference(type))
+            };
+            if (setFieldAsNullable)
+                codeMemberField.Type.TypeArguments.Add(type);
+            return codeMemberField;
         }
 
         // http://bytes.com/topic/c-sharp/answers/515498-typeof-check-nullability
@@ -123,7 +210,7 @@ namespace NMG.Core.Generator
         private static bool IsNullable(Type type)
         {
             return type.IsValueType ||
-                   (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>));
+                   (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
         public CodeMemberProperty CreateAutoPropertyWithDataMemberAttribute(string type, string propertyName)
