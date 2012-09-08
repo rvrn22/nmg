@@ -17,10 +17,17 @@ namespace NMG.Core
                     return MapFromMySqlDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.PostgreSQL:
                     return MapFromPostgreDBType(dataType, dataLength, dataPrecision, dataScale);
+                    case ServerType.SQLite:
+                    return MapFromSqliteDBType(dataType, dataLength, dataPrecision, dataScale);
             }
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
-        
+
+        private Type MapFromSqliteDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        {
+            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+        }
+
         //http://msdn.microsoft.com/en-us/library/cc716729.aspx
         private Type MapFromSqlServerDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {

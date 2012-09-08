@@ -7,24 +7,19 @@ namespace NMG.Core
     {
         public static IMetadataReader GetReader(ServerType serverType, string connectionStr)
         {
-            IMetadataReader metadataReader;
-            if (serverType == ServerType.Oracle)
+            switch (serverType)
             {
-                metadataReader = new OracleMetadataReader(connectionStr);
+                case ServerType.Oracle:
+                    return new OracleMetadataReader(connectionStr);
+                case ServerType.SqlServer:
+                    return new SqlServerMetadataReader(connectionStr);
+                case ServerType.MySQL:
+                    return new MysqlMetadataReader(connectionStr);
+                case ServerType.SQLite:
+                    return new SqliteMetadataReader(connectionStr);
+                default:
+                    return new NpgsqlMetadataReader(connectionStr);
             }
-            else if (serverType == ServerType.SqlServer)
-            {
-                metadataReader = new SqlServerMetadataReader(connectionStr);
-            }
-            else if (serverType == ServerType.MySQL)
-            {
-                metadataReader = new MysqlMetadataReader(connectionStr);
-            }
-            else
-            {
-                metadataReader = new NpgsqlMetadataReader(connectionStr);
-            }
-            return metadataReader;
         }
     }
 }

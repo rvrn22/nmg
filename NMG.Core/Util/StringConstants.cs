@@ -12,5 +12,8 @@
 
         public static string MYSQL_CONN_STR_TEMPLATE =
             "Server=localhost;Port=3306;Database=letrunghieu;Uid=root;Pwd=a;";
+
+        public static string SQLITE_CONN_STR_TEMPLATE =
+            "Data Source=local.db;Version=3;New=False;Compress=True;";
     }
 }

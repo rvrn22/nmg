@@ -5,6 +5,7 @@ namespace NMG.Core.Domain
         Oracle,
         SqlServer,
         PostgreSQL, 
-        MySQL
+        MySQL,
+        SQLite
     }
 }
