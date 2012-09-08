@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
@@ -21,49 +22,38 @@ namespace NMG.Core.Reader
 
             using (var sqlCon = new SQLiteConnection(_connectionStr))
             {
-                sqlCon.Open();
                 try
                 {
                     using (var tableDetailsCommand = sqlCon.CreateCommand())
                     {
-                        var tbls = sqlCon.GetSchema("columns", new[]{ null, null, table.Name, null, null});
-                        tableDetailsCommand.CommandText = string.Format("PRAGMA table_info({0})", table.Name);
-                        using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
-                        {
-                            var m = new DataTypeMapper();
+                        tableDetailsCommand.CommandText = string.Format("SELECT * FROM {0}", table.Name);
+                        sqlCon.Open();
 
-                            /*
-                             
-                                reader index    =   column
-                                0                   cid
-                                1                   name
-                                2                   type (needs to split for data type precision)
-                                3                   not null
-                                4                   default value
-                                5                   pk (0/1)
-                             
-                             */
-                            while (sqlDataReader.Read())
-                            {
-                                var sqliteDataType = new SqliteDataType(sqlDataReader.GetString(2));
-                                columns.Add(
+                        var dr = tableDetailsCommand.ExecuteReader(CommandBehavior.SchemaOnly);
+                        var dt = dr.GetSchemaTable();
+                        var m = new DataTypeMapper();
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            columns.Add(
                                     new Column
                                     {
-                                        Name = sqlDataReader.GetString(1),
-                                        IsNullable = sqlDataReader.GetInt32(3) == 0,
-                                        IsPrimaryKey = sqlDataReader.GetBoolean(5),
-                                        MappedDataType =m.MapFromDBType(ServerType.SQLite, sqliteDataType.DataType, sqliteDataType.DataLength, null, null).ToString(),
-                                        DataLength = sqliteDataType.DataLength, 
-                                        DataType = sqliteDataType.DataType
+                                        Name = row["ColumnName"].ToString(),
+                                        IsNullable = (bool)row["AllowDBNull"],
+                                        IsPrimaryKey = (bool)row["IsKey"],
+                                        MappedDataType = m.MapFromDBType(ServerType.SQLite, row["DataTypeName"].ToString(), (int)row["ColumnSize"], null, null).ToString(),
+                                        DataLength = (int)row["ColumnSize"],
+                                        DataType = row["DataTypeName"].ToString(),
+                                        IsUnique = (bool)row["IsUnique"]
                                     });
-                            }
-
-                            table.Columns = columns;
-                            table.PrimaryKey = DeterminePrimaryKeys(table);
-                            table.ForeignKeys = new List<ForeignKey>();// DetermineForeignKeyReferences(table);
-                            table.HasManyRelationships = new List<HasMany>();// DetermineHasManyRelationships(table);
+                            dr.Close();
                         }
                     }
+
+                    table.Columns = columns;
+                    table.PrimaryKey = DeterminePrimaryKeys(table);
+                    table.ForeignKeys = new List<ForeignKey>();// DetermineForeignKeyReferences(table);
+                    table.HasManyRelationships = new List<HasMany>();// DetermineHasManyRelationships(table);
                 }
                 finally
                 {
@@ -152,7 +142,7 @@ namespace NMG.Core.Reader
             {
                 var typeSplit = sqliteType.Replace(")", string.Empty).Split('(');
                 DataType = typeSplit[0];
-                DataLength = int.Parse( typeSplit[1] );
+                DataLength = int.Parse(typeSplit[1]);
             }
         }
         public string DataType { get; set; }
