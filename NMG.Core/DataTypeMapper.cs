@@ -5,7 +5,8 @@ namespace NMG.Core
 {
     public class DataTypeMapper
     {
-        public Type MapFromDBType(ServerType serverType, string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        public Type MapFromDBType(ServerType serverType, string dataType, int? dataLength, int? dataPrecision,
+                                  int? dataScale)
         {
             switch (serverType)
             {
@@ -17,23 +18,18 @@ namespace NMG.Core
                     return MapFromMySqlDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.PostgreSQL:
                     return MapFromPostgreDBType(dataType, dataLength, dataPrecision, dataScale);
-                    case ServerType.SQLite:
-                    return MapFromSqliteDBType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.SQLite:
+                    return MapFromSqliteDbType(dataType, dataLength, dataPrecision, dataScale);
             }
-            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
-        }
-
-        private Type MapFromSqliteDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
-        {
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
 
         //http://msdn.microsoft.com/en-us/library/cc716729.aspx
         private Type MapFromSqlServerDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
-            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale); 
+            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
-        
+
         //http://docs.oracle.com/cd/B28359_01/win.111/b28376/appendixa.htm
         private Type MapFromOracleDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
@@ -44,7 +40,7 @@ namespace NMG.Core
             {
                 return typeof (System.DateTime);
             }
-            
+
             if (string.Equals(dataType, "NUMBER", StringComparison.OrdinalIgnoreCase))
             {
                 if (dataScale.GetValueOrDefault(0) == 0) //Integer type
@@ -65,7 +61,7 @@ namespace NMG.Core
                 }
                 return typeof (System.Decimal);
             }
-            
+
             if (string.Equals(dataType, "BLOB", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(dataType, "BFILE *", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(dataType, "LONG RAW", StringComparison.OrdinalIgnoreCase) ||
@@ -73,108 +69,124 @@ namespace NMG.Core
             {
                 return typeof (byte[]);
             }
-            
+
             if (string.Equals(dataType, "INTERVAL DAY TO SECOND", StringComparison.OrdinalIgnoreCase))
             {
                 return typeof (System.TimeSpan);
             }
-            
+
             if (string.Equals(dataType, "INTERVAL YEAR TO MONTH", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(dataType, "LONG", StringComparison.OrdinalIgnoreCase))
             {
                 return typeof (System.Int64);
             }
-            
+
             if (string.Equals(dataType, "BINARY_FLOAT", StringComparison.OrdinalIgnoreCase))
             {
                 return typeof (System.Single);
             }
-            
+
             if (string.Equals(dataType, "BINARY_DOUBLE", StringComparison.OrdinalIgnoreCase))
             {
                 return typeof (System.Double);
             }
-            
+
             if (string.Equals(dataType, "BINARY_INTEGER", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(dataType, "FLOAT", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(dataType, "REAL", StringComparison.OrdinalIgnoreCase))
             {
                 return typeof (System.Decimal);
             }
-            
+
             return typeof (System.String);
         }
-        
+
         private Type MapFromMySqlDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
-        
+
         private Type MapFromPostgreDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
-        
+
+        private Type MapFromSqliteDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        {
+            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+        }
+
         private Type MapFromDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
-            if (dataType == "DATE" ||dataType == "date" || dataType == "datetime"|| dataType == "datetime2" || dataType == "TIMESTAMP" ||
-                dataType == "TIMESTAMP WITH TIME ZONE" || dataType == "TIMESTAMP WITH LOCAL TIME ZONE" ||
-                dataType == "smalldatetime")
+            switch (dataType.ToUpperInvariant())
             {
-                return typeof(DateTime);
-            }
-         if (dataType == "NUMBER" || dataType == "LONG" || dataType == "bigint" )
-            {
-                return typeof(long);
-            }
-            if (dataType == "smallint")
-            {
-                return typeof(Int16);
-            }
-            if (dataType == "tinyint")
-            {
-                return typeof(Byte);
-            }
-            if (dataType == "int" || dataType == "INTERVAL YEAR TO MONTH" || dataType == "BINARY_INTEGER" || dataType.Contains("int"))
-            {
-                return typeof(int);
-            }
-            if (dataType == "BINARY_DOUBLE" || dataType == "float" || dataType == "numeric")
-            {
-                return typeof(double);
-            }
-            if (dataType == "BINARY_FLOAT" || dataType == "FLOAT")
-            {
-                return typeof(float);
-            }
-            if (dataType == "BLOB" || dataType == "BFILE *" || dataType == "LONG RAW" || dataType == "binary" ||
-                dataType == "image" || dataType == "timestamp" || dataType == "varbinary")
-            {
-                return typeof(byte[]);
-            }
-            if (dataType == "INTERVAL DAY TO SECOND")
-            {
-                return typeof(TimeSpan);
-            }
-            if (dataType == "bit")
-            {
-                return typeof(Boolean);
-            }
-            if (dataType == "decimal" || dataType == "money" || dataType == "smallmoney" || dataType == "numeric")
-            {
-                return typeof(decimal);
-            }
-            if (dataType == "real")
-            {
-                return typeof(Single);
-            }
-            if (dataType == "uniqueidentifier")
-            {
-                return typeof(Guid);
-            }
+                case "DATE":
+                case "DATETIME":
+                case "DATETIME2":
+                case "TIMESTAMP":
+                case "TIMESTAMP WITH TIME ZONE":
+                case "TIMESTAMP WITH LOCAL TIME ZONE":
+                case "SMALLDATETIME":
+                case "TIME":
+                    return typeof (DateTime);
 
-            // CHAR, CLOB, NCLOB, NCHAR, XMLType, VARCHAR2, nchar, ntext
-            return typeof(string);
+                case "NUMBER":
+                case "LONG":
+                case "BIGINT":
+                    return typeof (long);
+
+                case "SMALLINT":
+                    return typeof (Int16);
+
+                case "TINYINT":
+                    return typeof (Byte);
+
+                case "INT":
+                case "INTERVAL YEAR TO MONTH":
+                case "BINARY_INTEGER":
+                case "INTEGER":
+                    return typeof (int);
+
+                case "BINARY_DOUBLE":
+                case "NUMERIC":
+                    return typeof (double);
+
+                case "FLOAT":
+                case "BINARY_FLOAT":
+                    return typeof (float);
+
+                case "BLOB":
+                case "BFILE *":
+                case "LONG RAW":
+                case "BINARY":
+                case "IMAGE":
+                case "VARBINARY":
+                    return typeof (byte[]);
+
+                case "INTERVAL DAY TO SECOND":
+                    return typeof (TimeSpan);
+
+                case "BIT":
+                case "BOOLEAN":
+                    return typeof (Boolean);
+
+                case "DECIMAL":
+                case "MONEY":
+                case "SMALLMONEY":
+                    return typeof (decimal);
+
+                case "REAL":
+                    return typeof (Single);
+
+                case "UNIQUEIDENTIFIER":
+                    return typeof (Guid);
+
+                default:
+                    return dataType.Contains("int")
+                               ? typeof (int)
+                               : // CHAR, CLOB, NCLOB, NCHAR, XMLTYPE, VARCHAR2, NCHAR, NTEXT
+                           typeof (string);
+            }
         }
     }
 }
