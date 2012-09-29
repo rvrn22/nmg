@@ -22,13 +22,13 @@ namespace NMG.Tests
             var mapper = new DataTypeMapper();
 
             AssertMappedTypes(ServerType.SqlServer, mapper, typeof (int), "int");
-            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (DateTime), "datetime", "smalldatetime");
+            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (DateTime), "datetime", "smalldatetime", "timestamp");
             AssertMappedTypes(ServerType.SqlServer, mapper, typeof (long), "bigint");
             AssertMappedTypes(ServerType.SqlServer, mapper, typeof (string), "nchar");
-            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (double), "float");
+            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (float), "float");
             
             AssertMappedTypes(ServerType.SqlServer, mapper, typeof (decimal), "decimal", "money", "smallmoney");
-            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (byte[]), "binary", "varbinary", "image", "timestamp");
+            AssertMappedTypes(ServerType.SqlServer, mapper, typeof (byte[]), "binary", "varbinary", "image");
 
             Assert.AreEqual(typeof (Boolean), mapper.MapFromDBType(ServerType.SqlServer, "bit", null, null, null));
             Assert.AreEqual(typeof (Single), mapper.MapFromDBType(ServerType.SqlServer, "real", null, null, null));
