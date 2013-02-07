@@ -76,6 +76,7 @@ namespace NHibernateMappingGenerator
                 textBoxClassNamePrefix.Text = appSettings.ClassNamePrefix;
                 wcfDataContractCheckBox.Checked = appSettings.GenerateWcfContracts;
                 partialClassesCheckBox.Checked = appSettings.GeneratePartialClasses;
+                useLazyLoadingCheckBox.Checked = appSettings.UseLazy;
 
                 fluentMappingOption.Checked = appSettings.IsFluent;
                 nhFluentMappingStyle.Checked = appSettings.IsNhFluent;
