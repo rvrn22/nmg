@@ -107,6 +107,7 @@
     <Compile Include="Reader\SqliteMetadataReader.cs" />
     <Compile Include="Reader\SqlServerConstraintType.cs" />
     <Compile Include="Reader\SqlServerMetadataReader.cs" />
+    <Compile Include="Reader\SybaseMetadataReader.cs" />
     <Compile Include="TextFormatter\Inflector.cs" />
     <Compile Include="TextFormatter\TextFormatter.cs" />
     <Compile Include="Util\Extensions.cs" />
