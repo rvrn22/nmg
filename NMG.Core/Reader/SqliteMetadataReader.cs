@@ -50,6 +50,7 @@ namespace NMG.Core.Reader
                         }
                     }
 
+                    table.Owner = owner;
                     table.Columns = columns;
                     table.PrimaryKey = DeterminePrimaryKeys(table);
                     table.ForeignKeys = new List<ForeignKey>();// DetermineForeignKeyReferences(table);

@@ -110,6 +110,7 @@ inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||
 
                                 table.Columns = columns;
                             }
+                            table.Owner = owner;
                             table.PrimaryKey = DeterminePrimaryKeys(table);
                             table.ForeignKeys = DetermineForeignKeyReferences(table);
                             table.HasManyRelationships = DetermineHasManyRelationships(table);

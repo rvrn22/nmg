@@ -40,20 +40,34 @@ namespace NMG.Core.Generator
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
+            if (!string.IsNullOrEmpty(Table.Owner))
+            {
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Schema(\"" + Table.Owner + "\");"));
+            }
+
             constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));
             var mapper = new DBColumnMapper();
-            if (UsesSequence)
+
+            if (Table.PrimaryKey != null)
             {
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.IdSequenceMap(Table.PrimaryKey.Columns[0], appPrefs.Sequence, Formatter)));
-            }
-            else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
-            {
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.IdMap(Table.PrimaryKey.Columns[0], Formatter)));
-            }
-            else if (Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
-            {
-                var pkColumns = Table.PrimaryKey.Columns;
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.CompositeIdMap(pkColumns, Formatter)));
+                if (UsesSequence)
+                {
+                    constructor.Statements.Add(
+                        new CodeSnippetStatement(TABS +
+                                                 mapper.IdSequenceMap(Table.PrimaryKey.Columns[0], appPrefs.Sequence,
+                                                                      Formatter)));
+                }
+                else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+                {
+                    constructor.Statements.Add(
+                        new CodeSnippetStatement(TABS + mapper.IdMap(Table.PrimaryKey.Columns[0], Formatter)));
+                }
+                else if (Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
+                {
+                    var pkColumns = Table.PrimaryKey.Columns;
+                    constructor.Statements.Add(
+                        new CodeSnippetStatement(TABS + mapper.CompositeIdMap(pkColumns, Formatter)));
+                }
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))

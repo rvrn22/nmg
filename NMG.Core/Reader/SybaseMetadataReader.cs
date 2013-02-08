@@ -30,7 +30,7 @@ namespace NMG.Core.Reader
                         tableDetailsCommand.CommandText =
                             string.Format(
                                 "select default_value, cname columnName, colType DataTypeName, length ColumnSize, convert(bit, CASE WHEN in_primary_key = 'Y' THEN 1 ELSE 0 END) IsKey, convert(bit, CASE WHEN nulls = 'Y' THEN 1 ELSE 0 END) AllowDBNull from sys.syscolumns where tname = '{0}'",
-                                table.Name);
+                                table.Name.Replace("'", string.Empty));
 
                         sqlCon.Open();
 
@@ -69,6 +69,7 @@ namespace NMG.Core.Reader
                         dr.Close();
                     }
 
+                    table.Owner = owner;
                     table.Columns = columns;
                     table.PrimaryKey = DeterminePrimaryKeys(table);
                     table.ForeignKeys = new List<ForeignKey>(); // DetermineForeignKeyReferences(table);
@@ -150,7 +151,8 @@ namespace NMG.Core.Reader
                               };
                 return key;
             }
-            else
+
+            if (primaryKeys.Count() > 1)
             {
                 var key = new PrimaryKey
                               {
@@ -166,6 +168,9 @@ namespace NMG.Core.Reader
                 }
                 return key;
             }
+
+
+            return null;
         }
     }
 
