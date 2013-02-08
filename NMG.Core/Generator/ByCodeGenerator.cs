@@ -50,9 +50,10 @@ namespace NMG.Core.Generator
             {
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.IdMap(Table.PrimaryKey.Columns[0], Formatter)));
             }
-            else
+            else if (Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
             {
-                
+                var pkColumns = Table.PrimaryKey.Columns;
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.CompositeIdMap(pkColumns, Formatter)));
             }
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
