@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 using System.Text;
@@ -31,6 +32,19 @@ namespace NMG.Core.ByCode
             builder.AppendLine();
             builder.AppendLine("\t\t\t\t{");
             builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
+            builder.Append("\t\t\t\t});");
+            return builder.ToString();
+        }
+
+        public string CompositeIdMap(IList<Column> columns, ITextFormatter formatter)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("ComposedId(compId =>");
+            builder.AppendLine("\t\t\t\t{");
+            foreach (var column in columns)
+            {
+                builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(\"" + column.Name + "\"));");
+            }
             builder.Append("\t\t\t\t});");
             return builder.ToString();
         }
