@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CSharp;
@@ -40,6 +41,24 @@ namespace NMG.Core.Generator
             newType.IsPartial = appPrefs.GeneratePartialClasses;
 
             CreateProperties(codeGenerationHelper, mapper, newType);
+
+            // Generate GetHashCode() and Equals() methods.
+            if (Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
+            {
+                var pkColsList = Table.PrimaryKey.Columns.Select(s => Formatter.FormatText(s.Name)).ToList();
+
+                var equalsCode = CreateCompositeKeyEqualsMethod(pkColsList);
+                var getHashKeyCode = CreateCompositeKeyGetHashKeyMethod(pkColsList);
+
+                equalsCode.StartDirectives.Add(new CodeRegionDirective(CodeRegionMode.Start, "NHibernate Composite Key Requirements"));
+                newType.Members.Add(equalsCode);
+                newType.Members.Add(getHashKeyCode);
+                getHashKeyCode.EndDirectives.Add(new CodeRegionDirective(CodeRegionMode.End, string.Empty));
+            }
+
+            // Dont create a constructor if there are no relationships.
+            if (Table.HasManyRelationships.Count == 0)
+                return compileUnit;
 
             var constructorStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
@@ -140,6 +159,70 @@ namespace NMG.Core.Generator
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
             }
+        }
+
+        private CodeMemberMethod CreateCompositeKeyEqualsMethod(IList<string> columns)
+        {
+            if (columns.Count == 0)
+                return null;
+
+            var method = new CodeMemberMethod
+            {
+                Name = "Equals",
+                ReturnType = new CodeTypeReference(typeof(bool)),
+                Attributes = MemberAttributes.Public | MemberAttributes.Override,
+            };
+
+            method.Parameters.Add(new CodeParameterDeclarationExpression("System.Object", "obj"));
+
+            // Create the if statement to compare if the obj equals another.
+            var compareCode = new StringBuilder();
+
+            var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name));
+            method.Statements.Add(new CodeSnippetStatement("\t\t\tif (obj == null) return false;"));
+            method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tvar t = obj as {0};", className)));
+            method.Statements.Add(new CodeSnippetStatement("\t\t\tif (t == null) return false;"));
+
+            compareCode.Append("\t\t\tif (");
+            var lastCol = columns.LastOrDefault();
+            foreach (var column in columns)
+            {
+                compareCode.Append(string.Format("{0} == t.{0}", column));
+                compareCode.Append(column != lastCol ? " && " : ")");
+            }
+            method.Statements.Add(new CodeSnippetStatement(compareCode.ToString()));
+
+            method.Statements.Add(new CodeSnippetStatement("\t\t\t\treturn true;"));
+            method.Statements.Add(new CodeSnippetStatement(string.Empty));
+            method.Statements.Add(new CodeSnippetStatement("\t\t\treturn false;"));
+
+            return method;
+        }
+
+        private CodeMemberMethod CreateCompositeKeyGetHashKeyMethod(IList<string> columns)
+        {
+            if (columns.Count == 0)
+                return null;
+
+            var method = new CodeMemberMethod
+            {
+                Name = "GetHashCode",
+                ReturnType = new CodeTypeReference(typeof(int)),
+                Attributes = MemberAttributes.Public | MemberAttributes.Override,
+            };
+
+            // Create the if statement to compare if the obj equals another.
+            method.Statements.Add(new CodeSnippetStatement("\t\t\tint hash = 13;"));
+
+            foreach (var column in columns)
+            {
+                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\thash += {0}.GetHashCode();", column)));
+            }
+
+            method.Statements.Add(new CodeSnippetStatement(string.Empty));
+            method.Statements.Add(new CodeSnippetStatement("\t\t\treturn hash;"));
+
+            return method;
         }
 
         private void WriteToFile(CodeCompileUnit compileUnit, string className)
