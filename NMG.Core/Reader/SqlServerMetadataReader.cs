@@ -79,6 +79,7 @@ namespace NMG.Core.Reader
 
 								table.Columns = columns;
 							}
+						    table.Owner = owner;
 							table.PrimaryKey = DeterminePrimaryKeys(table);
 							table.ForeignKeys = DetermineForeignKeyReferences(table);
 							table.HasManyRelationships = DetermineHasManyRelationships(table);

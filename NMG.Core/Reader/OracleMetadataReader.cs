@@ -100,6 +100,7 @@ namespace NMG.Core.Reader
                                                 DataScale = dataScale
                                             });
                         }
+                        table.Owner = owner;
                         table.Columns = columns;
                         table.PrimaryKey = DeterminePrimaryKeys(table);
                         table.ForeignKeys = DetermineForeignKeyReferences(table);

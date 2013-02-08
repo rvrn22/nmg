@@ -43,7 +43,7 @@ namespace NMG.Core.Generator
             CreateProperties(codeGenerationHelper, mapper, newType);
 
             // Generate GetHashCode() and Equals() methods.
-            if (Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
+            if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
             {
                 var pkColsList = Table.PrimaryKey.Columns.Select(s => Formatter.FormatText(s.Name)).ToList();
 
@@ -140,10 +140,16 @@ namespace NMG.Core.Generator
 
         private void CreateAutoProperties(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
         {
-            foreach (var pk in Table.PrimaryKey.Columns)
+            if (Table.PrimaryKey != null)
             {
-                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), Formatter.FormatText(pk.Name), appPrefs.UseLazy));
+                foreach (var pk in Table.PrimaryKey.Columns)
+                {
+                    var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength,
+                                                             pk.DataPrecision, pk.DataScale);
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(),
+                                                                                Formatter.FormatText(pk.Name),
+                                                                                appPrefs.UseLazy));
+                }
             }
 
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
