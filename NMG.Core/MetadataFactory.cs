@@ -17,6 +17,8 @@ namespace NMG.Core
                     return new MysqlMetadataReader(connectionStr);
                 case ServerType.SQLite:
                     return new SqliteMetadataReader(connectionStr);
+                case ServerType.Sybase:
+                    return new SybaseMetadataReader(connectionStr);
                 default:
                     return new NpgsqlMetadataReader(connectionStr);
             }

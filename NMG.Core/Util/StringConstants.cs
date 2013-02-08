@@ -15,5 +15,8 @@
 
         public static string SQLITE_CONN_STR_TEMPLATE =
             "Data Source=local.db;Version=3;New=False;Compress=True;";
+
+        public static string SYBASE_CONN_STR_TEMPLATE =
+            "Provider=ASAProv;UID=uidname;PWD=password;DatabaseName=databasename;EngineName=enginename;CommLinks=TCPIP{host=servername}";
     }
 }

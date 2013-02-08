@@ -32,6 +32,14 @@ namespace NMG.Core.ByCode
             builder.AppendLine();
             builder.AppendLine("\t\t\t\t{");
             builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
+            if (column.IsIdentity)
+            {
+                builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Identity);");
+            }
+            else
+            {
+                builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Assigned);");
+            }
             builder.Append("\t\t\t\t});");
             return builder.ToString();
         }
