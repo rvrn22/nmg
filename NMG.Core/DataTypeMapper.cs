@@ -5,6 +5,42 @@ namespace NMG.Core
 {
     public class DataTypeMapper
     {
+        /// <summary>
+        /// Determines if a type is numeric.  Nullable numeric types are considered numeric.
+        /// </summary>
+        /// <remarks>
+        /// Boolean is not considered numeric.
+        /// </remarks>
+        public static bool IsNumericType(Type type)
+        {
+            if (type == null)
+            {
+                return false;
+            }
+
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.SByte:
+                case TypeCode.Single:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                    return true;
+                case TypeCode.Object:
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        return IsNumericType(Nullable.GetUnderlyingType(type));
+                    }
+                    return false;
+            }
+            return false;
+        }
+
         public Type MapFromDBType(ServerType serverType, string dataType, int? dataLength, int? dataPrecision,
                                   int? dataScale)
         {
@@ -18,8 +54,8 @@ namespace NMG.Core
                     return MapFromMySqlDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.PostgreSQL:
                     return MapFromPostgreDBType(dataType, dataLength, dataPrecision, dataScale);
-                case ServerType.SQLite:
-                    return MapFromSqliteDbType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.Sybase:
+                    return MapFromSqlServerDBType(dataType, dataLength, dataPrecision, dataScale);
             }
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }

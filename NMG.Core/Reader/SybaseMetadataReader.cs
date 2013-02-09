@@ -27,10 +27,23 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = sqlCon.CreateCommand())
                     {
+                        var sqlText = @"SELECT 
+    [default] default_value, c.column_name columnName, 
+    d.domain_name DataTypeName, width ColumnSize, scale columnPrecision,
+    convert(bit, CASE WHEN pkey = 'Y' THEN 1 ELSE 0 END) IsKey, 
+    convert(bit, CASE WHEN nulls = 'Y' THEN 1 ELSE 0 END) AllowDBNull,
+    convert(bit, CASE WHEN [default] = 'AUTOINCREMENT' THEN 1 ELSE 0 END) IsIdentity,
+    convert(bit, CASE WHEN [default] = 'NEWID()' THEN 1 ELSE 0 END) IsGenerated
+FROM sys.syscolumn c 
+    inner join sys.systable t on t.table_id = c.table_id
+    inner join sys.sysdomain d on c.domain_id = d.domain_id
+inner join sysobjects o on t.object_id = o.id
+inner join sys.sysuser u on u.user_id = o.uid
+WHERE t.table_name = '{0}' 
+and u.user_name = '{1}'";
                         tableDetailsCommand.CommandText =
-                            string.Format(
-                                "select default_value, cname columnName, colType DataTypeName, length ColumnSize, convert(bit, CASE WHEN in_primary_key = 'Y' THEN 1 ELSE 0 END) IsKey, convert(bit, CASE WHEN nulls = 'Y' THEN 1 ELSE 0 END) AllowDBNull from sys.syscolumns where tname = '{0}'",
-                                table.Name.Replace("'", string.Empty));
+                            string.Format(sqlText,
+                                table.Name.Replace("'", string.Empty), owner);
 
                         sqlCon.Open();
 
@@ -40,28 +53,42 @@ namespace NMG.Core.Reader
 
                         while (dr.Read())
                         {
-                            var name = dr["ColumnName"].ToString();
+                            var name = dr["columnName"].ToString();
                             var isNullable = (bool) dr["AllowDBNull"];
-                            var isPrimaryKey = (bool) dr["IsKey"];
+                            var isPrimaryKey = dr["IsKey"] as bool?;
 
                             var dataType = dr["DataTypeName"].ToString();
-                            var dataLength = Convert.ToInt32(dr["ColumnSize"]);
-                            var isIdentity = dr["default_value"].ToString() == "autoincrement";
+                            var dataLength = Convert.ToInt32(dr["columnSize"]);
+                            var dataPrecision = Convert.ToInt32(dr["columnSize"]);
+                            var dataScale = Convert.ToInt32(dr["columnPrecision"]);
+                            var isIdentity = dr["IsIdentity"] as bool?;
                             var isUnique = false; //(bool) dr["IsKey"];
+                            var mappedType = m.MapFromDBType(ServerType.Sybase, dataType, dataLength, dataPrecision,
+                                                             dataScale);
+
+                            if (DataTypeMapper.IsNumericType(mappedType))
+                            {
+                                dataLength = 0;
+                            }
+                            else
+                            {
+                                dataScale = 0;
+                                dataPrecision = 0;
+                            }
 
                             columns.Add(
                                 new Column
                                     {
                                         Name = name,
                                         IsNullable = isNullable,
-                                        IsPrimaryKey = isPrimaryKey,
-                                        MappedDataType =
-                                            m.MapFromDBType(ServerType.Sybase, dataType, dataLength, null, null)
-                                             .ToString(),
+                                        IsPrimaryKey = isPrimaryKey.GetValueOrDefault(),
+                                        MappedDataType = mappedType.ToString(),
                                         DataLength = dataLength,
+                                        DataScale = dataScale,
+                                        DataPrecision = dataPrecision,
                                         DataType = dataType,
                                         IsUnique = isUnique,
-                                        IsIdentity = isIdentity
+                                        IsIdentity = isIdentity.GetValueOrDefault()
                                     });
 
                         }
@@ -121,7 +148,33 @@ namespace NMG.Core.Reader
 
         public IList<string> GetOwners()
         {
-            return new List<string> {"dba"};
+            var owners = new List<string>();
+
+            using (var sqlCon = new OleDbConnection(_connectionStr))
+            {
+                sqlCon.Open();
+                try
+                {
+                    using (var tableDetailsCommand = sqlCon.CreateCommand())
+                    {
+                        tableDetailsCommand.CommandText =
+                            "SELECT distinct b.name FROM sysobjects a, sysusers b WHERE a.type IN ('U', 'S') AND a.uid = b.uid ORDER BY b.name";
+                        using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
+                        {
+                            while (sqlDataReader.Read())
+                            {
+                                owners.Add(sqlDataReader.GetString(0));
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    sqlCon.Close();
+                }
+            }
+
+            return owners;
         }
 
         public List<string> GetSequences(string owner)
