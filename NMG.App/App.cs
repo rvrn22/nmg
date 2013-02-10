@@ -77,6 +77,8 @@ namespace NHibernateMappingGenerator
                 wcfDataContractCheckBox.Checked = appSettings.GenerateWcfContracts;
                 partialClassesCheckBox.Checked = appSettings.GeneratePartialClasses;
                 useLazyLoadingCheckBox.Checked = appSettings.UseLazy;
+                includeLengthAndScaleCheckBox.Checked = appSettings.IncludeLengthAndScale;
+                includeForeignKeysCheckBox.Checked = appSettings.IncludeForeignKeys;
 
                 fluentMappingOption.Checked = appSettings.IsFluent;
                 nhFluentMappingStyle.Checked = appSettings.IsNhFluent;
@@ -142,7 +144,8 @@ namespace NHibernateMappingGenerator
                                      GenerateInFolders = generateInFoldersCheckBox.Checked,
                                      IsByCode = IsByCode,
                                      UseLazy = useLazyLoadingCheckBox.Checked,
-                                     IncludeForeignKeys = includeForeignKeysCheckBox.Checked
+                                     IncludeForeignKeys = includeForeignKeysCheckBox.Checked,
+                                     IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked
                                  };
         }
 
@@ -504,7 +507,8 @@ namespace NHibernateMappingGenerator
                                                  ClassNamePrefix = appSettings.ClassNamePrefix,
                                                  IsByCode = appSettings.IsByCode,
                                                  UseLazy = useLazyLoadingCheckBox.Checked,
-                                                 IncludeForeignKeys = includeForeignKeysCheckBox.Checked
+                                                 IncludeForeignKeys = includeForeignKeysCheckBox.Checked,
+                                                 IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked
                                              };
 
             return applicationPreferences;

@@ -63,7 +63,7 @@ namespace NMG.Core.Generator
 
             foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && x.IsForeignKey != true))
             {
-                var columnMapping = new DBColumnMapper().Map(column, Formatter);
+                var columnMapping = new DBColumnMapper().Map(column, Formatter, appPrefs.IncludeLengthAndScale);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 

@@ -74,7 +74,7 @@ namespace NMG.Core.Generator
             {
                 if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
                     continue;
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.Map(column, Formatter)));
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.Map(column, Formatter, appPrefs.IncludeLengthAndScale)));
             }
             
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))

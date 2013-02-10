@@ -59,6 +59,8 @@ namespace NMG.Core
         
         public bool IncludeForeignKeys { get; set; }
 
+        public bool IncludeLengthAndScale { get; set; }
+
         public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences

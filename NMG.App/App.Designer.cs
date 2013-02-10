@@ -31,7 +31,6 @@ namespace NHibernateMappingGenerator
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof (App));
             this.connStrTextBox = new System.Windows.Forms.TextBox();
             this.dbConnStrLabel = new System.Windows.Forms.Label();
             this.connectBtn = new System.Windows.Forms.Button();
@@ -105,6 +104,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
+            this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -504,7 +504,7 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.advanceSettingsTabPage.Name = "advanceSettingsTabPage";
             this.advanceSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1069, 697);
+            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 697);
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
@@ -513,9 +513,9 @@ namespace NHibernateMappingGenerator
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.generateInFoldersCheckBox);
-            this.groupBox9.Location = new System.Drawing.Point(7, 299);
+            this.groupBox9.Location = new System.Drawing.Point(6, 311);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(200, 100);
+            this.groupBox9.Size = new System.Drawing.Size(200, 63);
             this.groupBox9.TabIndex = 8;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Files";
@@ -622,6 +622,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.includeLengthAndScaleCheckBox);
             this.groupBox7.Controls.Add(this.autoPropertyRadioBtn);
             this.groupBox7.Controls.Add(this.propertyRadioBtn);
             this.groupBox7.Controls.Add(this.fieldRadioBtn);
@@ -629,7 +630,7 @@ namespace NHibernateMappingGenerator
             this.groupBox7.Controls.Add(this.includeForeignKeysCheckBox);
             this.groupBox7.Location = new System.Drawing.Point(6, 152);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(200, 140);
+            this.groupBox7.Size = new System.Drawing.Size(200, 153);
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
@@ -643,24 +644,6 @@ namespace NHibernateMappingGenerator
             this.autoPropertyRadioBtn.TabIndex = 6;
             this.autoPropertyRadioBtn.Text = "Auto Property";
             this.autoPropertyRadioBtn.UseVisualStyleBackColor = true;
-            // 
-            // useLazyLoadingCheckBox
-            // 
-            this.useLazyLoadingCheckBox.AutoSize = true;
-            this.useLazyLoadingCheckBox.Location = new System.Drawing.Point(6, 85);
-            this.useLazyLoadingCheckBox.Name = "useLazyLoadingCheckBox";
-            this.useLazyLoadingCheckBox.Size = new System.Drawing.Size(89, 17);
-            this.useLazyLoadingCheckBox.Text = "Use Lazy Loading";
-            this.useLazyLoadingCheckBox.UseVisualStyleBackColor = true;
-            //
-            //includeForeignKeysCheckBox
-            //
-            this.includeForeignKeysCheckBox.AutoSize = true;
-            this.includeForeignKeysCheckBox.Location = new System.Drawing.Point(6, 105);
-            this.includeForeignKeysCheckBox.Name = "includeForeignKeysCheckBox";
-            this.includeForeignKeysCheckBox.Size = new System.Drawing.Size(89, 17);
-            this.includeForeignKeysCheckBox.Text = "Include Foreign Keys";
-            this.includeForeignKeysCheckBox.UseVisualStyleBackColor = true;
             // 
             // propertyRadioBtn
             // 
@@ -683,6 +666,26 @@ namespace NHibernateMappingGenerator
             this.fieldRadioBtn.TabStop = true;
             this.fieldRadioBtn.Text = "Field";
             this.fieldRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // useLazyLoadingCheckBox
+            // 
+            this.useLazyLoadingCheckBox.AutoSize = true;
+            this.useLazyLoadingCheckBox.Location = new System.Drawing.Point(6, 88);
+            this.useLazyLoadingCheckBox.Name = "useLazyLoadingCheckBox";
+            this.useLazyLoadingCheckBox.Size = new System.Drawing.Size(111, 17);
+            this.useLazyLoadingCheckBox.TabIndex = 7;
+            this.useLazyLoadingCheckBox.Text = "Use Lazy Loading";
+            this.useLazyLoadingCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // includeForeignKeysCheckBox
+            // 
+            this.includeForeignKeysCheckBox.AutoSize = true;
+            this.includeForeignKeysCheckBox.Location = new System.Drawing.Point(6, 107);
+            this.includeForeignKeysCheckBox.Name = "includeForeignKeysCheckBox";
+            this.includeForeignKeysCheckBox.Size = new System.Drawing.Size(125, 17);
+            this.includeForeignKeysCheckBox.TabIndex = 8;
+            this.includeForeignKeysCheckBox.Text = "Include Foreign Keys";
+            this.includeForeignKeysCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -741,17 +744,18 @@ namespace NHibernateMappingGenerator
             this.hbmMappingOption.TabStop = true;
             this.hbmMappingOption.Text = ".hbm.xml file";
             this.hbmMappingOption.UseVisualStyleBackColor = true;
-            //
+            // 
             // byCodeMappingOption
-            //
             // 
             this.byCodeMappingOption.AutoSize = true;
             this.byCodeMappingOption.Location = new System.Drawing.Point(6, 110);
             this.byCodeMappingOption.Name = "byCodeMappingOption";
-            this.byCodeMappingOption.Size = new System.Drawing.Size(98, 17);
+            this.byCodeMappingOption.Size = new System.Drawing.Size(109, 17);
+            this.byCodeMappingOption.TabIndex = 10;
             this.byCodeMappingOption.TabStop = true;
             this.byCodeMappingOption.Text = "By Code Mapping";
             this.byCodeMappingOption.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.vbRadioButton);
@@ -860,15 +864,22 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
+            // includeLengthAndScaleCheckBox
+            // 
+            this.includeLengthAndScaleCheckBox.AutoSize = true;
+            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 127);
+            this.includeLengthAndScaleCheckBox.Name = "includeLengthAndScaleCheckBox";
+            this.includeLengthAndScaleCheckBox.Size = new System.Drawing.Size(148, 17);
+            this.includeLengthAndScaleCheckBox.TabIndex = 9;
+            this.includeLengthAndScaleCheckBox.Text = "Include Length and Scale";
+            this.includeLengthAndScaleCheckBox.UseVisualStyleBackColor = true;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1173, 723);
             this.Controls.Add(this.mainTabControl);
-#if !MONO            
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-#endif            
             this.Name = "App";
             this.Text = "NHibernate Mapping Generator";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -974,6 +985,7 @@ namespace NHibernateMappingGenerator
         private CheckBox generateInFoldersCheckBox;
         private CheckBox useLazyLoadingCheckBox;
         private CheckBox includeForeignKeysCheckBox;
+        private CheckBox includeLengthAndScaleCheckBox;
     }
 }
 

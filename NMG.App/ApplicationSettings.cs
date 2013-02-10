@@ -53,7 +53,9 @@ namespace NHibernateMappingGenerator
         public bool UseLazy { get; set; }
 
         public bool IncludeForeignKeys { get; set; }
-        
+
+        public bool IncludeLengthAndScale { get; set; }
+
         public void Save()
         {
             var streamWriter = new StreamWriter(Application.LocalUserAppDataPath + @"\nmg.config", false);

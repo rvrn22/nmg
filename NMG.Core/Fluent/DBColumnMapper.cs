@@ -6,7 +6,7 @@ namespace NMG.Core.Fluent
 {
     public class DBColumnMapper
     {
-        public string Map(Column column, ITextFormatter Formatter)
+        public string Map(Column column, ITextFormatter Formatter, bool includeLengthAndScale = true)
         {
             var mappedStrBuilder = new StringBuilder(string.Format("Map(x => x.{0})", Formatter.FormatText(column.Name)));
             mappedStrBuilder.Append(Constants.Dot);
@@ -18,7 +18,7 @@ namespace NMG.Core.Fluent
                 mappedStrBuilder.Append("Not.Nullable()");
             }
 
-            if (column.DataLength > 0)
+            if (column.DataLength > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(Constants.Dot);
                 mappedStrBuilder.Append("Length(" + column.DataLength + ")");

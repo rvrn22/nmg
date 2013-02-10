@@ -72,7 +72,7 @@ namespace NMG.Core.Generator
                 }
                 else
                 {
-                    var columnMapping = MapNhStyle(columnDetail);
+                    var columnMapping = MapNhStyle(columnDetail, appPrefs.IncludeLengthAndScale);
                     constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
                 }
             }
@@ -101,10 +101,10 @@ namespace NMG.Core.Generator
             return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
         }
 
-        private string MapNhStyle(Column column)
+        private string MapNhStyle(Column column, bool includeLengthAndScale = true)
         {
             var mappedStrBuilder = new StringBuilder("Property(x => x." + column.Name + ", map => { map.Column(\"" + column.Name + "\");");
-            if (column.DataLength > 0)
+            if (column.DataLength > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(" map.Length(" + column.DataLength + ");");
             }

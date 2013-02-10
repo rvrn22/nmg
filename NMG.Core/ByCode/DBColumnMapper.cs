@@ -64,7 +64,7 @@ namespace NMG.Core.ByCode
 //                    map.NotNullable(true);
 //                    map.Length(200);
 //                });
-        public string Map(Column column, ITextFormatter formatter)
+        public string Map(Column column, ITextFormatter formatter, bool includeLengthAndScale = true)
         {
             var mappedStrBuilder = new StringBuilder();
             mappedStrBuilder.AppendFormat("Property(x => x.{0}, map => ", formatter.FormatText(column.Name));
@@ -76,15 +76,15 @@ namespace NMG.Core.ByCode
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.NotNullable(true);");
             }
-            if (column.DataLength > 0)
+            if (column.DataLength > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Length(" + column.DataLength + ");");
             }
-            if (column.DataPrecision.GetValueOrDefault(0) > 0)
+            if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Precision(" + column.DataPrecision + ");");
             }
-            if (column.DataScale.GetValueOrDefault(0) > 0)
+            if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Scale(" + column.DataScale + ");");
             }
