@@ -298,7 +298,8 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
-                tablesListBox.Items.Clear();
+                tablesListBox.DataSource = null;
+                tablesListBox.DisplayMember = "Name";
                 sequencesComboBox.Items.Clear();
 
                 metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem,
