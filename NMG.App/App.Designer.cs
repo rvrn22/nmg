@@ -83,6 +83,7 @@ namespace NHibernateMappingGenerator
             this.textBoxClassNamePrefix = new System.Windows.Forms.TextBox();
             this.textBoxInheritence = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.propertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.fieldRadioBtn = new System.Windows.Forms.RadioButton();
@@ -104,7 +105,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
+            this.TableFilterTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -370,6 +371,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.TableFilterTextBox);
             this.groupBox6.Controls.Add(this.tablesListBox);
             this.groupBox6.Controls.Add(this.dbTableDetailsGridView);
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -381,12 +383,13 @@ namespace NHibernateMappingGenerator
             // 
             // tablesListBox
             // 
-            this.tablesListBox.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tablesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.tablesListBox.FormattingEnabled = true;
-            this.tablesListBox.Location = new System.Drawing.Point(3, 16);
+            this.tablesListBox.Location = new System.Drawing.Point(3, 42);
             this.tablesListBox.Name = "tablesListBox";
             this.tablesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.tablesListBox.Size = new System.Drawing.Size(234, 331);
+            this.tablesListBox.Size = new System.Drawing.Size(234, 303);
             this.tablesListBox.TabIndex = 6;
             // 
             // groupBox5
@@ -508,7 +511,6 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
-            this.advanceSettingsTabPage.Click += new System.EventHandler(this.advanceSettingsTabPage_Click);
             // 
             // groupBox9
             // 
@@ -634,6 +636,16 @@ namespace NHibernateMappingGenerator
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
+            // 
+            // includeLengthAndScaleCheckBox
+            // 
+            this.includeLengthAndScaleCheckBox.AutoSize = true;
+            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 127);
+            this.includeLengthAndScaleCheckBox.Name = "includeLengthAndScaleCheckBox";
+            this.includeLengthAndScaleCheckBox.Size = new System.Drawing.Size(148, 17);
+            this.includeLengthAndScaleCheckBox.TabIndex = 9;
+            this.includeLengthAndScaleCheckBox.Text = "Include Length and Scale";
+            this.includeLengthAndScaleCheckBox.UseVisualStyleBackColor = true;
             // 
             // autoPropertyRadioBtn
             // 
@@ -864,15 +876,13 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // includeLengthAndScaleCheckBox
+            // TableFilterTextBox
             // 
-            this.includeLengthAndScaleCheckBox.AutoSize = true;
-            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 127);
-            this.includeLengthAndScaleCheckBox.Name = "includeLengthAndScaleCheckBox";
-            this.includeLengthAndScaleCheckBox.Size = new System.Drawing.Size(148, 17);
-            this.includeLengthAndScaleCheckBox.TabIndex = 9;
-            this.includeLengthAndScaleCheckBox.Text = "Include Length and Scale";
-            this.includeLengthAndScaleCheckBox.UseVisualStyleBackColor = true;
+            this.TableFilterTextBox.Location = new System.Drawing.Point(3, 16);
+            this.TableFilterTextBox.Name = "TableFilterTextBox";
+            this.TableFilterTextBox.Size = new System.Drawing.Size(234, 20);
+            this.TableFilterTextBox.TabIndex = 7;
+            this.TableFilterTextBox.TextChanged += new System.EventHandler(this.OnTableFilterTextChanged);
             // 
             // App
             // 
@@ -887,6 +897,7 @@ namespace NHibernateMappingGenerator
             this.mainTabControl.ResumeLayout(false);
             this.basicSettingsTabPage.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -986,6 +997,7 @@ namespace NHibernateMappingGenerator
         private CheckBox useLazyLoadingCheckBox;
         private CheckBox includeForeignKeysCheckBox;
         private CheckBox includeLengthAndScaleCheckBox;
+        private TextBox TableFilterTextBox;
     }
 }
 

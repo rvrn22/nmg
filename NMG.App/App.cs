@@ -19,6 +19,7 @@ namespace NHibernateMappingGenerator
         private readonly BackgroundWorker worker;
         private IList<Column> gridData;
         private ApplicationSettings applicationSettings;
+        private IList<Table> _tables; 
 
         public App()
         {
@@ -29,10 +30,12 @@ namespace NHibernateMappingGenerator
             dbTableDetailsGridView.DataError += DataError;
             BindData();
             sequencesComboBox.Enabled = false;
+            TableFilterTextBox.Enabled = false;
             Closing += App_Closing;
             worker = new BackgroundWorker {WorkerSupportsCancellation = true};
         }
 
+        
         private Language LanguageSelected
         {
             get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
@@ -211,6 +214,12 @@ namespace NHibernateMappingGenerator
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
+                if (tablesListBox.SelectedIndex == -1)
+                {
+                    dbTableDetailsGridView.DataSource = null;
+                    return;
+                }
+
                 int? lastTableSelectedIndex = LastTableSelected();
                 if (lastTableSelectedIndex != null)
                 {
@@ -303,21 +312,23 @@ namespace NHibernateMappingGenerator
         private void PopulateTablesAndSequences()
         {
             errorLabel.Text = string.Empty;
-            tablesListBox.DataBindings.Clear();
             try
             {
                 if (ownersComboBox.SelectedItem == null)
                 {
                     return;
                 }
-                var tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
+                _tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
                 tablesListBox.Enabled = false;
-                tablesListBox.Items.Clear();
-                if (tables != null && tables.Any())
+                TableFilterTextBox.Enabled = false;
+                tablesListBox.DataSource = _tables;
+                tablesListBox.DisplayMember = "Name";
+
+                if (_tables != null && _tables.Any())
                 {
-                    tablesListBox.Items.AddRange(tables.ToArray());
                     tablesListBox.Enabled = true;
-                    tablesListBox.SelectedIndex = 0;
+                    TableFilterTextBox.Enabled = true;
+                    tablesListBox.SelectedItem = _tables.FirstOrDefault();
                 }
                 
                 var sequences = metadataReader.GetSequences(ownersComboBox.SelectedItem.ToString());
@@ -553,11 +564,33 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        private void advanceSettingsTabPage_Click(object sender, EventArgs e)
+        private void OnTableFilterTextChanged(object sender, EventArgs e)
         {
+            var textbox = sender as TextBox;
+            if (textbox == null) return;
 
+            // Display the full table list
+            if (string.IsNullOrEmpty(textbox.Text))
+            {
+                SuspendLayout();
+                tablesListBox.SelectedIndex = -1;
+                tablesListBox.DataSource = _tables;
+                tablesListBox.SelectedItem = _tables.FirstOrDefault();
+                ResumeLayout();
+                return;
+            }
+
+            // Display filtered list of tables
+            var query = (from t in _tables
+                         where t.Name.StartsWith(textbox.Text)
+                         select t).ToList();
+
+            SuspendLayout();
+            tablesListBox.SelectedIndex = -1;
+            tablesListBox.DataSource = query;
+            tablesListBox.SelectedItem = query.FirstOrDefault();
+            ResumeLayout();
         }
 
-     
     }
 }
