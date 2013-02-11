@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Reader;
+using NMG.Core.TextFormatter;
 using NMG.Core.Util;
 using System.Linq;
 using System.Threading;
@@ -210,6 +211,8 @@ namespace NHibernateMappingGenerator
 
         private void TablesListSelectedIndexChanged(object sender, EventArgs e)
         {
+            
+
             errorLabel.Text = string.Empty;
             try
             {
@@ -224,10 +227,17 @@ namespace NHibernateMappingGenerator
                 if (lastTableSelectedIndex != null)
                 {
                     var selectedItem = tablesListBox.Items[lastTableSelectedIndex.Value];
-                    entityNameTextBox.Text = selectedItem.ToString();
                     var table = selectedItem as Table;
+
                     if (table != null)
+                    {
                         PopulateTableDetails(table);
+
+                        var appSettings = CaptureApplicationSettings();
+                        var appPreferences = GetApplicationPreferences(table, false, appSettings);
+                        var formatter = TextFormatterFactory.GetTextFormatter(appPreferences);
+                        entityNameTextBox.Text = formatter.FormatText(table.Name);
+                    }
                 }
             }
             catch (Exception ex)
@@ -349,8 +359,12 @@ namespace NHibernateMappingGenerator
 
         private void folderSelectButton_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog.ShowDialog();
-            folderTextBox.Text = folderBrowserDialog.SelectedPath;
+            var diagResult = folderBrowserDialog.ShowDialog();
+
+            if (diagResult == DialogResult.OK)
+            {
+                folderTextBox.Text = folderBrowserDialog.SelectedPath;
+            }
         }
 
         private void GenerateClicked(object sender, EventArgs e)

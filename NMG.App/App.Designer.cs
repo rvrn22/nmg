@@ -60,6 +60,7 @@ namespace NHibernateMappingGenerator
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.basicSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.TableFilterTextBox = new System.Windows.Forms.TextBox();
             this.tablesListBox = new System.Windows.Forms.ListBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -105,7 +106,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.TableFilterTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -381,6 +381,14 @@ namespace NHibernateMappingGenerator
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
             // 
+            // TableFilterTextBox
+            // 
+            this.TableFilterTextBox.Location = new System.Drawing.Point(3, 16);
+            this.TableFilterTextBox.Name = "TableFilterTextBox";
+            this.TableFilterTextBox.Size = new System.Drawing.Size(234, 20);
+            this.TableFilterTextBox.TabIndex = 7;
+            this.TableFilterTextBox.TextChanged += new System.EventHandler(this.OnTableFilterTextChanged);
+            // 
             // tablesListBox
             // 
             this.tablesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -429,7 +437,7 @@ namespace NHibernateMappingGenerator
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(3, 199);
+            this.progressBar.Location = new System.Drawing.Point(3, 187);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1150, 13);
             this.progressBar.TabIndex = 21;
@@ -875,14 +883,6 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.TabStop = true;
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // TableFilterTextBox
-            // 
-            this.TableFilterTextBox.Location = new System.Drawing.Point(3, 16);
-            this.TableFilterTextBox.Name = "TableFilterTextBox";
-            this.TableFilterTextBox.Size = new System.Drawing.Size(234, 20);
-            this.TableFilterTextBox.TabIndex = 7;
-            this.TableFilterTextBox.TextChanged += new System.EventHandler(this.OnTableFilterTextChanged);
             // 
             // App
             // 

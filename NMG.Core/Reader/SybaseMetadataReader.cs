@@ -27,7 +27,7 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = sqlCon.CreateCommand())
                     {
-                        var sqlText = @"SELECT 
+                        var sqlText = @"SELECT
 	                                    [default] default_value, c.column_name columnName, 
 	                                    d.domain_name DataTypeName, width ColumnSize, scale columnPrecision,
 	                                    convert(bit, CASE WHEN pkey = 'Y' THEN 1 ELSE 0 END) IsKey, 
@@ -44,7 +44,8 @@ namespace NMG.Core.Reader
                                         left join sysfkcol fcol ON c.table_id = fcol.foreign_table_id and c.column_id = fcol.foreign_column_id
                                         left join sysforeignkey fk ON fcol.foreign_table_id = fk.foreign_table_id AND fcol.foreign_key_id = fk.foreign_key_id
                                     WHERE t.table_name = '{0}' 
-                                    and u.user_name = '{1}'";
+                                    and u.user_name = '{1}'
+                                    ORDER BY c.Column_id";
                         tableDetailsCommand.CommandText =
                             string.Format(sqlText,table.Name, owner);
 
