@@ -20,13 +20,15 @@ namespace NHibernateMappingGenerator
         private readonly BackgroundWorker worker;
         private IList<Column> gridData;
         private ApplicationSettings applicationSettings;
-        private IList<Table> _tables; 
+        private IList<Table> _tables;
+        private Connection _currentConnection;
 
         public App()
         {
             InitializeComponent();
             ownersComboBox.SelectedIndexChanged += OwnersSelectedIndexChanged;
             tablesListBox.SelectedIndexChanged += TablesListSelectedIndexChanged;
+            connectionNameComboBox.SelectedIndexChanged += ConnectionNameSelectedIndexChanged;
             serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             dbTableDetailsGridView.DataError += DataError;
             BindData();
@@ -36,7 +38,14 @@ namespace NHibernateMappingGenerator
             worker = new BackgroundWorker {WorkerSupportsCancellation = true};
         }
 
-        
+        private void ConnectionNameSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (connectionNameComboBox.SelectedItem == null) return;
+
+            _currentConnection = (Connection) connectionNameComboBox.SelectedItem;
+        }
+
+
         private Language LanguageSelected
         {
             get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
@@ -67,8 +76,21 @@ namespace NHibernateMappingGenerator
             var appSettings = ApplicationSettings.Load();
             if (appSettings != null)
             {
-                serverTypeComboBox.SelectedItem = appSettings.ServerType;
-                connStrTextBox.Text = appSettings.ConnectionString;
+                // Display all previous connections
+                connectionNameComboBox.DataSource = appSettings.Connections;
+                connectionNameComboBox.DisplayMember = "Name";
+
+                // Set the last used connection
+                var lastUsedConnection = appSettings.Connections.FirstOrDefault(connection => connection.Name == appSettings.LastUsedConnectionName);
+                _currentConnection = lastUsedConnection ?? appSettings.Connections.FirstOrDefault();
+
+                if (_currentConnection != null)
+                {
+                    serverTypeComboBox.SelectedItem = _currentConnection.Type;
+                    connStrTextBox.Text = _currentConnection.ConnectionString;
+                    connectionNameComboBox.SelectedItem = _currentConnection;
+                }
+
                 nameSpaceTextBox.Text = appSettings.NameSpace;
                 assemblyNameTextBox.Text = appSettings.AssemblyName;
                 fluentMappingOption.Checked = appSettings.IsFluent;
@@ -128,38 +150,45 @@ namespace NHibernateMappingGenerator
 
         private void App_Closing(object sender, CancelEventArgs e)
         {
-            applicationSettings = CaptureApplicationSettings();
+            CaptureApplicationSettings();
             applicationSettings.Save();
         }
 
-        private ApplicationSettings CaptureApplicationSettings()
+        private void CaptureApplicationSettings()
         {
-            return new ApplicationSettings
-                                 {
-                                     ConnectionString = connStrTextBox.Text,
-                                     ServerType = (ServerType)serverTypeComboBox.SelectedItem,
-                                     NameSpace = nameSpaceTextBox.Text,
-                                     AssemblyName = assemblyNameTextBox.Text,
-                                     Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB,
-                                     IsFluent = fluentMappingOption.Checked,
-                                     IsAutoProperty = autoPropertyRadioBtn.Checked,
-                                     FolderPath = folderTextBox.Text,
-                                     InheritenceAndInterfaces = textBoxInheritence.Text,
-                                     ForeignEntityCollectionType = comboBoxForeignCollection.Text,
-                                     FieldPrefixRemovalList = applicationSettings.FieldPrefixRemovalList,
-                                     FieldNamingConvention = GetFieldNamingConvention(),
-                                     Prefix = prefixTextBox.Text,
-                                     IsNhFluent = IsNhFluent,
-                                     IsCastle = IsCastle,
-                                     ClassNamePrefix = textBoxClassNamePrefix.Text,
-                                     GeneratePartialClasses = partialClassesCheckBox.Checked,
-                                     GenerateWcfContracts =  wcfDataContractCheckBox.Checked,
-                                     GenerateInFolders = generateInFoldersCheckBox.Checked,
-                                     IsByCode = IsByCode,
-                                     UseLazy = useLazyLoadingCheckBox.Checked,
-                                     IncludeForeignKeys = includeForeignKeysCheckBox.Checked,
-                                     IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked
-                                 };
+            applicationSettings.NameSpace = nameSpaceTextBox.Text;
+            applicationSettings.AssemblyName = assemblyNameTextBox.Text;
+            applicationSettings.Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB;
+            applicationSettings.IsFluent = fluentMappingOption.Checked;
+            applicationSettings.IsAutoProperty = autoPropertyRadioBtn.Checked;
+            applicationSettings.FolderPath = folderTextBox.Text;
+            applicationSettings.InheritenceAndInterfaces = textBoxInheritence.Text;
+            applicationSettings.ForeignEntityCollectionType = comboBoxForeignCollection.Text;
+            applicationSettings.FieldPrefixRemovalList = applicationSettings.FieldPrefixRemovalList;
+            applicationSettings.FieldNamingConvention = GetFieldNamingConvention();
+            applicationSettings.Prefix = prefixTextBox.Text;
+            applicationSettings.IsNhFluent = IsNhFluent;
+            applicationSettings.IsCastle = IsCastle;
+            applicationSettings.ClassNamePrefix = textBoxClassNamePrefix.Text;
+            applicationSettings.GeneratePartialClasses = partialClassesCheckBox.Checked;
+            applicationSettings.GenerateWcfContracts = wcfDataContractCheckBox.Checked;
+            applicationSettings.GenerateInFolders = generateInFoldersCheckBox.Checked;
+            applicationSettings.IsByCode = IsByCode;
+            applicationSettings.UseLazy = useLazyLoadingCheckBox.Checked;
+            applicationSettings.IncludeForeignKeys = includeForeignKeysCheckBox.Checked;
+            applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
+
+            if (_currentConnection == null)
+            {
+                _currentConnection = new Connection {Name = serverTypeComboBox.Text + " Connection"};
+                applicationSettings.Connections.Add(_currentConnection);
+            }
+
+            _currentConnection.Name = connectionNameComboBox.Text;
+            _currentConnection.Type = (ServerType) Enum.Parse(typeof (ServerType), serverTypeComboBox.Text);
+            _currentConnection.ConnectionString = connStrTextBox.Text;
+
+            applicationSettings.LastUsedConnectionName = _currentConnection.Name;
         }
 
         private void ServerTypeSelected(object sender, EventArgs e)
@@ -242,8 +271,8 @@ namespace NHibernateMappingGenerator
                     {
                         PopulateTableDetails(table);
 
-                        var appSettings = CaptureApplicationSettings();
-                        var appPreferences = GetApplicationPreferences(table, false, appSettings);
+                        CaptureApplicationSettings();
+                        var appPreferences = GetApplicationPreferences(table, false, applicationSettings);
                         var formatter = TextFormatterFactory.GetTextFormatter(appPreferences);
                         entityNameTextBox.Text = formatter.FormatText(table.Name);
                     }
@@ -298,6 +327,11 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
+                CaptureApplicationSettings();
+
+                connectionNameComboBox.DataSource = applicationSettings.Connections;
+                connectionNameComboBox.DisplayMember = "Name";
+
                 tablesListBox.DataSource = null;
                 tablesListBox.DisplayMember = "Name";
                 sequencesComboBox.Items.Clear();
@@ -393,7 +427,8 @@ namespace NHibernateMappingGenerator
                     errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
                     var table = (Table)selectedItem;
                     metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
-                    Generate(table, selectedItems.Count > 1, CaptureApplicationSettings());                
+                    CaptureApplicationSettings();
+                    Generate(table, selectedItems.Count > 1, applicationSettings);                
                 }
                 errorLabel.Text = @"Generated all files successfully.";
             }
@@ -421,7 +456,8 @@ namespace NHibernateMappingGenerator
                     progressBar.Value = 10;
                     worker.DoWork += DoWork;
                     worker.RunWorkerCompleted += WorkerCompleted;
-                    worker.RunWorkerAsync(CaptureApplicationSettings());
+                    CaptureApplicationSettings();
+                    worker.RunWorkerAsync(applicationSettings);
                 }
                 finally
                 {
@@ -535,7 +571,7 @@ namespace NHibernateMappingGenerator
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = appSettings.GeneratePartialClasses,
                                                  GenerateWcfDataContract = appSettings.GenerateWcfContracts,
-                                                 ConnectionString = appSettings.ConnectionString,
+                                                 ConnectionString = _currentConnection.ConnectionString,
                                                  ForeignEntityCollectionType = appSettings.ForeignEntityCollectionType,
                                                  InheritenceAndInterfaces = appSettings.InheritenceAndInterfaces,
                                                  GenerateInFolders = appSettings.GenerateInFolders,

@@ -112,6 +112,7 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
+            this.connectionNameComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -131,7 +132,7 @@ namespace NHibernateMappingGenerator
             // 
             // connStrTextBox
             // 
-            this.connStrTextBox.Location = new System.Drawing.Point(142, 21);
+            this.connStrTextBox.Location = new System.Drawing.Point(142, 22);
             this.connStrTextBox.Name = "connStrTextBox";
             this.connStrTextBox.Size = new System.Drawing.Size(490, 20);
             this.connStrTextBox.TabIndex = 0;
@@ -148,7 +149,7 @@ namespace NHibernateMappingGenerator
             // 
             // connectBtn
             // 
-            this.connectBtn.Location = new System.Drawing.Point(898, 21);
+            this.connectBtn.Location = new System.Drawing.Point(1079, 20);
             this.connectBtn.Name = "connectBtn";
             this.connectBtn.Size = new System.Drawing.Size(75, 23);
             this.connectBtn.TabIndex = 2;
@@ -319,7 +320,7 @@ namespace NHibernateMappingGenerator
             // 
             this.serverTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.serverTypeComboBox.FormattingEnabled = true;
-            this.serverTypeComboBox.Location = new System.Drawing.Point(639, 21);
+            this.serverTypeComboBox.Location = new System.Drawing.Point(636, 22);
             this.serverTypeComboBox.Name = "serverTypeComboBox";
             this.serverTypeComboBox.Size = new System.Drawing.Size(244, 21);
             this.serverTypeComboBox.TabIndex = 15;
@@ -467,6 +468,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.connectionNameComboBox);
             this.groupBox4.Controls.Add(this.pOracleOnlyOptions);
             this.groupBox4.Controls.Add(this.ownersComboBox);
             this.groupBox4.Controls.Add(this.lblOwner);
@@ -951,6 +953,14 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
+            // conncetionNameComboBox
+            // 
+            this.connectionNameComboBox.FormattingEnabled = true;
+            this.connectionNameComboBox.Location = new System.Drawing.Point(886, 21);
+            this.connectionNameComboBox.Name = "connectionNameComboBox";
+            this.connectionNameComboBox.Size = new System.Drawing.Size(187, 21);
+            this.connectionNameComboBox.TabIndex = 21;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1073,6 +1083,7 @@ namespace NHibernateMappingGenerator
         private ListBox fieldPrefixListBox;
         private Label label7;
         private TextBox fieldPrefixTextBox;
+        private ComboBox connectionNameComboBox;
     }
 }
 

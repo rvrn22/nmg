@@ -9,10 +9,14 @@ namespace NHibernateMappingGenerator
 {
     public class ApplicationSettings
     {
-        public string ConnectionString { get; set; }
+        public ApplicationSettings()
+        {
+            Connections = new List<Connection>();
+        }
 
-        public ServerType ServerType { get; set; }
-
+        public List<Connection> Connections { get; set; }
+        public string LastUsedConnectionName { get; set; }
+            
         public string NameSpace { get; set; }
 
         public string AssemblyName { get; set; }
@@ -83,5 +87,12 @@ namespace NHibernateMappingGenerator
             }
             return appSettings;
         }
+    }
+
+    public class Connection
+    {
+        public string ConnectionString { get; set; }
+        public string Name { get; set; }
+        public ServerType Type { get; set; }
     }
 }
