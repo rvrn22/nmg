@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -55,6 +56,8 @@ namespace NHibernateMappingGenerator
         public bool IncludeForeignKeys { get; set; }
 
         public bool IncludeLengthAndScale { get; set; }
+
+        public List<string> FieldPrefixRemovalList { get; set; }
 
         public void Save()
         {

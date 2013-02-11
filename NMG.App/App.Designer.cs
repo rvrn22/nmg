@@ -72,6 +72,12 @@ namespace NHibernateMappingGenerator
             this.ownersComboBox = new System.Windows.Forms.ComboBox();
             this.lblOwner = new System.Windows.Forms.Label();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.removeFieldPrefixButton = new System.Windows.Forms.Button();
+            this.addFieldPrefixButton = new System.Windows.Forms.Button();
+            this.fieldPrefixListBox = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.fieldPrefixTextBox = new System.Windows.Forms.TextBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.generateInFoldersCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -114,6 +120,7 @@ namespace NHibernateMappingGenerator
             this.groupBox4.SuspendLayout();
             this.pOracleOnlyOptions.SuspendLayout();
             this.advanceSettingsTabPage.SuspendLayout();
+            this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -506,6 +513,7 @@ namespace NHibernateMappingGenerator
             // 
             // advanceSettingsTabPage
             // 
+            this.advanceSettingsTabPage.Controls.Add(this.groupBox10);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox9);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox8);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox7);
@@ -519,6 +527,65 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.removeFieldPrefixButton);
+            this.groupBox10.Controls.Add(this.addFieldPrefixButton);
+            this.groupBox10.Controls.Add(this.fieldPrefixListBox);
+            this.groupBox10.Controls.Add(this.label7);
+            this.groupBox10.Controls.Add(this.fieldPrefixTextBox);
+            this.groupBox10.Location = new System.Drawing.Point(212, 311);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(515, 165);
+            this.groupBox10.TabIndex = 8;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Table and Field Formatting";
+            // 
+            // removeFieldPrefixButton
+            // 
+            this.removeFieldPrefixButton.Location = new System.Drawing.Point(236, 70);
+            this.removeFieldPrefixButton.Name = "removeFieldPrefixButton";
+            this.removeFieldPrefixButton.Size = new System.Drawing.Size(64, 23);
+            this.removeFieldPrefixButton.TabIndex = 7;
+            this.removeFieldPrefixButton.Text = "Remove";
+            this.removeFieldPrefixButton.UseVisualStyleBackColor = true;
+            this.removeFieldPrefixButton.Click += new System.EventHandler(this.OnRemoveFieldPrefixButtonClick);
+            // 
+            // addFieldPrefixButton
+            // 
+            this.addFieldPrefixButton.Location = new System.Drawing.Point(236, 41);
+            this.addFieldPrefixButton.Name = "addFieldPrefixButton";
+            this.addFieldPrefixButton.Size = new System.Drawing.Size(64, 23);
+            this.addFieldPrefixButton.TabIndex = 7;
+            this.addFieldPrefixButton.Text = "Add";
+            this.addFieldPrefixButton.UseVisualStyleBackColor = true;
+            this.addFieldPrefixButton.Click += new System.EventHandler(this.OnAddFieldPrefixButtonClick);
+            // 
+            // fieldPrefixListBox
+            // 
+            this.fieldPrefixListBox.FormattingEnabled = true;
+            this.fieldPrefixListBox.Location = new System.Drawing.Point(19, 70);
+            this.fieldPrefixListBox.Name = "fieldPrefixListBox";
+            this.fieldPrefixListBox.Size = new System.Drawing.Size(210, 82);
+            this.fieldPrefixListBox.TabIndex = 6;
+            this.fieldPrefixListBox.SelectedIndexChanged += new System.EventHandler(this.fieldPrefixListBox_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(16, 24);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(277, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "Remove the following prefixes from field and table names.";
+            // 
+            // fieldPrefixTextBox
+            // 
+            this.fieldPrefixTextBox.Location = new System.Drawing.Point(19, 43);
+            this.fieldPrefixTextBox.Name = "fieldPrefixTextBox";
+            this.fieldPrefixTextBox.Size = new System.Drawing.Size(210, 20);
+            this.fieldPrefixTextBox.TabIndex = 4;
             // 
             // groupBox9
             // 
@@ -552,10 +619,10 @@ namespace NHibernateMappingGenerator
             this.groupBox8.Controls.Add(this.textBoxInheritence);
             this.groupBox8.Location = new System.Drawing.Point(212, 152);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(515, 140);
+            this.groupBox8.Size = new System.Drawing.Size(515, 153);
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Fluent Options";
+            this.groupBox8.Text = "Mapping Options";
             // 
             // comboBoxForeignCollection
             // 
@@ -572,7 +639,7 @@ namespace NHibernateMappingGenerator
             // wcfDataContractCheckBox
             // 
             this.wcfDataContractCheckBox.AutoSize = true;
-            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(6, 43);
+            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(7, 43);
             this.wcfDataContractCheckBox.Name = "wcfDataContractCheckBox";
             this.wcfDataContractCheckBox.Size = new System.Drawing.Size(171, 17);
             this.wcfDataContractCheckBox.TabIndex = 1;
@@ -905,6 +972,8 @@ namespace NHibernateMappingGenerator
             this.pOracleOnlyOptions.ResumeLayout(false);
             this.pOracleOnlyOptions.PerformLayout();
             this.advanceSettingsTabPage.ResumeLayout(false);
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -998,6 +1067,12 @@ namespace NHibernateMappingGenerator
         private CheckBox includeForeignKeysCheckBox;
         private CheckBox includeLengthAndScaleCheckBox;
         private TextBox TableFilterTextBox;
+        private GroupBox groupBox10;
+        private Button removeFieldPrefixButton;
+        private Button addFieldPrefixButton;
+        private ListBox fieldPrefixListBox;
+        private Label label7;
+        private TextBox fieldPrefixTextBox;
     }
 }
 

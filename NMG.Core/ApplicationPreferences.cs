@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NMG.Core.Domain;
 
 namespace NMG.Core
@@ -60,6 +61,8 @@ namespace NMG.Core
         public bool IncludeForeignKeys { get; set; }
 
         public bool IncludeLengthAndScale { get; set; }
+
+        public List<string> FieldPrefixRemovalList { get; set; }
 
         public static ApplicationPreferences Default()
         {

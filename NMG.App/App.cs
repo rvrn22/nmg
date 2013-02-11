@@ -88,7 +88,13 @@ namespace NHibernateMappingGenerator
                 nhFluentMappingStyle.Checked = appSettings.IsNhFluent;
                 castleMappingOption.Checked = appSettings.IsCastle;
                 byCodeMappingOption.Checked = appSettings.IsByCode;
-                
+
+                if (appSettings.FieldPrefixRemovalList == null)
+                    appSettings.FieldPrefixRemovalList = new List<string>();
+
+                fieldPrefixListBox.Items.AddRange(appSettings.FieldPrefixRemovalList.ToArray());
+                removeFieldPrefixButton.Enabled = false;
+
                 prefixRadioButton.Checked = !string.IsNullOrEmpty(appSettings.Prefix);
                 prefixTextBox.Text = appSettings.Prefix;
                 camelCasedRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
@@ -111,6 +117,8 @@ namespace NHibernateMappingGenerator
             {
                 prefixLabel.Visible = prefixTextBox.Visible = false;
             }
+
+            applicationSettings = appSettings;
         }
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -138,6 +146,7 @@ namespace NHibernateMappingGenerator
                                      FolderPath = folderTextBox.Text,
                                      InheritenceAndInterfaces = textBoxInheritence.Text,
                                      ForeignEntityCollectionType = comboBoxForeignCollection.Text,
+                                     FieldPrefixRemovalList = applicationSettings.FieldPrefixRemovalList,
                                      FieldNamingConvention = GetFieldNamingConvention(),
                                      Prefix = prefixTextBox.Text,
                                      IsNhFluent = IsNhFluent,
@@ -532,6 +541,7 @@ namespace NHibernateMappingGenerator
                                                  ClassNamePrefix = appSettings.ClassNamePrefix,
                                                  IsByCode = appSettings.IsByCode,
                                                  UseLazy = useLazyLoadingCheckBox.Checked,
+                                                 FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,
                                                  IncludeForeignKeys = includeForeignKeysCheckBox.Checked,
                                                  IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked
                                              };
@@ -604,6 +614,40 @@ namespace NHibernateMappingGenerator
             tablesListBox.DataSource = query;
             tablesListBox.SelectedItem = query.FirstOrDefault();
             ResumeLayout();
+        }
+
+        private void OnAddFieldPrefixButtonClick(object sender, EventArgs e)
+        {
+            // Check if the prefix has already been added.
+            if (applicationSettings.FieldPrefixRemovalList.Any(s => s == fieldPrefixTextBox.Text))
+            {
+                fieldPrefixTextBox.Text = string.Empty;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(fieldPrefixTextBox.Text)) return;
+
+            // Add the new prefix
+            applicationSettings.FieldPrefixRemovalList.Add(fieldPrefixTextBox.Text);
+            fieldPrefixListBox.Items.Clear();
+            fieldPrefixListBox.Items.AddRange(applicationSettings.FieldPrefixRemovalList.ToArray());
+            fieldPrefixTextBox.Text = string.Empty;
+        }
+
+        private void OnRemoveFieldPrefixButtonClick(object sender, EventArgs e)
+        {
+            if (fieldPrefixListBox.SelectedIndex == -1) return;
+
+            applicationSettings.FieldPrefixRemovalList.Remove(fieldPrefixListBox.SelectedItem.ToString());
+            fieldPrefixListBox.Items.Clear();
+            fieldPrefixListBox.Items.AddRange(applicationSettings.FieldPrefixRemovalList.ToArray());
+            fieldPrefixListBox.SelectedIndex = -1;
+            removeFieldPrefixButton.Enabled = fieldPrefixListBox.SelectedIndex != -1;
+        }
+
+        private void fieldPrefixListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            removeFieldPrefixButton.Enabled = fieldPrefixListBox.SelectedIndex != -1;
         }
 
     }
