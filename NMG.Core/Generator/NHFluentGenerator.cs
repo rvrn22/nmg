@@ -16,12 +16,16 @@ namespace NMG.Core.Generator
             appPrefs = applicationPreferences;
         }
 
-        public override void Generate()
+        public override void Generate(bool writeToFile = true)
         {
             var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
-            WriteToFile(generateCode, className);
+
+            if (writeToFile)
+            {
+                WriteToFile(generateCode, className);
+            }
         }
 
         public CodeCompileUnit GetCompleteCompileUnit(string className)

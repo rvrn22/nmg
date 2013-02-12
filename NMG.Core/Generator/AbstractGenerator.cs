@@ -47,7 +47,9 @@ namespace NMG.Core.Generator
 
         public ITextFormatter Formatter { get; set; }
 
-        public abstract void Generate();
+        public string GeneratedCode { get; set; }
+
+        public abstract void Generate(bool writeToFile = true);
 
         #endregion
     }

@@ -12,7 +12,7 @@ namespace NMG.Core.Generator
 
         protected abstract void AddIdGenerator(XmlDocument xmldoc, XmlElement idElement);
 
-        public override void Generate()
+        public override void Generate(bool writeToFile = true)
         {
             string fileName = filePath + Formatter.FormatSingular(tableName) + ".hbm.xml";
             using (var stringWriter = new StringWriter())
@@ -21,10 +21,14 @@ namespace NMG.Core.Generator
                 xmldoc.Save(stringWriter);
                 string generatedXML = RemoveEmptyNamespaces(stringWriter.ToString());
 
-                using (var writer = new StreamWriter(fileName))
+                GeneratedCode = generatedXML;
+                if (writeToFile)
                 {
-                    writer.Write(generatedXML);
-                    writer.Flush();
+                    using (var writer = new StreamWriter(fileName))
+                    {
+                        writer.Write(generatedXML);
+                        writer.Flush();
+                    }
                 }
             }
         }
@@ -53,7 +57,7 @@ namespace NMG.Core.Generator
             PrimaryKey primaryKey = Table.PrimaryKey;
 
 
-            if (primaryKey.Type == PrimaryKeyType.CompositeKey)
+            if (primaryKey != null && primaryKey.Type == PrimaryKeyType.CompositeKey)
             {
                 XmlElement idElement = xmldoc.CreateElement("composite-id");
                 foreach (Column key in primaryKey.Columns)

@@ -17,12 +17,18 @@ namespace NMG.Core.Generator
             this.table = table;
         }
 
-        public override void Generate()
+        public override void Generate(bool writeToFile = true)
         {
 			string className = appPrefs.ClassNamePrefix + Formatter.FormatSingular(Table.Name) + "Data";
 			var compileUnit = GetCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
-            WriteToFile(generateCode, className);
+
+            GeneratedCode = generateCode;
+            if (writeToFile)
+            {
+                WriteToFile(generateCode, className);
+            }
+
         }
 
 		public CodeCompileUnit GetCompileUnit(string className)

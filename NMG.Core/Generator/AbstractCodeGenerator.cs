@@ -27,7 +27,9 @@ namespace NMG.Core.Generator
                 var stringWriter = new StringWriter(stringBuilder);
                 provider.GenerateCodeFromCompileUnit(compileUnit, stringWriter, new CodeGeneratorOptions());
             }
-            return CleanupCode(stringBuilder.ToString());
+            var codeOutput = CleanupCode(stringBuilder.ToString());
+            GeneratedCode = codeOutput;
+            return codeOutput;
         }
 
         protected void WriteToFile(string content, string fileName)

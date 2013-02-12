@@ -161,6 +161,8 @@ namespace NHibernateMappingGenerator
                 sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked && !camelCasedRadioButton.Checked);
 
                 generateInFoldersCheckBox.Checked = appSettings.GenerateInFolders;
+
+                SetCodeControlFormatting(appSettings);
             }
             else
             {
@@ -176,6 +178,31 @@ namespace NHibernateMappingGenerator
             }
 
             applicationSettings = appSettings;
+        }
+
+        private void SetCodeControlFormatting(ApplicationSettings appSettings)
+        {
+            if (appSettings.Language == Language.CSharp)
+            {
+                domainCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.CSharp;
+            }
+            else if (appSettings.Language == Language.VB)
+            {
+                domainCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.VB;
+            }
+
+            if (appSettings.Language == Language.CSharp & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent)
+            {
+                mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.CSharp;
+            }
+            else if (appSettings.Language == Language.VB & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent)
+            {
+                mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.VB;
+            }
+            else
+            {
+                mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.HTML;
+            }
         }
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -268,9 +295,21 @@ namespace NHibernateMappingGenerator
                         PopulateTableDetails(table);
 
                         CaptureApplicationSettings();
+                        SetCodeControlFormatting(applicationSettings);
+
                         var appPreferences = GetApplicationPreferences(table, false, applicationSettings);
                         var formatter = TextFormatterFactory.GetTextFormatter(appPreferences);
                         entityNameTextBox.Text = formatter.FormatText(table.Name);
+
+                        // Get Table Metadata
+                        metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
+
+                        // Show map and domain code preview
+                        ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
+                        var applicationController = new ApplicationController(applicationPreferences, table);
+                        applicationController.Generate(false);
+                        mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
+                        domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
                     }
                 }
             }
@@ -283,6 +322,7 @@ namespace NHibernateMappingGenerator
                 Cursor.Current = Cursors.Default;
             }
         }
+
 
         readonly IList<int> _cachedTableListSelection = new List<int>();
 

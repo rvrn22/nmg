@@ -19,10 +19,18 @@ namespace NMG.Core.Generator
             this.applicationPreferences = applicationPreferences;
         }
 
-        public override void Generate()
+        public override void Generate(bool writeToFile = true)
         {
             var compileUnit = GetCompileUnit();
-            WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
+
+            if (writeToFile)
+            {
+                WriteToFile(compileUnit, Formatter.FormatSingular(tableName));
+            }
+            else
+            {
+                WriteToString(compileUnit, Formatter.FormatSingular(tableName));
+            }
         }
 
         public CodeCompileUnit GetCompileUnit()
@@ -72,9 +80,9 @@ namespace NMG.Core.Generator
         {
             var provider = (CodeDomProvider) new CSharpCodeProvider();
             string sourceFile = GetCompleteFilePath(provider, className.MakeSingular());
+            var streamWriter = new StringWriter();
             using (provider)
             {
-                var streamWriter = new StreamWriter(sourceFile);
                 var textWriter = new IndentedTextWriter(streamWriter, "    ");
                 using (textWriter)
                 {
@@ -85,23 +93,39 @@ namespace NMG.Core.Generator
                     }
                 }
             }
-            CleanupGeneratedFile(sourceFile);
-        }
+            var entireContent = CleanupGeneratedFile(streamWriter.ToString());
 
-        private static void CleanupGeneratedFile(string sourceFile)
-        {
-            string entireContent;
-            using (var reader = new StreamReader(sourceFile))
-            {
-                entireContent = reader.ReadToEnd();
-            }
-            entireContent = RemoveComments(entireContent);
-            entireContent = AddStandardHeader(entireContent);
-            entireContent = FixAutoProperties(entireContent);
             using (var writer = new StreamWriter(sourceFile))
             {
                 writer.Write(entireContent);
             }
+        }
+
+        private void WriteToString(CodeCompileUnit compileUnit, string className)
+        {
+            var provider = (CodeDomProvider)new CSharpCodeProvider();
+            var streamWriter = new StringWriter();
+            using (provider)
+            {
+                var textWriter = new IndentedTextWriter(streamWriter, "    ");
+                using (textWriter)
+                {
+                    using (streamWriter)
+                    {
+                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = true };
+                        provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
+                    }
+                }
+            }
+            GeneratedCode = CleanupGeneratedFile(streamWriter.ToString());
+        }
+
+        private static string CleanupGeneratedFile(string entireContent)
+        {
+            entireContent = RemoveComments(entireContent);
+            entireContent = AddStandardHeader(entireContent);
+            entireContent = FixAutoProperties(entireContent);
+            return entireContent;
         }
 
         // Hack : Auto property generator is not there in CodeDom.

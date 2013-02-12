@@ -34,32 +34,43 @@ namespace NHibernateMappingGenerator
             }
         }
 
-        public void Generate()
+        public string GeneratedDomainCode { get; set; }
+        public string GeneratedMapCode { get; set; }
+
+        public void Generate(bool writeToFile = true)
         {
-            codeGenerator.Generate();
+            codeGenerator.Generate(writeToFile);
+            GeneratedDomainCode = codeGenerator.GeneratedCode;
+
             if (applicationPreferences.IsNhFluent)
             {
-                nhFluentGenerator.Generate();
+                nhFluentGenerator.Generate(writeToFile);
+                GeneratedMapCode = nhFluentGenerator.GeneratedCode;
             }
             else if (applicationPreferences.IsFluent)
             {
-                fluentGenerator.Generate();
+                fluentGenerator.Generate(writeToFile);
+                GeneratedMapCode = fluentGenerator.GeneratedCode;
             }
             else if (applicationPreferences.IsCastle)
             {
-                castleGenerator.Generate();
+                castleGenerator.Generate(writeToFile);
+                GeneratedMapCode = castleGenerator.GeneratedCode;
             }
             else if (applicationPreferences.IsByCode)
             {
-                byCodeGenerator.Generate();
+                byCodeGenerator.Generate(writeToFile);
+                GeneratedMapCode = byCodeGenerator.GeneratedCode;
             }
             else
             {
-                mappingGenerator.Generate();
+                mappingGenerator.Generate(writeToFile);
+                GeneratedMapCode = mappingGenerator.GeneratedCode;
             }
+
             if(applicationPreferences.GenerateWcfDataContract)
             {
-                contractGenerator.Generate();
+                contractGenerator.Generate(writeToFile);
             }
         }
     }

@@ -2,6 +2,6 @@ namespace NMG.Core.Generator
 {
     public interface IGenerator
     {
-        void Generate();
+        void Generate(bool writeToFile = true);
     }
 }
