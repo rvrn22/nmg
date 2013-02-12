@@ -31,6 +31,7 @@ namespace NHibernateMappingGenerator
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(App));
             this.dbConnStrLabel = new System.Windows.Forms.Label();
             this.connectBtn = new System.Windows.Forms.Button();
             this.sequencesComboBox = new System.Windows.Forms.ComboBox();
@@ -70,6 +71,7 @@ namespace NHibernateMappingGenerator
             this.pOracleOnlyOptions = new System.Windows.Forms.Panel();
             this.ownersComboBox = new System.Windows.Forms.ComboBox();
             this.lblOwner = new System.Windows.Forms.Label();
+            this.connectionButton = new System.Windows.Forms.Button();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.removeFieldPrefixButton = new System.Windows.Forms.Button();
@@ -111,7 +113,6 @@ namespace NHibernateMappingGenerator
             this.prefixLabel = new System.Windows.Forms.Label();
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
-            this.connectionButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -504,6 +505,15 @@ namespace NHibernateMappingGenerator
             this.lblOwner.TabIndex = 18;
             this.lblOwner.Text = "Owner";
             // 
+            // connectionButton
+            // 
+            this.connectionButton.Location = new System.Drawing.Point(336, 18);
+            this.connectionButton.Name = "connectionButton";
+            this.connectionButton.Size = new System.Drawing.Size(30, 23);
+            this.connectionButton.TabIndex = 2;
+            this.connectionButton.Text = "...";
+            this.connectionButton.UseVisualStyleBackColor = true;
+            // 
             // advanceSettingsTabPage
             // 
             this.advanceSettingsTabPage.Controls.Add(this.groupBox10);
@@ -516,7 +526,7 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.advanceSettingsTabPage.Name = "advanceSettingsTabPage";
             this.advanceSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 697);
+            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 693);
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
@@ -944,21 +954,13 @@ namespace NHibernateMappingGenerator
             this.sameAsDBRadioButton.Text = "Same as database column name (No change)";
             this.sameAsDBRadioButton.UseVisualStyleBackColor = true;
             // 
-            // connectionButton
-            // 
-            this.connectionButton.Location = new System.Drawing.Point(336, 18);
-            this.connectionButton.Name = "connectionButton";
-            this.connectionButton.Size = new System.Drawing.Size(30, 23);
-            this.connectionButton.TabIndex = 2;
-            this.connectionButton.Text = "...";
-            this.connectionButton.UseVisualStyleBackColor = true;
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1173, 719);
             this.Controls.Add(this.mainTabControl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "App";
             this.Text = "NHibernate Mapping Generator";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
