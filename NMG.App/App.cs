@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Reader;
 using NMG.Core.TextFormatter;
-using NMG.Core.Util;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -665,7 +665,7 @@ namespace NHibernateMappingGenerator
 
             // Display filtered list of tables
             var query = (from t in _tables
-                         where t.Name.StartsWith(textbox.Text)
+                         where t.Name.StartsWith(textbox.Text, true, CultureInfo.CurrentCulture)
                          select t).ToList();
 
             SuspendLayout();

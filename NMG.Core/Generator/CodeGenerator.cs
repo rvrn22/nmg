@@ -52,7 +52,7 @@ namespace NMG.Core.Generator
             CreateProperties(codeGenerationHelper, mapper, newType);
 
             // Generate GetHashCode() and Equals() methods.
-            if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
+            if (Table.PrimaryKey != null && Table.PrimaryKey.Columns.Count != 0 && Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
             {
                 var pkColsList = Table.PrimaryKey.Columns.Select(s => Formatter.FormatText(s.Name)).ToList();
 
