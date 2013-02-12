@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -15,7 +16,7 @@ namespace NHibernateMappingGenerator
         }
 
         public List<Connection> Connections { get; set; }
-        public string LastUsedConnectionName { get; set; }
+        public Guid? LastUsedConnection { get; set; }
             
         public string NameSpace { get; set; }
 
@@ -91,6 +92,7 @@ namespace NHibernateMappingGenerator
 
     public class Connection
     {
+        public Guid Id { get; set; }
         public string ConnectionString { get; set; }
         public string Name { get; set; }
         public ServerType Type { get; set; }

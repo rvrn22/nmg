@@ -30,7 +30,7 @@ namespace NMG.Core.Reader
 					using (var tableDetailsCommand = conn.CreateCommand()) {
 						tableDetailsCommand.CommandText = string.Format(
 							@"
-						SELECT distinct c.column_name, c .data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
+						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
 						from information_schema.columns c
 							left outer join (
 								information_schema.constraint_column_usage ccu

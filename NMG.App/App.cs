@@ -29,13 +29,49 @@ namespace NHibernateMappingGenerator
             ownersComboBox.SelectedIndexChanged += OwnersSelectedIndexChanged;
             tablesListBox.SelectedIndexChanged += TablesListSelectedIndexChanged;
             connectionNameComboBox.SelectedIndexChanged += ConnectionNameSelectedIndexChanged;
-            serverTypeComboBox.SelectedIndexChanged += ServerTypeSelected;
             dbTableDetailsGridView.DataError += DataError;
+            connectionButton.Click += ConnectionButtonClick;
             BindData();
+
             sequencesComboBox.Enabled = false;
             TableFilterTextBox.Enabled = false;
             Closing += App_Closing;
             worker = new BackgroundWorker {WorkerSupportsCancellation = true};
+        }
+
+        private void ConnectionButtonClick(object sender, EventArgs e)
+        {
+            var connectionDialog = new ConnectionDialog();
+            
+            if (_currentConnection != null)
+            {
+                connectionDialog.Connection = _currentConnection;
+            }
+            
+            var result = connectionDialog.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.OK:
+                    // Add or Update
+                    _currentConnection = connectionDialog.Connection;
+                    var connectionToUpdate = applicationSettings.Connections.FirstOrDefault(connection => connection.Id == _currentConnection.Id);
+                    if (connectionToUpdate == null)
+                    {
+                        applicationSettings.Connections.Add(_currentConnection);
+                    }
+
+                    break;
+                case DialogResult.Abort:
+                    // Delete
+                    applicationSettings.Connections.Remove(_currentConnection);
+                    _currentConnection = null;
+                    break;
+            }
+
+            connectionNameComboBox.DataSource = null;
+            connectionNameComboBox.DataSource = applicationSettings.Connections;
+            connectionNameComboBox.DisplayMember = "Name";
+            connectionNameComboBox.SelectedItem = _currentConnection;
         }
 
         private void ConnectionNameSelectedIndexChanged(object sender, EventArgs e)
@@ -43,6 +79,11 @@ namespace NHibernateMappingGenerator
             if (connectionNameComboBox.SelectedItem == null) return;
 
             _currentConnection = (Connection) connectionNameComboBox.SelectedItem;
+
+            pOracleOnlyOptions.Hide();
+
+            if (_currentConnection.Type == ServerType.Oracle)
+                pOracleOnlyOptions.Show();
         }
 
 
@@ -81,15 +122,9 @@ namespace NHibernateMappingGenerator
                 connectionNameComboBox.DisplayMember = "Name";
 
                 // Set the last used connection
-                var lastUsedConnection = appSettings.Connections.FirstOrDefault(connection => connection.Name == appSettings.LastUsedConnectionName);
+                var lastUsedConnection = appSettings.Connections.FirstOrDefault(connection => connection.Id == appSettings.LastUsedConnection);
                 _currentConnection = lastUsedConnection ?? appSettings.Connections.FirstOrDefault();
-
-                if (_currentConnection != null)
-                {
-                    serverTypeComboBox.SelectedItem = _currentConnection.Type;
-                    connStrTextBox.Text = _currentConnection.ConnectionString;
-                    connectionNameComboBox.SelectedItem = _currentConnection;
-                }
+                connectionNameComboBox.SelectedItem = _currentConnection;
 
                 nameSpaceTextBox.Text = appSettings.NameSpace;
                 assemblyNameTextBox.Text = appSettings.AssemblyName;
@@ -177,53 +212,14 @@ namespace NHibernateMappingGenerator
             applicationSettings.UseLazy = useLazyLoadingCheckBox.Checked;
             applicationSettings.IncludeForeignKeys = includeForeignKeysCheckBox.Checked;
             applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
-
             if (_currentConnection == null)
-            {
-                _currentConnection = new Connection {Name = serverTypeComboBox.Text + " Connection"};
-                applicationSettings.Connections.Add(_currentConnection);
-            }
-
-            _currentConnection.Name = connectionNameComboBox.Text;
-            _currentConnection.Type = (ServerType) Enum.Parse(typeof (ServerType), serverTypeComboBox.Text);
-            _currentConnection.ConnectionString = connStrTextBox.Text;
-
-            applicationSettings.LastUsedConnectionName = _currentConnection.Name;
-        }
-
-        private void ServerTypeSelected(object sender, EventArgs e)
-        {
-            pOracleOnlyOptions.Hide();
-
-            switch ((ServerType)serverTypeComboBox.SelectedItem)
-            {
-                case ServerType.Oracle:
-                    connStrTextBox.Text = StringConstants.ORACLE_CONN_STR_TEMPLATE;
-                    pOracleOnlyOptions.Show();
-                    break;
-                case ServerType.SqlServer:
-                    connStrTextBox.Text = StringConstants.SQL_CONN_STR_TEMPLATE;
-                    break;
-                case ServerType.MySQL:
-                    connStrTextBox.Text = StringConstants.MYSQL_CONN_STR_TEMPLATE;
-                    break;
-                case ServerType.SQLite:
-                    connStrTextBox.Text = StringConstants.SQLITE_CONN_STR_TEMPLATE;
-                    break;
-                case ServerType.Sybase:
-                    connStrTextBox.Text = StringConstants.SYBASE_CONN_STR_TEMPLATE;
-                    break;
-                default:
-                    connStrTextBox.Text = StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
-                    break;
-            }
+                applicationSettings.LastUsedConnection = null;
+            else
+                applicationSettings.LastUsedConnection = _currentConnection.Id;
         }
 
         private void BindData()
         {
-            serverTypeComboBox.DataSource = Enum.GetValues(typeof (ServerType));
-            serverTypeComboBox.SelectedIndex = 0;
-
             columnName.DataPropertyName = "Name";
             isPrimaryKey.DataPropertyName = "IsPrimaryKey";
             isForeignKey.DataPropertyName = "IsForeignKey";
@@ -327,17 +323,11 @@ namespace NHibernateMappingGenerator
             Cursor.Current = Cursors.WaitCursor;
             try
             {
-                CaptureApplicationSettings();
-
-                connectionNameComboBox.DataSource = applicationSettings.Connections;
-                connectionNameComboBox.DisplayMember = "Name";
-
                 tablesListBox.DataSource = null;
                 tablesListBox.DisplayMember = "Name";
                 sequencesComboBox.Items.Clear();
 
-                metadataReader = MetadataFactory.GetReader((ServerType)serverTypeComboBox.SelectedItem,
-                                              connStrTextBox.Text);
+                metadataReader = MetadataFactory.GetReader(_currentConnection.Type, _currentConnection.ConnectionString);
                 PopulateOwners();
                 PopulateTablesAndSequences();
                 
@@ -544,19 +534,11 @@ namespace NHibernateMappingGenerator
                 Directory.CreateDirectory(folderPath + "Domain");
                 Directory.CreateDirectory(folderPath + "Mapping");
             }
-            object serverType = null;
-            if (serverTypeComboBox.InvokeRequired)
-            {
-                serverTypeComboBox.Invoke(new MethodInvoker(delegate {
-                    serverType = serverTypeComboBox.SelectedItem; }));
-            }
-            else
-            {
-                serverType = serverTypeComboBox.SelectedItem;
-            }
+
+
             var applicationPreferences = new ApplicationPreferences
                                              {
-                                                 ServerType = (ServerType)serverType,
+                                                 ServerType = _currentConnection.Type,
                                                  FolderPath = folderPath,
                                                  TableName = tableName.Name,
                                                  NameSpace = nameSpaceTextBox.Text,
