@@ -13,7 +13,7 @@ namespace NMG.Core.Generator
     {
         private readonly ApplicationPreferences appPrefs;
 
-        public ByCodeGenerator(ApplicationPreferences appPrefs, Table table) : base(appPrefs.FolderPath, "Mapping", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
+        public ByCodeGenerator(ApplicationPreferences appPrefs, Table table) : base(appPrefs.FolderPath, "Mapping", appPrefs.TableName, appPrefs.NameSpaceMap, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = this.appPrefs.Language;

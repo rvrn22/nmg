@@ -14,7 +14,7 @@ namespace NMG.Core.Generator
     {
         private readonly ApplicationPreferences applicationPreferences;
 
-        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpaceMap, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
         }
@@ -42,13 +42,19 @@ namespace NMG.Core.Generator
             var mapper = new DataTypeMapper();
             var newType = compileUnit.Namespaces[0].Types[0];
             newType.IsPartial = applicationPreferences.GeneratePartialClasses;
-            foreach (var pk in Table.PrimaryKey.Columns)
-            {
-                var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
 
-                var declaration = new CodeAttributeDeclaration("PrimaryKey");
-                declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(pk.Name)));
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), pk.Name.GetFormattedText(), declaration));
+            if (Table.PrimaryKey != null && Table.PrimaryKey.Columns.Count() != 0)
+            {
+                foreach (var pk in Table.PrimaryKey.Columns)
+                {
+                    var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, pk.DataType,
+                                                             pk.DataLength, pk.DataPrecision, pk.DataScale);
+
+                    var declaration = new CodeAttributeDeclaration("PrimaryKey");
+                    declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(pk.Name)));
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(),
+                                                                                pk.Name.GetFormattedText(), declaration));
+                }
             }
 
             foreach (var fk in Table.ForeignKeys)

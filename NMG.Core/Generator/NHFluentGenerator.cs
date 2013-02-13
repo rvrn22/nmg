@@ -11,7 +11,7 @@ namespace NMG.Core.Generator
     {
         private readonly ApplicationPreferences appPrefs;
 
-        public NHFluentGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpace, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
+        public NHFluentGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpaceMap, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             appPrefs = applicationPreferences;
         }
@@ -46,7 +46,7 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
                     Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, appPrefs.Sequence)));
             }
-            else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+            else if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }

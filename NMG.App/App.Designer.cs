@@ -61,6 +61,7 @@ namespace NHibernateMappingGenerator
             this.tableGroupBox = new System.Windows.Forms.GroupBox();
             this.TableFilterTextBox = new System.Windows.Forms.TextBox();
             this.tablesListBox = new System.Windows.Forms.ListBox();
+            this.ownersComboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -74,7 +75,6 @@ namespace NHibernateMappingGenerator
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.connectionNameComboBox = new System.Windows.Forms.ComboBox();
             this.pOracleOnlyOptions = new System.Windows.Forms.Panel();
-            this.ownersComboBox = new System.Windows.Forms.ComboBox();
             this.connectionButton = new System.Windows.Forms.Button();
             this.advanceSettingsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
@@ -120,6 +120,8 @@ namespace NHibernateMappingGenerator
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.namespaceMapTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -196,7 +198,7 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(3, 3);
             this.dbTableDetailsGridView.Name = "dbTableDetailsGridView";
             this.dbTableDetailsGridView.RowHeadersVisible = false;
-            this.dbTableDetailsGridView.Size = new System.Drawing.Size(912, 363);
+            this.dbTableDetailsGridView.Size = new System.Drawing.Size(913, 357);
             this.dbTableDetailsGridView.TabIndex = 5;
             // 
             // columnName
@@ -253,7 +255,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateButton
             // 
-            this.generateButton.Location = new System.Drawing.Point(11, 145);
+            this.generateButton.Location = new System.Drawing.Point(11, 169);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(106, 23);
             this.generateButton.TabIndex = 8;
@@ -285,22 +287,22 @@ namespace NHibernateMappingGenerator
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(11, 92);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 13);
+            this.label2.Size = new System.Drawing.Size(115, 13);
             this.label2.TabIndex = 11;
-            this.label2.Text = "Namespace :";
+            this.label2.Text = "Namespace (Domain) :";
             // 
             // nameSpaceTextBox
             // 
-            this.nameSpaceTextBox.Location = new System.Drawing.Point(102, 88);
+            this.nameSpaceTextBox.Location = new System.Drawing.Point(130, 88);
             this.nameSpaceTextBox.Name = "nameSpaceTextBox";
-            this.nameSpaceTextBox.Size = new System.Drawing.Size(514, 20);
+            this.nameSpaceTextBox.Size = new System.Drawing.Size(486, 20);
             this.nameSpaceTextBox.TabIndex = 12;
             this.nameSpaceTextBox.Text = "Sample.CustomerService.Domain";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 120);
+            this.label3.Location = new System.Drawing.Point(11, 144);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 13;
@@ -308,11 +310,11 @@ namespace NHibernateMappingGenerator
             // 
             // assemblyNameTextBox
             // 
-            this.assemblyNameTextBox.Location = new System.Drawing.Point(102, 116);
+            this.assemblyNameTextBox.Location = new System.Drawing.Point(130, 140);
             this.assemblyNameTextBox.Name = "assemblyNameTextBox";
-            this.assemblyNameTextBox.Size = new System.Drawing.Size(514, 20);
+            this.assemblyNameTextBox.Size = new System.Drawing.Size(486, 20);
             this.assemblyNameTextBox.TabIndex = 14;
-            this.assemblyNameTextBox.Text = "Sample.CustomerService.Domain";
+            this.assemblyNameTextBox.Text = "Sample.CustomerService";
             // 
             // label5
             // 
@@ -325,7 +327,7 @@ namespace NHibernateMappingGenerator
             // 
             // generateAllBtn
             // 
-            this.generateAllBtn.Location = new System.Drawing.Point(384, 145);
+            this.generateAllBtn.Location = new System.Drawing.Point(384, 169);
             this.generateAllBtn.Name = "generateAllBtn";
             this.generateAllBtn.Size = new System.Drawing.Size(106, 23);
             this.generateAllBtn.TabIndex = 18;
@@ -373,8 +375,8 @@ namespace NHibernateMappingGenerator
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
-            this.splitContainer1.Size = new System.Drawing.Size(1159, 421);
-            this.splitContainer1.SplitterDistance = 229;
+            this.splitContainer1.Size = new System.Drawing.Size(1159, 395);
+            this.splitContainer1.SplitterDistance = 228;
             this.splitContainer1.TabIndex = 23;
             // 
             // tableGroupBox
@@ -385,7 +387,7 @@ namespace NHibernateMappingGenerator
             this.tableGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableGroupBox.Location = new System.Drawing.Point(0, 0);
             this.tableGroupBox.Name = "tableGroupBox";
-            this.tableGroupBox.Size = new System.Drawing.Size(229, 421);
+            this.tableGroupBox.Size = new System.Drawing.Size(228, 395);
             this.tableGroupBox.TabIndex = 21;
             this.tableGroupBox.TabStop = false;
             this.tableGroupBox.Text = "Select Owner and Table(s)";
@@ -396,7 +398,7 @@ namespace NHibernateMappingGenerator
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TableFilterTextBox.Location = new System.Drawing.Point(6, 47);
             this.TableFilterTextBox.Name = "TableFilterTextBox";
-            this.TableFilterTextBox.Size = new System.Drawing.Size(218, 20);
+            this.TableFilterTextBox.Size = new System.Drawing.Size(217, 20);
             this.TableFilterTextBox.TabIndex = 7;
             this.TableFilterTextBox.Tag = "Enter table filter here...";
             this.TableFilterTextBox.Text = "Enter table filter here...";
@@ -412,8 +414,19 @@ namespace NHibernateMappingGenerator
             this.tablesListBox.Location = new System.Drawing.Point(6, 73);
             this.tablesListBox.Name = "tablesListBox";
             this.tablesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.tablesListBox.Size = new System.Drawing.Size(217, 342);
+            this.tablesListBox.Size = new System.Drawing.Size(216, 316);
             this.tablesListBox.TabIndex = 6;
+            // 
+            // ownersComboBox
+            // 
+            this.ownersComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ownersComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ownersComboBox.FormattingEnabled = true;
+            this.ownersComboBox.Location = new System.Drawing.Point(6, 20);
+            this.ownersComboBox.Name = "ownersComboBox";
+            this.ownersComboBox.Size = new System.Drawing.Size(217, 21);
+            this.ownersComboBox.TabIndex = 19;
             // 
             // tabControl1
             // 
@@ -424,7 +437,7 @@ namespace NHibernateMappingGenerator
             this.tabControl1.Location = new System.Drawing.Point(0, 6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(926, 415);
+            this.tabControl1.Size = new System.Drawing.Size(927, 389);
             this.tabControl1.TabIndex = 22;
             // 
             // tabPage1
@@ -433,7 +446,7 @@ namespace NHibernateMappingGenerator
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(918, 369);
+            this.tabPage1.Size = new System.Drawing.Size(919, 363);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Table Definition";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -444,7 +457,7 @@ namespace NHibernateMappingGenerator
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(918, 369);
+            this.tabPage2.Size = new System.Drawing.Size(919, 389);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Map Code";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -461,7 +474,7 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
             this.mapCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.mapCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mapCodeFastColoredTextBox.Size = new System.Drawing.Size(912, 363);
+            this.mapCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 383);
             this.mapCodeFastColoredTextBox.TabIndex = 0;
             // 
             // tabPage3
@@ -470,7 +483,7 @@ namespace NHibernateMappingGenerator
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(918, 389);
+            this.tabPage3.Size = new System.Drawing.Size(919, 389);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Domain Code";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -487,7 +500,7 @@ namespace NHibernateMappingGenerator
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
             this.domainCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.domainCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.domainCodeFastColoredTextBox.Size = new System.Drawing.Size(912, 383);
+            this.domainCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 383);
             this.domainCodeFastColoredTextBox.TabIndex = 0;
             // 
             // groupBox5
@@ -500,20 +513,22 @@ namespace NHibernateMappingGenerator
             this.groupBox5.Controls.Add(this.generateAllBtn);
             this.groupBox5.Controls.Add(this.folderSelectButton);
             this.groupBox5.Controls.Add(this.assemblyNameTextBox);
+            this.groupBox5.Controls.Add(this.label4);
             this.groupBox5.Controls.Add(this.label2);
             this.groupBox5.Controls.Add(this.generateButton);
             this.groupBox5.Controls.Add(this.label3);
+            this.groupBox5.Controls.Add(this.namespaceMapTextBox);
             this.groupBox5.Controls.Add(this.nameSpaceTextBox);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox5.Location = new System.Drawing.Point(3, 487);
+            this.groupBox5.Location = new System.Drawing.Point(3, 461);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1159, 178);
+            this.groupBox5.Size = new System.Drawing.Size(1159, 204);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(510, 145);
+            this.cancelButton.Location = new System.Drawing.Point(510, 169);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(106, 23);
             this.cancelButton.TabIndex = 22;
@@ -532,9 +547,9 @@ namespace NHibernateMappingGenerator
             // 
             // entityNameTextBox
             // 
-            this.entityNameTextBox.Location = new System.Drawing.Point(102, 59);
+            this.entityNameTextBox.Location = new System.Drawing.Point(130, 59);
             this.entityNameTextBox.Name = "entityNameTextBox";
-            this.entityNameTextBox.Size = new System.Drawing.Size(514, 20);
+            this.entityNameTextBox.Size = new System.Drawing.Size(486, 20);
             this.entityNameTextBox.TabIndex = 20;
             // 
             // groupBox4
@@ -573,17 +588,6 @@ namespace NHibernateMappingGenerator
             this.pOracleOnlyOptions.Size = new System.Drawing.Size(559, 43);
             this.pOracleOnlyOptions.TabIndex = 20;
             // 
-            // ownersComboBox
-            // 
-            this.ownersComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ownersComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ownersComboBox.FormattingEnabled = true;
-            this.ownersComboBox.Location = new System.Drawing.Point(6, 20);
-            this.ownersComboBox.Name = "ownersComboBox";
-            this.ownersComboBox.Size = new System.Drawing.Size(218, 21);
-            this.ownersComboBox.TabIndex = 19;
-            // 
             // connectionButton
             // 
             this.connectionButton.Location = new System.Drawing.Point(198, 30);
@@ -605,7 +609,7 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.advanceSettingsTabPage.Name = "advanceSettingsTabPage";
             this.advanceSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 693);
+            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 668);
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
@@ -1063,6 +1067,23 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
+            // namespaceMapTextBox
+            // 
+            this.namespaceMapTextBox.Location = new System.Drawing.Point(130, 114);
+            this.namespaceMapTextBox.Name = "namespaceMapTextBox";
+            this.namespaceMapTextBox.Size = new System.Drawing.Size(486, 20);
+            this.namespaceMapTextBox.TabIndex = 12;
+            this.namespaceMapTextBox.Text = "Sample.CustomerService.Maps";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(11, 118);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(100, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Namespace (Map) :";
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1206,6 +1227,8 @@ namespace NHibernateMappingGenerator
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripProgressBar toolStripProgressBar1;
+        private Label label4;
+        private TextBox namespaceMapTextBox;
     }
 }
 

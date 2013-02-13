@@ -20,6 +20,8 @@ namespace NHibernateMappingGenerator
             
         public string NameSpace { get; set; }
 
+        public string NameSpaceMap { get; set; }
+
         public string AssemblyName { get; set; }
 
         public Language Language { get; set; }
@@ -63,6 +65,7 @@ namespace NHibernateMappingGenerator
         public bool IncludeLengthAndScale { get; set; }
 
         public List<string> FieldPrefixRemovalList { get; set; }
+
 
         public void Save()
         {

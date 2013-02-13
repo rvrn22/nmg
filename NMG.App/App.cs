@@ -127,6 +127,7 @@ namespace NHibernateMappingGenerator
                 connectionNameComboBox.SelectedItem = _currentConnection;
 
                 nameSpaceTextBox.Text = appSettings.NameSpace;
+                namespaceMapTextBox.Text = appSettings.NameSpaceMap;
                 assemblyNameTextBox.Text = appSettings.AssemblyName;
                 fluentMappingOption.Checked = appSettings.IsFluent;
                 cSharpRadioButton.Checked = appSettings.Language == Language.CSharp;
@@ -219,6 +220,7 @@ namespace NHibernateMappingGenerator
         private void CaptureApplicationSettings()
         {
             applicationSettings.NameSpace = nameSpaceTextBox.Text;
+            applicationSettings.NameSpaceMap = namespaceMapTextBox.Text;
             applicationSettings.AssemblyName = assemblyNameTextBox.Text;
             applicationSettings.Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB;
             applicationSettings.IsFluent = fluentMappingOption.Checked;
@@ -594,6 +596,7 @@ namespace NHibernateMappingGenerator
                                                  ServerType = _currentConnection.Type,
                                                  FolderPath = folderPath,
                                                  TableName = tableName.Name,
+                                                 NameSpaceMap = namespaceMapTextBox.Text,
                                                  NameSpace = nameSpaceTextBox.Text,
                                                  AssemblyName = assemblyNameTextBox.Text,
                                                  Sequence = sequence,

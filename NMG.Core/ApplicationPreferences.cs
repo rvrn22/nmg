@@ -18,6 +18,8 @@ namespace NMG.Core
 
         public string NameSpace { get; set; }
 
+        public string NameSpaceMap { get; set; }
+
         public string AssemblyName { get; set; }
 
         public ServerType ServerType { get; set; }
