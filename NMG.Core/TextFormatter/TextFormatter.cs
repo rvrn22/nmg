@@ -17,20 +17,28 @@ namespace NMG.Core.TextFormatter
     {
         public virtual string FormatText(string text)
         {
-            return RemovePrefix(text);
+            var result = RemovePrefix(text);
+
+            if (result.Length != 0 && char.IsNumber(result.ToCharArray(0, 1)[0]))
+            {
+                // Cannot start class or property with a number
+                result = "_" + result;
+            }
+
+            return result;
         }
 
         public string FormatSingular(string text)
         {
-            return FormatText(RemovePrefix(text)).MakeSingular();
+            return FormatText(text).MakeSingular();
         }
 
         public string FormatPlural(string text)
         {
-            return FormatText(RemovePrefix(text)).MakePlural();
+            return FormatText(text).MakePlural();
         }
 
-        protected string RemovePrefix(string original)
+        private string RemovePrefix(string original)
         {
             if (PrefixRemovalList == null || PrefixRemovalList.Count == 0)
                 return original;
@@ -56,7 +64,7 @@ namespace NMG.Core.TextFormatter
     {
         public override string FormatText(string text)
         {
-            return text.ToCamelCase();
+            return base.FormatText(text).ToCamelCase();
         }
     }
 
@@ -64,7 +72,7 @@ namespace NMG.Core.TextFormatter
     {
         public override string FormatText(string text)
         {
-            return RemovePrefix(text).ToPascalCase();
+            return base.FormatText(text).ToPascalCase();
         }
     }
 
@@ -79,7 +87,7 @@ namespace NMG.Core.TextFormatter
 
         public override string FormatText(string text)
         {
-            return Prefix + RemovePrefix(text);
+            return Prefix + base.FormatText(text);
         }
     }
 
