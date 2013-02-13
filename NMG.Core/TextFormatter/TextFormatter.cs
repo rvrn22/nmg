@@ -32,7 +32,7 @@ namespace NMG.Core.TextFormatter
 
         protected string RemovePrefix(string original)
         {
-            if (PrefixRemovalList == null && PrefixRemovalList.Count == 0)
+            if (PrefixRemovalList == null || PrefixRemovalList.Count == 0)
                 return original;
 
             // Strip out the first matching prefix
