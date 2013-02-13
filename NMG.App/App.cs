@@ -207,7 +207,7 @@ namespace NHibernateMappingGenerator
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            errorLabel.Text = string.Format("Error in column {0} of row {1} - {3}. Detail : {2}", e.ColumnIndex, e.RowIndex, e.Exception.Message, (gridData != null ? gridData[e.RowIndex].Name : ""));
+            toolStripStatusLabel1.Text = string.Format("Error in column {0} of row {1} - {3}. Detail : {2}", e.ColumnIndex, e.RowIndex, e.Exception.Message, (gridData != null ? gridData[e.RowIndex].Name : ""));
         }
 
         private void App_Closing(object sender, CancelEventArgs e)
@@ -274,7 +274,7 @@ namespace NHibernateMappingGenerator
         {
             
 
-            errorLabel.Text = string.Empty;
+            toolStripStatusLabel1.Text = string.Empty;
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -315,7 +315,7 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
             finally
             {
@@ -344,7 +344,7 @@ namespace NHibernateMappingGenerator
 
         private void PopulateTableDetails(Table selectedTable)
         {
-            errorLabel.Text = string.Empty;
+            toolStripStatusLabel1.Text = string.Empty;
             try
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
@@ -353,13 +353,14 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
         }
 
         private void connectBtnClicked(object sender, EventArgs e)
         {
-            errorLabel.Text = string.Empty;
+            toolStripStatusLabel1.Text = string.Format("Connecting to {0}...", _currentConnection.Name);
+            statusStrip1.Refresh();
             Cursor.Current = Cursors.WaitCursor;
             try
             {
@@ -368,13 +369,18 @@ namespace NHibernateMappingGenerator
                 sequencesComboBox.Items.Clear();
 
                 metadataReader = MetadataFactory.GetReader(_currentConnection.Type, _currentConnection.ConnectionString);
+
+                toolStripStatusLabel1.Text = "Retrieving owners...";
+                statusStrip1.Refresh();
                 PopulateOwners();
+
                 PopulateTablesAndSequences();
-                
+
+                toolStripStatusLabel1.Text = string.Empty;
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
             finally
             {
@@ -391,13 +397,17 @@ namespace NHibernateMappingGenerator
             }
             ownersComboBox.Items.Clear();
             ownersComboBox.Items.AddRange(owners.ToArray());
+
+            ownersComboBox.SelectedIndex = 0;
         }
 
         private void PopulateTablesAndSequences()
         {
-            errorLabel.Text = string.Empty;
             try
             {
+                toolStripStatusLabel1.Text = "Retrieving tables...";
+                statusStrip1.Refresh();
+
                 if (ownersComboBox.SelectedItem == null)
                 {
                     return;
@@ -424,10 +434,13 @@ namespace NHibernateMappingGenerator
                     sequencesComboBox.Enabled = true;
                     sequencesComboBox.SelectedIndex = 0;
                 }
+
+                toolStripStatusLabel1.Text = string.Empty;
+                statusStrip1.Refresh();
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
         }
 
@@ -443,38 +456,38 @@ namespace NHibernateMappingGenerator
 
         private void GenerateClicked(object sender, EventArgs e)
         {
-            errorLabel.Text = string.Empty;
+            toolStripStatusLabel1.Text = string.Empty;
             var selectedItems = tablesListBox.SelectedItems;
             if (selectedItems.Count == 0)
             {
-                errorLabel.Text = @"Please select table(s) above to generate the mapping files.";
+                toolStripStatusLabel1.Text = @"Please select table(s) above to generate the mapping files.";
                 return;
             }
             try
             {
                 foreach (var selectedItem in selectedItems)
                 {
-                    errorLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
+                    toolStripStatusLabel1.Text = string.Format("Generating {0} mapping file ...", selectedItem);
                     var table = (Table)selectedItem;
                     metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                     CaptureApplicationSettings();
                     Generate(table, selectedItems.Count > 1, applicationSettings);                
                 }
-                errorLabel.Text = @"Generated all files successfully.";
+                toolStripStatusLabel1.Text = @"Generated all files successfully.";
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
         }
 
         private void GenerateAllClicked(object sender, EventArgs e)
         {
-            errorLabel.Text = string.Empty;
+            toolStripStatusLabel1.Text = string.Empty;
             var items = tablesListBox.Items;
             if (items.Count == 0)
             {
-                errorLabel.Text = @"Please connect to a database to populate the tables first.";
+                toolStripStatusLabel1.Text = @"Please connect to a database to populate the tables first.";
                 return;
             }
             try
@@ -482,8 +495,8 @@ namespace NHibernateMappingGenerator
                 Cursor.Current = Cursors.WaitCursor;
                 try
                 {
-                    progressBar.Maximum = 100;
-                    progressBar.Value = 10;
+                    toolStripProgressBar1.Maximum = 100;
+                    toolStripProgressBar1.Value = 10;
                     worker.DoWork += DoWork;
                     worker.RunWorkerCompleted += WorkerCompleted;
                     CaptureApplicationSettings();
@@ -496,14 +509,14 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                errorLabel.Text = ex.Message;
+                toolStripStatusLabel1.Text = ex.Message;
             }
         }
      
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar.Value = 100;
-            errorLabel.Text = @"Generated all files successfully.";
+            toolStripProgressBar1.Value = 100;
+            toolStripStatusLabel1.Text = @"Generated all files successfully.";
         }
 
         private void DoWork(object sender, DoWorkEventArgs e)
@@ -675,6 +688,23 @@ namespace NHibernateMappingGenerator
             ResumeLayout();
         }
 
+        private void OnTableFilterEnter(object sender, EventArgs e)
+        {
+            var textbox = sender as TextBox;
+
+            if (textbox == null) return;
+
+            if (textbox.Text == textbox.Tag.ToString())
+            {
+                textbox.TextChanged -= OnTableFilterTextChanged;
+
+                // Clear the hint text in the table filter textbox
+                textbox.Text = string.Empty;
+
+                textbox.TextChanged += OnTableFilterTextChanged;
+            }
+        }
+
         private void OnAddFieldPrefixButtonClick(object sender, EventArgs e)
         {
             // Check if the prefix has already been added.
@@ -708,6 +738,8 @@ namespace NHibernateMappingGenerator
         {
             removeFieldPrefixButton.Enabled = fieldPrefixListBox.SelectedIndex != -1;
         }
+
+        
 
     }
 }
