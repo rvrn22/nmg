@@ -5,7 +5,7 @@ using NMG.Core.Reader;
 
 namespace NMG.Tests.Reader
 {
-    [TestFixture()]
+    [TestFixture]
     public class OracleMetadataReaderTest
     {
         private OracleMetadataReader oracleMetadataReader;
@@ -13,10 +13,10 @@ namespace NMG.Tests.Reader
         [SetUp]
         public void SetUp()
         {
-            string connectionString = "Data Source=xe;User Id=scott;Password=tiger";
+            const string connectionString = "Data Source=xe;User Id=scott;Password=tiger";
             oracleMetadataReader = new OracleMetadataReader(connectionString);
         }
-        
+
         [Test()]
         public void GetOwnersTest()
         {
@@ -26,7 +26,7 @@ namespace NMG.Tests.Reader
             Assert.IsTrue(owners.Contains("SCOTT"));
         }
         
-        [Test()]
+        [Test]
         public void GetTableTest()
         {
             var tables = oracleMetadataReader.GetTables("SCOTT");
@@ -35,7 +35,7 @@ namespace NMG.Tests.Reader
             Assert.IsTrue(tables.Any(t => string.Equals(t.Name, "PRODUCTS", StringComparison.OrdinalIgnoreCase)));
         }
         
-        [Test()]
+        [Test]
         public void GetSequencesTest()
         {
             var sequences = oracleMetadataReader.GetSequences("SCOTT");
@@ -44,7 +44,7 @@ namespace NMG.Tests.Reader
             Assert.IsTrue(sequences.Any(s => string.Equals(s, "INVENTORY_SEQ", StringComparison.OrdinalIgnoreCase)));
         }
         
-        [Test()]
+        [Test]
         public void GetTableDetailsTest()
         {
             var tables = oracleMetadataReader.GetTables("SCOTT");
