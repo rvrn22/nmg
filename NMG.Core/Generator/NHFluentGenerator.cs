@@ -70,7 +70,7 @@ namespace NMG.Core.Generator
 
                 if (columnDetail.IsForeignKey)
                 {
-                    var manyToOneMapping = TABS + "ManyToOne(x => x." + columnDetail.Name + ", map => {map.Column(\"" + columnDetail.Name + "\"); map.NotNullable(" +
+                    var manyToOneMapping = TABS + "ManyToOne(x => x." + Formatter.FormatText(columnDetail.Name) + ", map => {map.Column(\"" + columnDetail.Name + "\"); map.NotNullable(" +
                                            (!columnDetail.IsNullable).ToString().ToLower() + "); map.Cascade(Cascade.None); });";
                     constructor.Statements.Add(new CodeSnippetStatement(manyToOneMapping));
                 }
@@ -107,7 +107,7 @@ namespace NMG.Core.Generator
 
         private string MapNhStyle(Column column, bool includeLengthAndScale = true)
         {
-            var mappedStrBuilder = new StringBuilder("Property(x => x." + column.Name + ", map => { map.Column(\"" + column.Name + "\");");
+            var mappedStrBuilder = new StringBuilder("Property(x => x." + Formatter.FormatText(column.Name) + ", map => { map.Column(\"" + column.Name + "\");");
             if (column.DataLength > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(" map.Length(" + column.DataLength + ");");
