@@ -38,7 +38,7 @@ namespace NMG.Core.TextFormatter
             // Strip out the first matching prefix
             foreach (var prefix in PrefixRemovalList)
             {
-                if (original.ToLower().StartsWith(prefix))
+                if (original.ToLower().StartsWith(prefix.ToLower()))
                 {
                     return original.Remove(0, prefix.Length);
                 }
