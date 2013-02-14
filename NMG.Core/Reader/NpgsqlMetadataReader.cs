@@ -8,7 +8,7 @@ using System.Data;
 
 namespace NMG.Core.Reader
 {
-    public class NpgsqlMetadataReader:IMetadataReader
+    public class NpgsqlMetadataReader: IMetadataReader
     {
             private readonly string connectionStr;
 
@@ -214,9 +214,9 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
 
             #endregion
 
-        private static PrimaryKey DeterminePrimaryKeys(Table table)
+        public PrimaryKey DeterminePrimaryKeys(Table table)
         {
-            IEnumerable<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
+            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
             if (primaryKeys.Count() == 1)
             {
@@ -224,34 +224,28 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                 var key = new PrimaryKey
                 {
                     Type = PrimaryKeyType.PrimaryKey,
-                    Columns =
-                                      {
-                                          c
-                                      }
+                    Columns = { c }
                 };
                 return key;
             }
-            else
+
+            if (primaryKeys.Count() > 1)
             {
                 var key = new PrimaryKey
                 {
-                    Type = PrimaryKeyType.CompositeKey
+                    Type = PrimaryKeyType.CompositeKey,
+                    Columns = primaryKeys
                 };
-                foreach (var primaryKey in primaryKeys)
-                {
-                    key.Columns.Add(new Column
-                    {
-                        DataType = primaryKey.DataType,
-                        Name = primaryKey.Name
-                    });
-                }
+ 
                 return key;
             }
+
+            return null;
         }
 
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
+            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true)).ToList();
             var tempForeignKeys = new List<ForeignKey>();
 
             foreach (var foreignKey in foreignKeys)

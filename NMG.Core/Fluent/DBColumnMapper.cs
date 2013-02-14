@@ -18,6 +18,12 @@ namespace NMG.Core.Fluent
                 mappedStrBuilder.Append("Not.Nullable()");
             }
 
+            if (column.IsUnique)
+            {
+                mappedStrBuilder.Append(Constants.Dot);
+                mappedStrBuilder.Append("Unique()");
+            }
+
             if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(Constants.Dot);

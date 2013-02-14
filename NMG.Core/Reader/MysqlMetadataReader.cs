@@ -210,39 +210,33 @@ namespace NMG.Core.Reader
 
         #endregion
 
-        private static PrimaryKey DeterminePrimaryKeys(Table table)
+        public PrimaryKey DeterminePrimaryKeys(Table table)
         {
-            IEnumerable<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
+            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
             if (primaryKeys.Count() == 1)
             {
-                Column c = primaryKeys.First();
+                var c = primaryKeys.First();
                 var key = new PrimaryKey
                 {
                     Type = PrimaryKeyType.PrimaryKey,
-                    Columns =
-                                      {
-                                          c
-                                      }
+                    Columns = { c }
                 };
                 return key;
             }
-            else
+
+            if (primaryKeys.Count() > 1)
             {
                 var key = new PrimaryKey
                 {
-                    Type = PrimaryKeyType.CompositeKey
+                    Type = PrimaryKeyType.CompositeKey,
+                    Columns = primaryKeys
                 };
-                foreach (var primaryKey in primaryKeys)
-                {
-                    key.Columns.Add(new Column
-                    {
-                        DataType = primaryKey.DataType,
-                        Name = primaryKey.Name
-                    });
-                }
+
                 return key;
             }
+
+            return null;
         }
 
         private IList<ForeignKey> DetermineForeignKeyReferences(Table table)

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using NMG.Core.Annotations;
 
 namespace NMG.Core.Domain
 {
@@ -83,7 +85,7 @@ namespace NMG.Core.Domain
     /// <summary>
     /// Defines a database column entity;
     /// </summary>
-    public class Column
+    public class Column: INotifyPropertyChanged
     {
         public string Name { get; set; }
         public bool IsPrimaryKey { get; set; }
@@ -97,6 +99,14 @@ namespace NMG.Core.Domain
 		public string ConstraintName { get; set; }
         public int? DataPrecision { get; set; }
         public int? DataScale { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public interface IPrimaryKey

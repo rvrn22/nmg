@@ -109,6 +109,11 @@ namespace NMG.Core.Generator
                 columnProperty.SetAttribute("name", column.Name);
                 columnProperty.SetAttribute("sql-type", column.DataType);
                 columnProperty.SetAttribute("not-null", (!column.IsNullable).ToString().ToLower());
+                if (column.IsUnique)
+                {
+                    columnProperty.SetAttribute("unique", "true");
+                }
+
                 property2.AppendChild(columnProperty.Clone());
                 if (property != null)
                     classElement.AppendChild(property);

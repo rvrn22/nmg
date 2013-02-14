@@ -31,12 +31,22 @@ namespace NHibernateMappingGenerator
             connectionNameComboBox.SelectedIndexChanged += ConnectionNameSelectedIndexChanged;
             dbTableDetailsGridView.DataError += DataError;
             connectionButton.Click += ConnectionButtonClick;
+            dbTableDetailsGridView.CurrentCellDirtyStateChanged += OnTableDetailsCellDirty;
             BindData();
 
             sequencesComboBox.Enabled = false;
             TableFilterTextBox.Enabled = false;
             Closing += App_Closing;
             worker = new BackgroundWorker {WorkerSupportsCancellation = true};
+        }
+
+        private void OnTableDetailsCellDirty(object sender, EventArgs e)
+        {
+            if (_currentTable != null)
+            {
+                // Update map and domain code to reflect changes in grid.
+                GenerateAndDisplayCode(_currentTable);
+            }
         }
 
         private void ConnectionButtonClick(object sender, EventArgs e)
@@ -183,6 +193,7 @@ namespace NHibernateMappingGenerator
 
         private void SetCodeControlFormatting(ApplicationSettings appSettings)
         {
+            // Domain Code Formatting
             if (appSettings.Language == Language.CSharp)
             {
                 domainCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.CSharp;
@@ -192,11 +203,12 @@ namespace NHibernateMappingGenerator
                 domainCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.VB;
             }
 
-            if (appSettings.Language == Language.CSharp & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent)
+            // Map Code Formatting
+            if (appSettings.Language == Language.CSharp & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle)
             {
                 mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.CSharp;
             }
-            else if (appSettings.Language == Language.VB & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent)
+            else if (appSettings.Language == Language.VB & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle)
             {
                 mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.VB;
             }
@@ -289,26 +301,20 @@ namespace NHibernateMappingGenerator
                 int? lastTableSelectedIndex = LastTableSelected();
                 if (lastTableSelectedIndex != null)
                 {
-                    var selectedItem = tablesListBox.Items[lastTableSelectedIndex.Value];
-                    var table = selectedItem as Table;
+                    var table = tablesListBox.Items[lastTableSelectedIndex.Value] as Table;
 
                     if (table != null)
                     {
                         PopulateTableDetails(table);
 
                         CaptureApplicationSettings();
-                        SetCodeControlFormatting(applicationSettings);
 
+                        GenerateAndDisplayCode(table);
+
+                        // Display entity name based on formatted table name
                         var appPreferences = GetApplicationPreferences(table, false, applicationSettings);
                         var formatter = TextFormatterFactory.GetTextFormatter(appPreferences);
                         entityNameTextBox.Text = formatter.FormatText(table.Name);
-
-                        // Show map and domain code preview
-                        ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
-                        var applicationController = new ApplicationController(applicationPreferences, table);
-                        applicationController.Generate(writeToFile:false);
-                        mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
-                        domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
                     }
                 }
             }
@@ -324,6 +330,7 @@ namespace NHibernateMappingGenerator
 
 
         readonly IList<int> _cachedTableListSelection = new List<int>();
+        private Table _currentTable;
 
         private int? LastTableSelected()
         {
@@ -347,6 +354,7 @@ namespace NHibernateMappingGenerator
             try
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
+                _currentTable = selectedTable;
                 gridData = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
                 dbTableDetailsGridView.DataSource = gridData;
             }
@@ -738,12 +746,25 @@ namespace NHibernateMappingGenerator
             removeFieldPrefixButton.Enabled = fieldPrefixListBox.SelectedIndex != -1;
         }
 
-        private void fieldPrefixListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void OnFieldPrefixListBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             removeFieldPrefixButton.Enabled = fieldPrefixListBox.SelectedIndex != -1;
         }
 
-        
+        public void GenerateAndDisplayCode(Table table)
+        {
+            SetCodeControlFormatting(applicationSettings);
+
+            // Refresh the primary key relationships.
+            table.PrimaryKey = metadataReader.DeterminePrimaryKeys(table);
+
+            // Show map and domain code preview
+            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
+            var applicationController = new ApplicationController(applicationPreferences, table);
+            applicationController.Generate(writeToFile: false);
+            mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
+            domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
+        }
 
     }
 }

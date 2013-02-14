@@ -108,7 +108,7 @@ namespace NMG.Core.Reader
 
         public PrimaryKey DeterminePrimaryKeys(Table table)
         {
-            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true));
+            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
             if (primaryKeys.Count() == 1)
             {
@@ -116,23 +116,24 @@ namespace NMG.Core.Reader
                 var key = new PrimaryKey
                 {
                     Type = PrimaryKeyType.PrimaryKey,
-                    Columns = new List<Column> { c }
+                    Columns = { c }
                 };
                 return key;
             }
-            else
+            
+            if (primaryKeys.Count() > 1)
             {
                 var key = new PrimaryKey
                 {
-                    Type = PrimaryKeyType.CompositeKey
+                    Type = PrimaryKeyType.CompositeKey,
+                    Columns = primaryKeys
                 };
-                foreach (var primaryKey in primaryKeys)
-                {
-                    key.Columns.Add(primaryKey);
-                }
                 return key;
             }
+            
+            return null;
         }
+
     }
 
     public class SqliteDataType

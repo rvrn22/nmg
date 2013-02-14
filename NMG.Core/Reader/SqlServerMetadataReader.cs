@@ -72,9 +72,7 @@ namespace NMG.Core.Reader
 													IsNullable = isNullable,
                                                     IsIdentity = isIdentity,
 													IsPrimaryKey = isPrimaryKey,
-													//IsPrimaryKey(selectedTableName.Name, columnName)
 													IsForeignKey = isForeignKey,
-													// IsFK()
 													MappedDataType = m.MapFromDBType(ServerType.SqlServer, dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
 													DataLength = characterMaxLenth,
                                                     DataScale = numericScale,
@@ -148,9 +146,9 @@ namespace NMG.Core.Reader
 
 		#endregion
 
-		private static PrimaryKey DeterminePrimaryKeys(Table table)
+		public PrimaryKey DeterminePrimaryKeys(Table table)
 		{
-			IList<Column> primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
+			var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
 			if (primaryKeys.Count() == 1)
 			{
@@ -158,34 +156,24 @@ namespace NMG.Core.Reader
 				var key = new PrimaryKey
 							  {
 								  Type = PrimaryKeyType.PrimaryKey,
-								  Columns =
-									  {
-										  new Column
-											  {
-												  DataType = c.DataType,
-												  Name = c.Name,
-                                                  IsIdentity = c.IsIdentity
-											  }
-									  }
+								  Columns = { c }
 							  };
 				return key;
 			}
-			else
+
+            if (primaryKeys.Count() > 1)
 			{
+                // Composite key
 				var key = new PrimaryKey
 							  {
-								  Type = PrimaryKeyType.CompositeKey
+								  Type = PrimaryKeyType.CompositeKey,
+                                  Columns =  primaryKeys
 							  };
-				foreach (var primaryKey in primaryKeys)
-				{
-					key.Columns.Add(new Column
-										{
-											DataType = primaryKey.DataType,
-											Name = primaryKey.Name
-										});
-				}
+
 				return key;
 			}
+
+            return null;
 		}
 
 		private IList<ForeignKey> DetermineForeignKeyReferences(Table table)

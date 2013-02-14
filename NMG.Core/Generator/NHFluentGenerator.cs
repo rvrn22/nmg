@@ -109,6 +109,7 @@ namespace NMG.Core.Generator
         {
             var mappedStrBuilder = new StringBuilder("Property(x => x." + Formatter.FormatText(column.Name) + ", map => { map.Column(\"" + column.Name + "\");");
 
+
             if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(" map.Length(" + column.DataLength + ");");
@@ -129,6 +130,10 @@ namespace NMG.Core.Generator
             if (!column.IsNullable)
             {
                 mappedStrBuilder.Append(" map.NotNullable(false);");
+            }
+            if (column.IsUnique)
+            {
+                mappedStrBuilder.Append(" map.Unique(true);");
             }
             mappedStrBuilder.Append(" });");
             return mappedStrBuilder.ToString();

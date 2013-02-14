@@ -199,36 +199,21 @@ namespace NMG.Core.Reader
                 var key = new PrimaryKey
                               {
                                   Type = PrimaryKeyType.PrimaryKey,
-                                  Columns =
-                                      {
-                                          new Column
-                                              {
-                                                  DataType = c.DataType,
-                                                  Name = c.Name,
-                                                  IsIdentity = c.IsIdentity
-                                              }
-                                      }
+                                  Columns = { c }
                               };
                 return key;
             }
 
             if (primaryKeys.Count() > 1)
             {
+                // Composite key
                 var key = new PrimaryKey
                               {
-                                  Type = PrimaryKeyType.CompositeKey
+                                  Type = PrimaryKeyType.CompositeKey,
+                                  Columns = primaryKeys
                               };
-                foreach (var primaryKey in primaryKeys)
-                {
-                    key.Columns.Add(new Column
-                                        {
-                                            DataType = primaryKey.DataType,
-                                            Name = primaryKey.Name
-                                        });
-                }
                 return key;
             }
-
 
             return null;
         }

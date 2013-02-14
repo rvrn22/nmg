@@ -96,6 +96,7 @@
     <Compile Include="Generator\NpgsqlMappingGenerator.cs" />
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="ApplicationPreferences.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Reader\IConstraintTypeResolver.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
     <Compile Include="Reader\MysqlConstraintType.cs" />
