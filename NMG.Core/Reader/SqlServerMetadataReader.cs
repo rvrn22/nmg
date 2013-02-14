@@ -30,7 +30,8 @@ namespace NMG.Core.Reader
 					using (var tableDetailsCommand = conn.CreateCommand()) {
 						tableDetailsCommand.CommandText = string.Format(
                             @"
-						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
+						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name,
+                               columnproperty(object_id(c.table_schema + '.' + c.table_name), c.column_name,'IsIdentity') IsIdentity
 						from information_schema.columns c
 							left outer join (
 								information_schema.constraint_column_usage ccu
@@ -54,10 +55,11 @@ namespace NMG.Core.Reader
 								string columnName = sqlDataReader.GetString(0);
 								string dataType = sqlDataReader.GetString(1);
 								bool isNullable = sqlDataReader.GetString(2).Equals("YES", StringComparison.CurrentCultureIgnoreCase);
+							    var isIdentity = Convert.ToBoolean(sqlDataReader["IsIdentity"]);
 								var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
 								var numericPrecision = sqlDataReader["numeric_precision"] as int?;
 								var numericScale = sqlDataReader["numeric_scale"] as int?;
-							    var constraintName = sqlDataReader["constraint_name"];
+							    var constraintName = sqlDataReader["constraint_name"].ToString();
 								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 								bool isForeignKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 
@@ -68,6 +70,7 @@ namespace NMG.Core.Reader
 													Name = columnName,
 													DataType = dataType,
 													IsNullable = isNullable,
+                                                    IsIdentity = isIdentity,
 													IsPrimaryKey = isPrimaryKey,
 													//IsPrimaryKey(selectedTableName.Name, columnName)
 													IsForeignKey = isForeignKey,
@@ -76,7 +79,7 @@ namespace NMG.Core.Reader
 													DataLength = characterMaxLenth,
                                                     DataScale = numericScale,
                                                     DataPrecision = numericPrecision,
-													ConstraintName = sqlDataReader["constraint_name"].ToString()
+													ConstraintName = constraintName
 												});
 
 								table.Columns = columns;
@@ -160,7 +163,8 @@ namespace NMG.Core.Reader
 										  new Column
 											  {
 												  DataType = c.DataType,
-												  Name = c.Name
+												  Name = c.Name,
+                                                  IsIdentity = c.IsIdentity
 											  }
 									  }
 							  };
