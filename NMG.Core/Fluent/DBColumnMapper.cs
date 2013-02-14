@@ -18,11 +18,26 @@ namespace NMG.Core.Fluent
                 mappedStrBuilder.Append("Not.Nullable()");
             }
 
-            if (column.DataLength > 0 & includeLengthAndScale)
+            if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(Constants.Dot);
                 mappedStrBuilder.Append("Length(" + column.DataLength + ")");
             }
+            else
+            {
+                if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.Append(Constants.Dot);
+                    mappedStrBuilder.Append("Precision(" + column.DataPrecision + ")");
+                }
+
+                if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.Append(Constants.Dot);
+                    mappedStrBuilder.Append("Scale(" + column.DataScale + ")");
+                }
+            }
+
 
             mappedStrBuilder.Append(Constants.SemiColon);
             return mappedStrBuilder.ToString();

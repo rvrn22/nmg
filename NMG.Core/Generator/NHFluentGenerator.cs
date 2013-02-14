@@ -108,10 +108,24 @@ namespace NMG.Core.Generator
         private string MapNhStyle(Column column, bool includeLengthAndScale = true)
         {
             var mappedStrBuilder = new StringBuilder("Property(x => x." + Formatter.FormatText(column.Name) + ", map => { map.Column(\"" + column.Name + "\");");
-            if (column.DataLength > 0 & includeLengthAndScale)
+
+            if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.Append(" map.Length(" + column.DataLength + ");");
             }
+            else
+            {
+                if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.Append(" map.Precision(" + column.DataPrecision + ");");
+                }
+
+                if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.Append(" map.Scale(" + column.DataScale + ");");
+                }
+            }
+
             if (!column.IsNullable)
             {
                 mappedStrBuilder.Append(" map.NotNullable(false);");

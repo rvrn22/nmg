@@ -76,18 +76,23 @@ namespace NMG.Core.ByCode
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.NotNullable(true);");
             }
-            if (column.DataLength > 0 & includeLengthAndScale)
+            if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
                 mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Length(" + column.DataLength + ");");
             }
-            if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+            else
             {
-                mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Precision(" + column.DataPrecision + ");");
+                if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Precision(" + column.DataPrecision + ");");
+                }
+
+                if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
+                {
+                    mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Scale(" + column.DataScale + ");");
+                }
             }
-            if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
-            {
-                mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Scale(" + column.DataScale + ");");
-            }
+            
             mappedStrBuilder.Append("\t\t\t\t});");
             return mappedStrBuilder.ToString();
         }

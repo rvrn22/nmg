@@ -29,8 +29,8 @@ namespace NMG.Core.Reader
 				using (conn) {
 					using (var tableDetailsCommand = conn.CreateCommand()) {
 						tableDetailsCommand.CommandText = string.Format(
-							@"
-						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, c.numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
+                            @"
+						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name
 						from information_schema.columns c
 							left outer join (
 								information_schema.constraint_column_usage ccu
@@ -57,7 +57,7 @@ namespace NMG.Core.Reader
 								var characterMaxLenth = sqlDataReader["character_maximum_length"] as int?;
 								var numericPrecision = sqlDataReader["numeric_precision"] as int?;
 								var numericScale = sqlDataReader["numeric_scale"] as int?;
-
+							    var constraintName = sqlDataReader["constraint_name"];
 								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 								bool isForeignKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 
@@ -74,6 +74,8 @@ namespace NMG.Core.Reader
 													// IsFK()
 													MappedDataType = m.MapFromDBType(ServerType.SqlServer, dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
 													DataLength = characterMaxLenth,
+                                                    DataScale = numericScale,
+                                                    DataPrecision = numericPrecision,
 													ConstraintName = sqlDataReader["constraint_name"].ToString()
 												});
 

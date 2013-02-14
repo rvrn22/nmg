@@ -361,6 +361,9 @@ namespace NHibernateMappingGenerator
 
         private void connectBtnClicked(object sender, EventArgs e)
         {
+            if (_currentConnection == null)
+                return;
+
             toolStripStatusLabel1.Text = string.Format("Connecting to {0}...", _currentConnection.Name);
             statusStrip1.Refresh();
             Cursor.Current = Cursors.WaitCursor;
