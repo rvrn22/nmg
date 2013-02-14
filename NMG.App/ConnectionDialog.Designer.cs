@@ -38,6 +38,7 @@
             this.serverTypeComboBox = new System.Windows.Forms.ComboBox();
             this.deleteButton = new System.Windows.Forms.Button();
             this.addButton = new System.Windows.Forms.Button();
+            this.connectionStringButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancelButton
@@ -103,7 +104,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.connectionStringTextBox.Location = new System.Drawing.Point(122, 36);
             this.connectionStringTextBox.Name = "connectionStringTextBox";
-            this.connectionStringTextBox.Size = new System.Drawing.Size(419, 20);
+            this.connectionStringTextBox.Size = new System.Drawing.Size(387, 20);
             this.connectionStringTextBox.TabIndex = 3;
             // 
             // serverTypeComboBox
@@ -137,12 +138,23 @@
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.OnAddButtonClick);
             // 
+            // connectionStringButton
+            // 
+            this.connectionStringButton.Location = new System.Drawing.Point(514, 34);
+            this.connectionStringButton.Name = "connectionStringButton";
+            this.connectionStringButton.Size = new System.Drawing.Size(27, 23);
+            this.connectionStringButton.TabIndex = 18;
+            this.connectionStringButton.Text = "...";
+            this.connectionStringButton.UseVisualStyleBackColor = true;
+            this.connectionStringButton.Click += new System.EventHandler(this.OnConnectionStringButtonClick);
+            // 
             // ConnectionDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(553, 133);
+            this.Controls.Add(this.connectionStringButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.serverTypeComboBox);
             this.Controls.Add(this.connectionStringTextBox);
@@ -176,5 +188,6 @@
         private System.Windows.Forms.ComboBox serverTypeComboBox;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button addButton;
+        private System.Windows.Forms.Button connectionStringButton;
     }
 }

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Data.ConnectionUI;
 using NMG.Core.Domain;
 using NMG.Core.Util;
 
@@ -126,6 +127,46 @@ namespace NHibernateMappingGenerator
         {
             serverTypeComboBox.DataSource = Enum.GetValues(typeof(ServerType));
             serverTypeComboBox.SelectedIndex = 0;
+        }
+
+        private void OnConnectionStringButtonClick(object sender, EventArgs e)
+        {
+            // Using the microsoft connection dialog as used in visual studio
+            // http://archive.msdn.microsoft.com/Connection/Release/ProjectReleases.aspx?ReleaseId=3863
+            var dialogResult = DialogResult.Cancel;
+            var connectionString = string.Empty;
+
+            var dcd = new DataConnectionDialog();
+
+            try
+            {
+                var dcs = new DataConnectionConfiguration(null);
+                dcs.LoadConfiguration(dcd, Connection.Type);
+
+                CaptureConnection();
+                if (Connection.ConnectionString != GetDefaultConnectionStringForServerType(Connection.Type))
+                {
+                    dcd.ConnectionString = Connection.ConnectionString;
+                }
+
+                dialogResult = DataConnectionDialog.Show(dcd);
+                connectionString = dcd.ConnectionString;
+
+            }
+            catch (ArgumentException)
+            {
+                dcd.ConnectionString = string.Empty;
+                dialogResult = DataConnectionDialog.Show(dcd);
+            }
+            finally
+            {
+                if (dialogResult == DialogResult.OK)
+                {
+                    Connection.ConnectionString = connectionString;
+                    BindData();
+                }
+            }
+
         }
 
     }

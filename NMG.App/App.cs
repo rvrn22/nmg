@@ -282,7 +282,7 @@ namespace NHibernateMappingGenerator
                 Cursor.Current = Cursors.WaitCursor;
                 if (tablesListBox.SelectedIndex == -1)
                 {
-                    dbTableDetailsGridView.DataSource = null;
+                    dbTableDetailsGridView.DataSource = new List<Column>();
                     return;
                 }
 
@@ -303,13 +303,10 @@ namespace NHibernateMappingGenerator
                         var formatter = TextFormatterFactory.GetTextFormatter(appPreferences);
                         entityNameTextBox.Text = formatter.FormatText(table.Name);
 
-                        // Get Table Metadata
-                        metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
-
                         // Show map and domain code preview
                         ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
                         var applicationController = new ApplicationController(applicationPreferences, table);
-                        applicationController.Generate(false);
+                        applicationController.Generate(writeToFile:false);
                         mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
                         domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
                     }
@@ -415,6 +412,7 @@ namespace NHibernateMappingGenerator
 
                 if (ownersComboBox.SelectedItem == null)
                 {
+                    tablesListBox.DataSource = new List<Table>();
                     return;
                 }
                 _tables = metadataReader.GetTables(ownersComboBox.SelectedItem.ToString());
@@ -675,7 +673,7 @@ namespace NHibernateMappingGenerator
             if (string.IsNullOrEmpty(textbox.Text))
             {
                 SuspendLayout();
-                tablesListBox.SelectedIndex = -1;
+                tablesListBox.ClearSelected();
                 tablesListBox.DataSource = _tables;
                 tablesListBox.SelectedItem = _tables.FirstOrDefault();
                 ResumeLayout();
@@ -688,7 +686,7 @@ namespace NHibernateMappingGenerator
                          select t).ToList();
 
             SuspendLayout();
-            tablesListBox.SelectedIndex = -1;
+            tablesListBox.ClearSelected();
             tablesListBox.DataSource = query;
             tablesListBox.SelectedItem = query.FirstOrDefault();
             ResumeLayout();

@@ -56,6 +56,12 @@
     <Reference Include="FastColoredTextBox">
       <HintPath>..\Lib\FastColoredTextBox\FastColoredTextBox.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Data.ConnectionUI">
+      <HintPath>..\Lib\Microsoft.Data.ConnectionUI\Microsoft.Data.ConnectionUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.ConnectionUI.Dialog">
+      <HintPath>..\Lib\Microsoft.Data.ConnectionUI\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -87,6 +93,8 @@
     <Compile Include="ConnectionDialog.Designer.cs">
       <DependentUpon>ConnectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataConnectionConfiguration.cs" />
+    <Compile Include="IDataConnectionConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="App.resx">
