@@ -106,6 +106,12 @@ namespace NMG.Core.Reader
                     table.Owner = owner;
                     table.Columns = columns;
                     table.PrimaryKey = DeterminePrimaryKeys(table);
+
+                    // Need to find the table name associated with the FK
+                    foreach (var c in table.Columns)
+                    {
+                        c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+                    }
                     table.ForeignKeys = DetermineForeignKeyReferences(table);
                     table.HasManyRelationships = DetermineHasManyRelationships(table);
                 }
@@ -218,21 +224,18 @@ namespace NMG.Core.Reader
             return null;
         }
 
-        private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
+        public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var constraints = table.Columns.Where(x => x.IsForeignKey.Equals(true)).Select(x => x.ConstraintName).Distinct().ToList();
-            var foreignKeys = new List<ForeignKey>();
-            constraints.ForEach(c =>
-            {
-                var fkColumns = table.Columns.Where(x => x.ConstraintName.Equals(c)).ToArray();
-                var fk = new ForeignKey
-                {
-                    Name = fkColumns[0].Name,
-                    References = GetForeignKeyReferenceTableName(table.Name, fkColumns[0].Name),
-                    AllColumnsNamesForTheSameConstraint = fkColumns.Select(f => f.Name).ToArray()
-                };
-                foreignKeys.Add(fk);
-            });
+            var foreignKeys = (from c in table.Columns
+                               where c.IsForeignKey
+                               group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
+                               select new ForeignKey
+                                   {
+                                       Name = g.Key.ConstraintName,
+                                       References = g.Key.ForeignKeyTableName,
+                                       Columns = g.ToList(), 
+                                       UniquePropertyName = g.Key.ForeignKeyTableName
+                                   }).ToList();
 
             Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 

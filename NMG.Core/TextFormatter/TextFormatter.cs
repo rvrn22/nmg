@@ -40,7 +40,7 @@ namespace NMG.Core.TextFormatter
 
         private string RemovePrefix(string original)
         {
-            if (PrefixRemovalList == null || PrefixRemovalList.Count == 0)
+            if (PrefixRemovalList == null || PrefixRemovalList.Count == 0 || string.IsNullOrEmpty(original))
                 return original;
 
             // Strip out the first matching prefix

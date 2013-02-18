@@ -73,6 +73,12 @@ namespace NMG.Core.Reader
                             }
                             table.Owner = owner;
                             table.PrimaryKey = DeterminePrimaryKeys(table);
+
+                            // Need to find the table name associated with the FK
+                            foreach (var c in table.Columns)
+                            {
+                                c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+                            }
                             table.ForeignKeys = DetermineForeignKeyReferences(table);
                             table.HasManyRelationships = DetermineHasManyRelationships(table);
                         }
@@ -227,6 +233,7 @@ namespace NMG.Core.Reader
 
             if (primaryKeys.Count() > 1)
             {
+                // Composite key
                 var key = new PrimaryKey
                 {
                     Type = PrimaryKeyType.CompositeKey,
@@ -239,20 +246,22 @@ namespace NMG.Core.Reader
             return null;
         }
 
-        private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
+        public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
-            var tempForeignKeys = new List<ForeignKey>();
+            var foreignKeys = (from c in table.Columns
+                               where c.IsForeignKey
+                               group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
+                               select new ForeignKey
+                               {
+                                   Name = g.Key.ConstraintName,
+                                   References = g.Key.ForeignKeyTableName,
+                                   Columns = g.ToList(),
+                                   UniquePropertyName = g.Key.ForeignKeyTableName
+                               }).ToList();
 
-            foreach (var foreignKey in foreignKeys)
-            {
-                tempForeignKeys.Add(new ForeignKey
-                {
-                    Name = foreignKey.Name,
-                    References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
-                });
-            }
-            return tempForeignKeys;
+            Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
+
+            return foreignKeys;
         }
 
         private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)

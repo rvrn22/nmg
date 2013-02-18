@@ -84,6 +84,12 @@ namespace NMG.Core.Reader
 							}
 						    table.Owner = owner;
 							table.PrimaryKey = DeterminePrimaryKeys(table);
+
+                            // Need to find the table name associated with the FK
+						    foreach (var c in table.Columns)
+						    {
+						        c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+						    }
 							table.ForeignKeys = DetermineForeignKeyReferences(table);
 							table.HasManyRelationships = DetermineHasManyRelationships(table);
 						}
@@ -104,7 +110,7 @@ namespace NMG.Core.Reader
 			try {
 				using (conn) {
 					var tableCommand = conn.CreateCommand();
-					tableCommand.CommandText = "SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA";
+                    tableCommand.CommandText = "SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA ORDER BY SCHEMA_NAME";
 					var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
 					while (sqlDataReader.Read()) {
 						var ownerName = sqlDataReader.GetString(0);
@@ -176,30 +182,27 @@ namespace NMG.Core.Reader
             return null;
 		}
 
-		private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
-		{
-			var constraints = table.Columns.Where(x => x.IsForeignKey.Equals(true)).Select(x => x.ConstraintName).Distinct().ToList();
-			var foreignKeys = new List<ForeignKey>(); 
-			constraints.ForEach(c =>
-									{
-										var fkColumns = table.Columns.Where(x => x.ConstraintName.Equals(c)).ToArray();
-										var fk = new ForeignKey
-													{
-														Name = fkColumns[0].Name,
-														References = GetForeignKeyReferenceTableName(table.Name, fkColumns[0].Name),
-														AllColumnsNamesForTheSameConstraint = fkColumns.Select(f=>f.Name).ToArray()
-													};
-										foreignKeys.Add(fk);
-									});
+        public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
+        {
+            var foreignKeys = (from c in table.Columns
+                               where c.IsForeignKey
+                               group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
+                               select new ForeignKey
+                               {
+                                   Name = g.Key.ConstraintName,
+                                   References = g.Key.ForeignKeyTableName,
+                                   Columns = g.ToList(),
+                                   UniquePropertyName = g.Key.ForeignKeyTableName
+                               }).ToList();
 
-			Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
+            Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 
-			return foreignKeys;
-		}
+            return foreignKeys;
+        }
 
 		private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
 		{
-			object referencedTableName;
+			string referencedTableName;
 			
 			var conn = new SqlConnection(connectionStr);
 			conn.Open();
@@ -221,12 +224,12 @@ namespace NMG.Core.Reader
 						) pt on pt.table_name = pk.table_name
 						where fk.table_name = '{0}' and cu.column_name = '{1}'",
 						selectedTableName, columnName);
-					referencedTableName = tableCommand.ExecuteScalar();
+					referencedTableName = (string)tableCommand.ExecuteScalar();
 				}
 			} finally {
 				conn.Close();
 			}
-			return (string)referencedTableName;
+			return referencedTableName;
 		}
 
 		// http://blog.sqlauthority.com/2006/11/01/sql-server-query-to-display-foreign-key-relationships-and-name-of-the-constraint-for-each-table-in-database/

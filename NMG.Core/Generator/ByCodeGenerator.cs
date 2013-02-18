@@ -31,19 +31,26 @@ namespace NMG.Core.Generator
             }
         }
         
-        public CodeCompileUnit GetCompleteCompileUnit(string className)
+        public CodeCompileUnit GetCompleteCompileUnit(string mapName)
         {
             var codeGenerationHelper = new CodeGenerationHelper();
-            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);
+            var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, mapName);
 
             var newType = compileUnit.Namespaces[0].Types[0];
             
             newType.IsPartial = appPrefs.GeneratePartialClasses;
 
-            newType.BaseTypes.Add(string.Format("ClassMapping<{0}{1}>", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name)));
+            var className = Formatter.FormatSingular(Table.Name);
+            newType.BaseTypes.Add(string.Format("ClassMapping<{0}{1}>", appPrefs.ClassNamePrefix, className));
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
-            constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
+
+            // Table Name - Only ouput if table is different than the class name.
+            if (Table.Name.ToLower() != className.ToLower())
+            {
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
+            }
+            // Scheme / Owner Name
             if (!string.IsNullOrEmpty(Table.Owner))
             {
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + "Schema(\"" + Table.Owner + "\");"));
@@ -52,6 +59,7 @@ namespace NMG.Core.Generator
             constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));
             var mapper = new DBColumnMapper();
 
+            // Id or ComposedId Map 
             if (Table.PrimaryKey != null)
             {
                 if (UsesSequence)
@@ -74,18 +82,19 @@ namespace NMG.Core.Generator
                 }
             }
 
-            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            // Property Map
+            foreach (var column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
-                if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
-                    continue;
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.Map(column, Formatter, appPrefs.IncludeLengthAndScale)));
             }
             
-            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
+            // Many To One Mapping
+            foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
                 constructor.Statements.Add(new CodeSnippetStatement(mapper.Reference(fk, Formatter)));
             }
             
+            // Bag 
             Table.HasManyRelationships.ToList().ForEach(x => constructor.Statements.Add(new CodeSnippetStatement(mapper.Bag(x, Formatter))));
 
             newType.Members.Add(constructor);
@@ -94,7 +103,7 @@ namespace NMG.Core.Generator
         
         protected override string AddStandardHeader(string entireContent)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.AppendLine("using System;");
             builder.AppendLine("using System.Text;");
             builder.AppendLine("using System.Collections.Generic;");

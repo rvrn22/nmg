@@ -26,34 +26,28 @@ namespace NMG.Core.Domain
         public IList<Column> Columns { get; set; }
         public IList<HasMany> HasManyRelationships { get; set; }
 
-		/// <summary>
-		/// Given a column from this table, if it is a foreign key return the name of the table it references.
-		/// </summary>
-		public string ForeignKeyReferenceForColumn(Column column)
-		{
-			if (ForeignKeys != null) {
-				var fKey = ForeignKeys.Where(fk => fk.Name == column.Name).FirstOrDefault();
-				if (fKey != null) return fKey.References;
-			}
-			return String.Format("/* TODO: UNKNOWN FOREIGN ENTITY for column {0} */", column.Name);
-		}
-
     	public override string ToString() { return Name; }
 
 		/// <summary>
 		/// When one table has multiple fields that represent different relationships to the same foreign entity, it is required to give them unique names.
 		/// </summary>
-    	public static void SetUniqueNamesForForeignKeyProperties(IEnumerable<ForeignKey> foreignKeys) {
-    		var referencesUsedMoreThanOnce = foreignKeys.Select(f => f.References).Distinct()
-    			.GroupJoin(foreignKeys, a=>a, b=>b.References, (a,b)=> new { References = a, Count = b.Count() } )
-    			.Where(@t=>t.Count > 1)
-    			.Select(@t=>t.References);
+    	public static void SetUniqueNamesForForeignKeyProperties(IList<ForeignKey> foreignKeys)
+		{
+            // Create unique names foreign keys that access the same table more than once.
+		    var groupedForeignKeys = (from fk in foreignKeys
+		                              group fk by fk.References
+		                              into g
+		                              where g.Count() > 1
+		                              select g).ToList();
 
-    		foreignKeys.Join(referencesUsedMoreThanOnce, a=>a.References, b=>b, (a,b)=>a).ToList()
-    			.ForEach(fk=>
-    			{
-    				fk.UniquePropertyName = fk.Name + "_" + fk.References;
-    			});
+		    foreach (var group in groupedForeignKeys)
+		    {
+		        foreach (var fk in group)
+		        {
+                    // Use the field name instead of the table name
+		            fk.UniquePropertyName = fk.Columns.First().Name;
+		        }
+		    }
     	}
     }
 
@@ -99,6 +93,7 @@ namespace NMG.Core.Domain
 		public string ConstraintName { get; set; }
         public int? DataPrecision { get; set; }
         public int? DataScale { get; set; }
+        public string ForeignKeyTableName { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -163,31 +158,25 @@ namespace NMG.Core.Domain
     public class ForeignKey
     {
         /// <summary>
-        /// Foreign key column name.
+        /// Foreign key constraint name.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// One or more columns linked to the foreign key (more than one being a composite fk)
+        /// </summary>
+        public IList<Column> Columns { get; set; }
 
         /// <summary>
         /// Defines what table the foreign key references.
         /// </summary>
         public string References { get; set; }
 
-    	private string _uniquePropertyName;
-
     	/// <summary>
 		/// When one table has multiple fields that represent different relationships to the same foreign entity, it is required to give them unique names.
 		/// </summary>
-		public string UniquePropertyName
-    	{
-			get { return string.IsNullOrEmpty(_uniquePropertyName) ? References : _uniquePropertyName; }
-    		set { _uniquePropertyName = value; }
-    	}
+		public string UniquePropertyName { get; set; }
 
-		/// <summary>
-		/// A foreign key may be one of multiple columns of a composite key to a foreign entity
-		/// </summary>
-		public string[] AllColumnsNamesForTheSameConstraint { get; set; }
-
-    	public override string ToString() { return Name; }
+        public override string ToString() { return Name; }
     }
 }

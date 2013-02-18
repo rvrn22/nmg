@@ -54,9 +54,9 @@ namespace NMG.Core.Generator
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
             	var referencesSnippet = string.Format("References(x => x.{0})", Formatter.FormatSingular(fk.UniquePropertyName));
-				var columnsSnippet = fk.AllColumnsNamesForTheSameConstraint.Length == 1 ?
+				var columnsSnippet = fk.Columns.Count() == 1 ?
 					string.Format(".Column(\"{0}\");", fk.Name) :
-					string.Format(".Columns({0});", fk.AllColumnsNamesForTheSameConstraint.Aggregate("new string[] { ", (a,b) => a+"\""+b+"\", ", c=>c.Substring(0, c.Length - 2) + " }" ));
+					string.Format(".Columns({0});", fk.Columns.Aggregate("new string[] { ", (a,b) => a+"\""+b+"\", ", c=>c.Substring(0, c.Length - 2) + " }" ));
 				
 				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "{0}{1}", referencesSnippet, columnsSnippet)));
 			}

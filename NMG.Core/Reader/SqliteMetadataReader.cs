@@ -134,6 +134,35 @@ namespace NMG.Core.Reader
             return null;
         }
 
+        public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
+        {
+            var foreignKeys = table.Columns.Where(x => x.IsForeignKey).Distinct()
+                                   .Select(c => new ForeignKey
+                                   {
+                                       Name = c.Name,
+                                       References = c.ForeignKeyTableName,
+                                       Columns = DetermineColumnsForForeignKey(table.Columns, c.ConstraintName)
+                                   }).ToList();
+
+            Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
+
+            return foreignKeys;
+        }
+
+        /// <summary>
+        /// Search for one or more columns that make up the foreign key.
+        /// </summary>
+        /// <param name="columns">All columns that could be used for the foreign key</param>
+        /// <param name="foreignKeyName">Name of the foreign key constraint</param>
+        /// <returns>List of columns associated with the foreign key</returns>
+        /// <remarks>Composite foreign key will return multiple columns</remarks>
+        private IList<Column> DetermineColumnsForForeignKey(IList<Column> columns, string foreignKeyName)
+        {
+            return (from c in columns
+                    where c.IsForeignKey && c.ConstraintName == foreignKeyName
+                    select c).ToList();
+        }
+
     }
 
     public class SqliteDataType

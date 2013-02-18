@@ -121,6 +121,7 @@ namespace NHibernateMappingGenerator
             this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.IsIdentity = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
@@ -193,6 +194,7 @@ namespace NHibernateMappingGenerator
             this.isPrimaryKey,
             this.isForeignKey,
             this.isNullable,
+            this.IsIdentity,
             this.isUniqueKey});
             this.dbTableDetailsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dbTableDetailsGridView.Location = new System.Drawing.Point(3, 3);
@@ -1071,12 +1073,17 @@ namespace NHibernateMappingGenerator
             // 
             this.isForeignKey.HeaderText = "Foreign Key";
             this.isForeignKey.Name = "isForeignKey";
-            this.isForeignKey.ReadOnly = true;
             // 
             // isNullable
             // 
             this.isNullable.HeaderText = "Nullable";
             this.isNullable.Name = "isNullable";
+            // 
+            // IsIdentity
+            // 
+            this.IsIdentity.DataPropertyName = "IsIdentity";
+            this.IsIdentity.HeaderText = "Identity";
+            this.IsIdentity.Name = "IsIdentity";
             // 
             // isUniqueKey
             // 
@@ -1227,6 +1234,7 @@ namespace NHibernateMappingGenerator
         private DataGridViewCheckBoxColumn isPrimaryKey;
         private DataGridViewCheckBoxColumn isForeignKey;
         private DataGridViewCheckBoxColumn isNullable;
+        private DataGridViewCheckBoxColumn IsIdentity;
         private DataGridViewCheckBoxColumn isUniqueKey;
     }
 }

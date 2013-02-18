@@ -103,6 +103,12 @@ namespace NMG.Core.Reader
                         table.Owner = owner;
                         table.Columns = columns;
                         table.PrimaryKey = DeterminePrimaryKeys(table);
+
+                        // Need to find the table name associated with the FK
+                        foreach (var c in table.Columns)
+                        {
+                            c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+                        }
                         table.ForeignKeys = DetermineForeignKeyReferences(table);
                         table.HasManyRelationships = DetermineHasManyRelationships(table);
                     }
@@ -184,49 +190,55 @@ namespace NMG.Core.Reader
             return sequences;
         }
 
-        #endregion
-
-        private bool IsPrimaryKey(string p, string columnName)
+        public PrimaryKey DeterminePrimaryKeys(Table table)
         {
-            string query =
-                String.Format(
-                    @"
-                select count(ac.constraint_type) from all_constraints ac
-                inner join all_cons_columns acc on ac.constraint_name = acc.constraint_name
-                where acc.table_name = '{0}' and acc.column_name = '{1}' 
-                and ac.constraint_type = 'P'",
-                    p, columnName);
-            var conn = new OracleConnection(connectionStr);
-            conn.Open();
-            using (conn)
-            {
-                using (var command = new OracleCommand())
-                {
-                    command.Connection = conn;
-                    command.CommandText = query;
-                    object pk = command.ExecuteScalar();
+            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
 
-                    return Convert.ToInt16(pk) == 1;
-                }
+            if (primaryKeys.Count() == 1)
+            {
+                var c = primaryKeys.First();
+                var key = new PrimaryKey
+                {
+                    Type = PrimaryKeyType.PrimaryKey,
+                    Columns = { c }
+                };
+                return key;
             }
+
+            if (primaryKeys.Count() > 1)
+            {
+                // Composite key
+                var key = new PrimaryKey
+                {
+                    Type = PrimaryKeyType.CompositeKey,
+                    Columns = primaryKeys
+                };
+
+                return key;
+            }
+
+            return null;
         }
 
         public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            IEnumerable<Column> foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true));
-            var tempForeignKeys = new List<ForeignKey>();
+            var foreignKeys = (from c in table.Columns
+                               where c.IsForeignKey
+                               group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
+                               select new ForeignKey
+                               {
+                                   Name = g.Key.ConstraintName,
+                                   References = g.Key.ForeignKeyTableName,
+                                   Columns = g.ToList(),
+                                   UniquePropertyName = g.Key.ForeignKeyTableName
+                               }).ToList();
 
-            foreach (Column foreignKey in foreignKeys)
-            {
-                tempForeignKeys.Add(new ForeignKey
-                                        {
-                                            Name = foreignKey.Name,
-                                            References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
-                                        });
-            }
+            Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 
-            return tempForeignKeys;
+            return foreignKeys;
         }
+
+        #endregion
 
         public IList<HasMany> DetermineHasManyRelationships(Table table)
         {
@@ -261,34 +273,6 @@ WHERE C.TABLE_NAME = :TABLE_NAME
                     return hasManyRelationships;
                 }
             }
-        }
-
-        public PrimaryKey DeterminePrimaryKeys(Table table)
-        {
-            var primaryKeys = table.Columns.Where(x => x.IsPrimaryKey.Equals(true)).ToList();
-
-            if (primaryKeys.Count() == 1)
-            {
-                Column c = primaryKeys.First();
-                var key = new PrimaryKey
-                              {
-                                  Type = PrimaryKeyType.PrimaryKey,
-                                  Columns = { c }
-                              };
-                return key;
-            }
-
-            if (primaryKeys.Count() > 1)
-            {
-                var key = new PrimaryKey
-                              {
-                                  Type = PrimaryKeyType.CompositeKey,
-                                  Columns = primaryKeys
-                              };
-
-                return key;
-            }
-            return null;
         }
 
         // http://blog.mclaughlinsoftware.com/2009/03/05/validating-foreign-keys/

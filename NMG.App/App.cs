@@ -191,6 +191,21 @@ namespace NHibernateMappingGenerator
             applicationSettings = appSettings;
         }
 
+        private void ToggleColumnsBasedOnAppSettings(ApplicationSettings appSettings)
+        {
+            var lengthColumn = dbTableDetailsGridView.Columns["DataLength"];
+            if (lengthColumn != null)
+                lengthColumn.Visible = appSettings.IncludeLengthAndScale;
+
+            var precisionColumn = dbTableDetailsGridView.Columns["DataPrecision"];
+            if (precisionColumn != null)
+                precisionColumn.Visible = appSettings.IncludeLengthAndScale;
+
+            var scaleColumn = dbTableDetailsGridView.Columns["DataScale"];
+            if (scaleColumn != null)
+                scaleColumn.Visible = appSettings.IncludeLengthAndScale;
+        }
+
         private void SetCodeControlFormatting(ApplicationSettings appSettings)
         {
             // Domain Code Formatting
@@ -305,9 +320,11 @@ namespace NHibernateMappingGenerator
 
                     if (table != null)
                     {
+                        CaptureApplicationSettings();
+
                         PopulateTableDetails(table);
 
-                        CaptureApplicationSettings();
+                        ToggleColumnsBasedOnAppSettings(applicationSettings);
 
                         GenerateAndDisplayCode(table);
 
@@ -355,8 +372,14 @@ namespace NHibernateMappingGenerator
             {
                 dbTableDetailsGridView.AutoGenerateColumns = true;
                 _currentTable = selectedTable;
-                gridData = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString());
+                gridData = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString()) ??
+                           new List<Column>();
+
+                // Show table details, and toggle columns based on app settings
+                dbTableDetailsGridView.SuspendLayout();
                 dbTableDetailsGridView.DataSource = gridData;
+                dbTableDetailsGridView.ResumeLayout();
+                
             }
             catch (Exception ex)
             {
@@ -384,8 +407,6 @@ namespace NHibernateMappingGenerator
                 statusStrip1.Refresh();
                 PopulateOwners();
 
-                PopulateTablesAndSequences();
-
                 toolStripStatusLabel1.Text = string.Empty;
             }
             catch (Exception ex)
@@ -405,9 +426,13 @@ namespace NHibernateMappingGenerator
             {
                 owners = new List<string> { "dbo" };
             }
+
+            tablesListBox.SelectedIndexChanged -= TablesListSelectedIndexChanged;
+
             ownersComboBox.Items.Clear();
             ownersComboBox.Items.AddRange(owners.ToArray());
 
+            tablesListBox.SelectedIndexChanged += TablesListSelectedIndexChanged;
             ownersComboBox.SelectedIndex = 0;
         }
 
@@ -757,6 +782,7 @@ namespace NHibernateMappingGenerator
 
             // Refresh the primary key relationships.
             table.PrimaryKey = metadataReader.DeterminePrimaryKeys(table);
+            table.ForeignKeys = metadataReader.DetermineForeignKeyReferences(table);
 
             // Show map and domain code preview
             ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);

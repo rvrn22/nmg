@@ -59,7 +59,7 @@ namespace NMG.Core.Generator
                 }
 				if (column.IsForeignKey)
                 {
-                	var fKey = table.ForeignKeyReferenceForColumn(column);
+                	var fKey = column.ForeignKeyTableName;
 					var typeName = appPrefs.ClassNamePrefix + fKey.MakeSingular().GetPreferenceFormattedText(appPrefs);
 					var codeMemberProperty = codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(typeName, fKey.MakeSingular().GetPreferenceFormattedText(appPrefs));
                     newType.Members.Add(codeMemberProperty);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 using System.Text;
@@ -27,21 +28,17 @@ namespace NMG.Core.ByCode
 
         public string IdMap (Column column, ITextFormatter formatter)
         {
-            var builder = new StringBuilder();
-            builder.AppendFormat("Id(x => x.{0}, map => ", formatter.FormatText(column.Name));
-            builder.AppendLine();
-            builder.AppendLine("\t\t\t\t{");
-            builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
-            if (column.IsIdentity)
+            var mapList = new List<string>();
+            var propertyName = formatter.FormatText(column.Name);
+
+            if (column.Name.ToLower() != propertyName.ToLower())
             {
-                builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Identity);");
+                mapList.Add("map.Column(\"" + column.Name + "\")");
             }
-            else
-            {
-                builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Assigned);");
-            }
-            builder.Append("\t\t\t\t});");
-            return builder.ToString();
+            mapList.Add(column.IsIdentity ? "map.Generator(Generators.Identity)" : "map.Generator(Generators.Assigned)");
+
+            // Outer property definition
+            return FormatCode("Id", propertyName, mapList);
         }
 
         public string CompositeIdMap(IList<Column> columns, ITextFormatter formatter)
@@ -67,43 +64,68 @@ namespace NMG.Core.ByCode
 //                });
         public string Map(Column column, ITextFormatter formatter, bool includeLengthAndScale = true)
         {
-            var mappedStrBuilder = new StringBuilder();
-            mappedStrBuilder.AppendFormat("Property(x => x.{0}, map => ", formatter.FormatText(column.Name));
-            mappedStrBuilder.AppendLine();
-            mappedStrBuilder.AppendLine("\t\t\t\t{");
-            mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
-            
+            var propertyName = formatter.FormatText(column.Name);
+            var mapList = new List<string>();
+
+            // Column
+            if (column.Name.ToLower() != propertyName.ToLower())
+            {
+                mapList.Add("map.Column(\"" + column.Name + "\")");
+            }
             // Not Null
             if (!column.IsNullable)
             {
-                mappedStrBuilder.AppendLine("\t\t\t\t\tmap.NotNullable(true);");
+                mapList.Add("map.NotNullable(true)");
             }
             // Unique
             if (column.IsUnique)
             {
-                mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Unique(true);");
+                mapList.Add("map.Unique(true)");
             }
             // Length
             if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
             {
-                mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Length(" + column.DataLength + ");");
+                mapList.Add("map.Length(" + column.DataLength + ")");
             }
             else
             {
                 // Precision
                 if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
                 {
-                    mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Precision(" + column.DataPrecision + ");");
+                    mapList.Add("map.Precision(" + column.DataPrecision + ")");
                 }
                 // Scale
                 if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
                 {
-                    mappedStrBuilder.AppendLine("\t\t\t\t\tmap.Scale(" + column.DataScale + ");");
+                    mapList.Add("map.Scale(" + column.DataScale + ")");
                 }
             }
             
-            mappedStrBuilder.Append("\t\t\t\t});");
-            return mappedStrBuilder.ToString();
+            // Outer property definition
+            return FormatCode("Property", propertyName, mapList);
+        }
+
+        private string FormatCode(string byCodeProperty, string propertyName, List<string> mapList)
+        {
+            // Outer property definition
+            var outerStrBuilder = new StringBuilder();
+            switch (mapList.Count)
+            {
+                case 0:
+                    outerStrBuilder.AppendFormat("{0}(x => x.{1})", byCodeProperty, propertyName);
+                    break;
+                case 1:
+                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {2});", byCodeProperty, propertyName, mapList.First());
+                    break;
+                case 2:
+                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {{ {2} }});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}; {1};", c, s)));
+                    break;
+                default:
+                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => \r\n\t\t\t{{\r\n\t\t\t\t{2}\r\n\t\t\t}});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}\r\n\t\t\t\t{1};", c, s)));
+                    break;
+            }
+
+            return outerStrBuilder.ToString();
         }
         
         public string Bag(HasMany hasMany, ITextFormatter formatter)
@@ -116,7 +138,35 @@ namespace NMG.Core.ByCode
         public string Reference(ForeignKey fk, ITextFormatter formatter)
         {
             var builder = new StringBuilder();
-            builder.Append("\t\t\tManyToOne<" + formatter.FormatSingular(fk.UniquePropertyName) + ">(x => x." + formatter.FormatSingular(fk.UniquePropertyName) + ", map => { map.Column(\"" + fk.Name + "\"); });");
+            if (fk.Columns.Count() == 1)
+            {
+                builder.Append("\t\t\tManyToOne<" + formatter.FormatSingular(fk.References) + ">(x => x." +
+                               formatter.FormatSingular(fk.UniquePropertyName) + ", map => { map.Column(\"" +
+                               fk.Columns.First().Name + "\"); });");
+            }
+            else
+            {
+                // Composite Foreign Key
+                // eg ManyToOne<TesteHeader>(x => x.TesteHeader, map => map.Columns(new Action<IColumnMapper>[] { x => x.Name("HeadIdOne"), x => x.Name("HeadIdTwo") }));
+
+                builder.AppendFormat("\t\t\tManyToOne<{0}>(x => x.{1}, map => map.Columns(new Action<IColumnMapper>[] {{ ",
+                                     formatter.FormatSingular(fk.References),
+                                     formatter.FormatSingular(fk.UniquePropertyName));
+
+                var lastColumn = fk.Columns.Last();
+                foreach (var column in fk.Columns)
+                {
+                    builder.AppendFormat("x.Name(\"{0}\")",column.Name);
+
+                    var isLastColumn = lastColumn == column;
+                    if (!isLastColumn)
+                    {
+                        builder.Append(", ");
+                    }
+                }
+
+                builder.Append(" }))");
+            }
             return builder.ToString();
         }
     }

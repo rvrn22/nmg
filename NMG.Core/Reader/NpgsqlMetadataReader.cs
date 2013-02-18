@@ -31,43 +31,43 @@ namespace NMG.Core.Reader
                     {
                         
 
-tableDetailsCommand.CommandText = string.Format(@"select
-c.column_name
-,c.data_type
-,c.is_nullable
-,b.constraint_type as type
-from information_schema.constraint_column_usage a
-inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
-inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
-where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
-union
-select
-a.column_name
-,a.data_type
-,a.is_nullable
-,b.constraint_type as type
-from information_schema.columns a
-inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey'
-union
-select 
-a.column_name
-,a.data_type
-,a.is_nullable
-,''
-from  information_schema.columns a
-where a.table_schema='{1}' and a.table_name='{0}' and a.column_name not in (
+                        tableDetailsCommand.CommandText = string.Format(@"select
+                            c.column_name
+                            ,c.data_type
+                            ,c.is_nullable
+                            ,b.constraint_type as type
+                            from information_schema.constraint_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
+                            union
+                            select
+                            a.column_name
+                            ,a.data_type
+                            ,a.is_nullable
+                            ,b.constraint_type as type
+                            from information_schema.columns a
+                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey'
+                            union
+                            select 
+                            a.column_name
+                            ,a.data_type
+                            ,a.is_nullable
+                            ,''
+                            from  information_schema.columns a
+                            where a.table_schema='{1}' and a.table_name='{0}' and a.column_name not in (
 
-select
-c.column_name
-from information_schema.constraint_column_usage a
-inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
-inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
-where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
-union
-select
-a.column_name
-from information_schema.columns a
-inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey')", table.Name, owner);
+                            select
+                            c.column_name
+                            from information_schema.constraint_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
+                            union
+                            select
+                            a.column_name
+                            from information_schema.columns a
+                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey')", table.Name, owner);
 
 
                         using (NpgsqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
@@ -112,6 +112,12 @@ inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||
                             }
                             table.Owner = owner;
                             table.PrimaryKey = DeterminePrimaryKeys(table);
+
+                            // Need to find the table name associated with the FK
+						    foreach (var c in table.Columns)
+						    {
+						        c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+						    }
                             table.ForeignKeys = DetermineForeignKeyReferences(table);
                             table.HasManyRelationships = DetermineHasManyRelationships(table);
                         }
@@ -243,21 +249,33 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
             return null;
         }
 
-        private IList<ForeignKey> DetermineForeignKeyReferences(Table table)
+        public IList<ForeignKey> DetermineForeignKeyReferences(Table table)
         {
-            var foreignKeys = table.Columns.Where(x => x.IsForeignKey.Equals(true)).ToList();
-            var tempForeignKeys = new List<ForeignKey>();
+            var foreignKeys = table.Columns.Where(x => x.IsForeignKey).Distinct()
+                                   .Select(c => new ForeignKey
+                                   {
+                                       Name = c.Name,
+                                       References = GetForeignKeyReferenceTableName(table.Name, c.Name),
+                                       Columns = DetermineColumnsForForeignKey(table.Columns, c.ConstraintName)
+                                   }).ToList();
 
-            foreach (var foreignKey in foreignKeys)
-            {
-                tempForeignKeys.Add(new ForeignKey
-                {
-                    Name = foreignKey.Name,                    
-                    References = GetForeignKeyReferenceTableName(table.Name, foreignKey.Name)
-                });
-            }
+            Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 
-            return tempForeignKeys;
+            return foreignKeys;
+        }
+
+        /// <summary>
+        /// Search for one or more columns that make up the foreign key.
+        /// </summary>
+        /// <param name="columns">All columns that could be used for the foreign key</param>
+        /// <param name="foreignKeyName">Name of the foreign key constraint</param>
+        /// <returns>List of columns associated with the foreign key</returns>
+        /// <remarks>Composite foreign key will return multiple columns</remarks>
+        private IList<Column> DetermineColumnsForForeignKey(IList<Column> columns, string foreignKeyName)
+        {
+            return (from c in columns
+                    where c.IsForeignKey && c.ConstraintName == foreignKeyName
+                    select c).ToList();
         }
 
         private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
