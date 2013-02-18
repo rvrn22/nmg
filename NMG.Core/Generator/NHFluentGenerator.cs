@@ -1,6 +1,5 @@
 ﻿using System;
 using System.CodeDom;
-using System.Linq;
 using System.Text;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
@@ -39,7 +38,6 @@ namespace NMG.Core.Generator
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             newType.Members.Add(constructor);
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + tableName + "\");"));
-            constructor.Statements.Add(GetIdMapCodeSnippetStatement());
 
             if(UsesSequence)
             {
@@ -50,16 +48,6 @@ namespace NMG.Core.Generator
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }
-
-            foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
-            {
-            	var referencesSnippet = string.Format("References(x => x.{0})", Formatter.FormatSingular(fk.UniquePropertyName));
-				var columnsSnippet = fk.Columns.Count() == 1 ?
-					string.Format(".Column(\"{0}\");", fk.Name) :
-					string.Format(".Columns({0});", fk.Columns.Aggregate("new string[] { ", (a,b) => a+"\""+b+"\", ", c=>c.Substring(0, c.Length - 2) + " }" ));
-				
-				constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "{0}{1}", referencesSnippet, columnsSnippet)));
-			}
 
             foreach (var columnDetail in Table.Columns)
             {
@@ -83,26 +71,23 @@ namespace NMG.Core.Generator
             return compileUnit;
         }
 
-        private CodeSnippetStatement GetIdMapCodeSnippetStatement()
-        {
-            var idGen = "\t\t\t" + "Id(x => x.Id, map => { map.Column(\"" + Table.PrimaryKey + "\"); map.Generator(Generators.HighLow, map => map.Params(new {table = \"T_NEXT_ID\", column = \"next_id\", max_lo = \"0\", where = \"type = 'TN'\" }));});";
-
-            return new CodeSnippetStatement(idGen);
-        }
-
         protected override string AddStandardHeader(string entireContent)
         {
             entireContent = "using NHibernate.Mapping.ByCode;" + Environment.NewLine + entireContent;
-            entireContent = string.Format("using {0};", nameSpace) + Environment.NewLine + entireContent;
+            entireContent = "using NHibernate.Mapping.ByCode.Conformist;" + Environment.NewLine + entireContent;
+            if (!string.IsNullOrWhiteSpace(nameSpace))
+            {
+                entireContent = string.Format("using {0};", nameSpace) + Environment.NewLine + entireContent;
+            }
             return base.AddStandardHeader(entireContent);
         }
 
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(ApplicationPreferences appPrefs, string pkColumnName, string pkColumnType, ITextFormatter formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
-            bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(appPrefs.ServerType, pkColumnType, null, null, null)).IsTypeIntegral();
-            string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
-            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
+            var isPkTypeIntegral = (dataTypeMapper.MapFromDBType(appPrefs.ServerType, pkColumnType, null, null, null)).IsTypeIntegral();
+            var idGeneratorType = isPkTypeIntegral ? "Generators.Identity" : "Generators.Assigned";
+            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}, map => {{ map.Column(\"{2}\"); map.Generator({1}); }});", formatter.FormatText(pkColumnName), idGeneratorType, pkColumnName));
         }
 
         private string MapNhStyle(Column column, bool includeLengthAndScale = true)
