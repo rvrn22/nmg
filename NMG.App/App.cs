@@ -246,6 +246,10 @@ namespace NHibernateMappingGenerator
 
         private void CaptureApplicationSettings()
         {
+            if (applicationSettings == null)
+            {
+                applicationSettings = new ApplicationSettings();
+            }
             applicationSettings.NameSpace = nameSpaceTextBox.Text;
             applicationSettings.NameSpaceMap = namespaceMapTextBox.Text;
             applicationSettings.AssemblyName = assemblyNameTextBox.Text;
