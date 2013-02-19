@@ -51,8 +51,15 @@ namespace NHibernateMappingGenerator
 
         private void ConnectionButtonClick(object sender, EventArgs e)
         {
+            // Belt and braces
+            if (applicationSettings == null)
+            {
+                applicationSettings = new ApplicationSettings();
+            }
+
             var connectionDialog = new ConnectionDialog();
             
+            // Edit current connection
             if (_currentConnection != null)
             {
                 connectionDialog.Connection = _currentConnection;
@@ -62,22 +69,25 @@ namespace NHibernateMappingGenerator
             switch (result)
             {
                 case DialogResult.OK:
-                    // Add or Update
+                    // Add or Update Connection
                     _currentConnection = connectionDialog.Connection;
                     var connectionToUpdate = applicationSettings.Connections.FirstOrDefault(connection => connection.Id == _currentConnection.Id);
+
                     if (connectionToUpdate == null)
                     {
+                        // Add new connection
                         applicationSettings.Connections.Add(_currentConnection);
                     }
 
                     break;
                 case DialogResult.Abort:
-                    // Delete
+                    // Delete Connection
                     applicationSettings.Connections.Remove(_currentConnection);
                     _currentConnection = null;
                     break;
             }
 
+            // Refresh data connections drop down
             connectionNameComboBox.DataSource = null;
             connectionNameComboBox.DataSource = applicationSettings.Connections;
             connectionNameComboBox.DisplayMember = "Name";
