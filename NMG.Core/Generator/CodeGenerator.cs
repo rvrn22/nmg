@@ -73,7 +73,14 @@ namespace NMG.Core.Generator
             foreach (var hasMany in Table.HasManyRelationships)
             {
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ForeignEntityCollectionType + "<" + appPrefs.ClassNamePrefix + Formatter.FormatSingular(hasMany.Reference) + ">", Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
-                constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+                if (appPrefs.Language == Language.CSharp)
+                {
+                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+                }
+                else if (appPrefs.Language == Language.VB)
+                {
+                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = New {1}<{2}{3}>()", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+                }
             }
 
             var constructor = new CodeConstructor { Attributes = MemberAttributes.Public };
@@ -194,23 +201,46 @@ namespace NMG.Core.Generator
             var compareCode = new StringBuilder();
 
             var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name));
-            method.Statements.Add(new CodeSnippetStatement("\t\t\tif (obj == null) return false;"));
-            method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tvar t = obj as {0};", className)));
-            method.Statements.Add(new CodeSnippetStatement("\t\t\tif (t == null) return false;"));
 
-            compareCode.Append("\t\t\tif (");
-            var lastCol = columns.LastOrDefault();
-            foreach (var column in columns)
+            if (appPrefs.Language == Language.CSharp)
             {
-                compareCode.Append(string.Format("{0} == t.{0}", column));
-                compareCode.Append(column != lastCol ? " && " : ")");
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tif (obj == null) return false;"));
+                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tvar t = obj as {0};", className)));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tif (t == null) return false;"));
+
+                compareCode.Append("\t\t\tif (");
+                var lastCol = columns.LastOrDefault();
+                foreach (var column in columns)
+                {
+                    compareCode.Append(string.Format("{0} == t.{0}", column));
+                    compareCode.Append(column != lastCol ? " && " : ")");
+                }
+                method.Statements.Add(new CodeSnippetStatement(compareCode.ToString()));
+
+                method.Statements.Add(new CodeSnippetStatement("\t\t\t\treturn true;"));
+                method.Statements.Add(new CodeSnippetStatement(string.Empty));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\treturn false;"));
             }
-            method.Statements.Add(new CodeSnippetStatement(compareCode.ToString()));
+            else if (appPrefs.Language == Language.VB)
+            {
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tIf obj Is Nothing Then Return False"));
+                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tDim t = TryCast(obj, {0})", className)));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tIf t Is Nothing Then Return False"));
 
-            method.Statements.Add(new CodeSnippetStatement("\t\t\t\treturn true;"));
-            method.Statements.Add(new CodeSnippetStatement(string.Empty));
-            method.Statements.Add(new CodeSnippetStatement("\t\t\treturn false;"));
+                compareCode.Append("\t\t\tIf ");
+                var lastCol = columns.LastOrDefault();
+                foreach (var column in columns)
+                {
+                    compareCode.Append(string.Format("{0} = t.{0}", column));
+                    compareCode.Append(column != lastCol ? " AndAlso " : string.Empty);
+                }
+                method.Statements.Add(new CodeSnippetStatement(compareCode.ToString()));
 
+                method.Statements.Add(new CodeSnippetStatement("\t\t\t\tReturn True"));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tEnd If"));
+                method.Statements.Add(new CodeSnippetStatement(string.Empty));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tReturn False"));
+            }
             return method;
         }
 
@@ -226,17 +256,33 @@ namespace NMG.Core.Generator
                 Attributes = MemberAttributes.Public | MemberAttributes.Override,
             };
 
-            // Create the if statement to compare if the obj equals another.
-            method.Statements.Add(new CodeSnippetStatement("\t\t\tint hash = 13;"));
-
-            foreach (var column in columns)
+            if (appPrefs.Language == Language.CSharp)
             {
-                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\thash += {0}.GetHashCode();", column)));
+                // Create the if statement to compare if the obj equals another.
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tint hash = 13;"));
+
+                foreach (var column in columns)
+                {
+                    method.Statements.Add(
+                        new CodeSnippetStatement(string.Format("\t\t\thash += {0}.GetHashCode();", column)));
+                }
+
+                method.Statements.Add(new CodeSnippetStatement(string.Empty));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\treturn hash;"));
             }
+            else if (appPrefs.Language == Language.VB)
+            {
+                // Create the if statement to compare if the obj equals another.
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tDim hash As Integer = 13"));
 
-            method.Statements.Add(new CodeSnippetStatement(string.Empty));
-            method.Statements.Add(new CodeSnippetStatement("\t\t\treturn hash;"));
+                foreach (var column in columns)
+                {
+                    method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\thash += {0}.GetHashCode()", column)));
+                }
 
+                method.Statements.Add(new CodeSnippetStatement(string.Empty));
+                method.Statements.Add(new CodeSnippetStatement("\t\t\tReturn hash"));
+            }
             return method;
         }
 
@@ -295,33 +341,61 @@ namespace NMG.Core.Generator
         }
 
         // Hack : Auto property generator is not there in CodeDom.
-        private static string FixAutoProperties(string entireContent)
+        private string FixAutoProperties(string entireContent)
         {
             // Do NOT mess with this... 
             //Indomitable: Just a little :)
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("{");
-            builder.Append("        }");
-            entireContent = entireContent.Replace(builder.ToString(), "{ }");
-            builder.Clear();
-            builder.AppendLine("{");
-            builder.AppendLine("            get {");
-            builder.AppendLine("            }");
-            builder.AppendLine("            set {");
-            builder.AppendLine("            }");
-            builder.Append("        }");
-            entireContent = entireContent.Replace(builder.ToString(), "{ get; set; }");
+            if (appPrefs.Language == Language.CSharp)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine("{");
+                builder.Append("        }");
+                entireContent = entireContent.Replace(builder.ToString(), "{ }");
+                builder.Clear();
+                builder.AppendLine("{");
+                builder.AppendLine("            get {");
+                builder.AppendLine("            }");
+                builder.AppendLine("            set {");
+                builder.AppendLine("            }");
+                builder.Append("        }");
+                entireContent = entireContent.Replace(builder.ToString(), "{ get; set; }");
+            }
+            else if (appPrefs.Language == Language.VB)
+            {
+                var blah = @"
+            Get
+            End Get
+            Set
+            End Set
+        End Property";
+                entireContent = entireContent.Replace(blah, string.Empty);
+            }
             return entireContent;
         }
 
         private string AddStandardHeader(string entireContent)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("using System;");
-            builder.AppendLine("using System.Text;");
-            builder.AppendLine("using System.Collections.Generic;");
-            if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
-                builder.AppendLine("using Iesi.Collections.Generic;");
+            var builder = new StringBuilder();
+            if (appPrefs.Language == Language.CSharp)
+            {
+                builder.AppendLine("using System;");
+                builder.AppendLine("using System.Text;");
+                builder.AppendLine("using System.Collections.Generic;");
+                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
+                    builder.AppendLine("using Iesi.Collections.Generic;");
+            }
+            else if (appPrefs.Language == Language.VB)
+            {
+                builder.AppendLine("Imports System");
+                builder.AppendLine("Imports System.Text");
+                builder.AppendLine("Imports System.Collections.Generic");
+                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
+                    builder.AppendLine("Imports Iesi.Collections.Generic");
+
+                entireContent = entireContent.Replace("Option Strict Off", string.Empty);
+                entireContent = entireContent.Replace("Option Explicit On", string.Empty);
+            }
+
             builder.Append(entireContent);
             return builder.ToString();
         }

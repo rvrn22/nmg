@@ -234,6 +234,8 @@ namespace NMG.Core.Generator
                 return "List";
             if (foreignEntityCollectionType.Contains("Set"))
                 return "HashedSet";
+            if (foreignEntityCollectionType.Contains("Collection"))
+                return "List";
             return foreignEntityCollectionType;
         }
     }

@@ -41,7 +41,15 @@ namespace NMG.Core.Generator
             newType.IsPartial = appPrefs.GeneratePartialClasses;
 
             var className = Formatter.FormatSingular(Table.Name);
-            newType.BaseTypes.Add(string.Format("ClassMapping<{0}{1}>", appPrefs.ClassNamePrefix, className));
+            switch (appPrefs.Language)
+            {
+                case Language.CSharp:
+                    newType.BaseTypes.Add(string.Format("ClassMapping<{0}{1}>", appPrefs.ClassNamePrefix, className));
+                    break;
+                case Language.VB:
+                    newType.BaseTypes.Add(string.Format("ClassMapping(Of {0}{1})", appPrefs.ClassNamePrefix, className));
+                    break;
+            }
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
 
@@ -57,7 +65,8 @@ namespace NMG.Core.Generator
             }
 
             constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));
-            var mapper = new DBColumnMapper();
+
+            var mapper = new DBColumnMapper(appPrefs.Language);
 
             // Id or ComposedId Map 
             if (Table.PrimaryKey != null)
@@ -98,22 +107,52 @@ namespace NMG.Core.Generator
             Table.HasManyRelationships.ToList().ForEach(x => constructor.Statements.Add(new CodeSnippetStatement(mapper.Bag(x, Formatter))));
 
             newType.Members.Add(constructor);
+
+            // Strip out any semicolons 
+            if (appPrefs.Language == Language.VB)
+            {
+                foreach (CodeSnippetStatement statement in constructor.Statements)
+                {
+                    statement.Value = statement.Value.Replace(";", string.Empty);
+                }
+            }
+
             return compileUnit;
         }
         
         protected override string AddStandardHeader(string entireContent)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("using System;");
-            builder.AppendLine("using System.Text;");
-            builder.AppendLine("using System.Collections.Generic;");
-            builder.AppendLine("using System.Linq;");
-            builder.AppendLine("using NHibernate.Mapping.ByCode.Conformist;");
-            builder.AppendLine("using NHibernate.Mapping.ByCode;");
-            builder.AppendFormat("using {0};", appPrefs.NameSpace);
-            builder.AppendLine();
-            if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
-                builder.AppendLine("using Iesi.Collections.Generic;");
+            if (appPrefs.Language == Language.CSharp)
+            {
+                builder.AppendLine("using System;");
+                builder.AppendLine("using System.Text;");
+                builder.AppendLine("using System.Collections.Generic;");
+                builder.AppendLine("using System.Linq;");
+                builder.AppendLine("using NHibernate.Mapping.ByCode.Conformist;");
+                builder.AppendLine("using NHibernate.Mapping.ByCode;");
+                builder.AppendFormat("using {0};", appPrefs.NameSpace);
+                builder.AppendLine();
+                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
+                    builder.AppendLine("using Iesi.Collections.Generic;");
+            }
+            else if (appPrefs.Language == Language.VB)
+            {
+                builder.AppendLine("Imports System");
+                builder.AppendLine("Imports System.Text");
+                builder.AppendLine("Imports System.Collections.Generic");
+                builder.AppendLine("Imports System.Linq");
+                builder.AppendLine("Imports NHibernate.Mapping.ByCode.Conformist");
+                builder.AppendLine("Imports NHibernate.Mapping.ByCode");
+                builder.AppendFormat("Imports {0}", appPrefs.NameSpace);
+                builder.AppendLine();
+                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
+                    builder.AppendLine("Imports Iesi.Collections.Generic");
+
+                entireContent = entireContent.Replace("Option Strict Off", string.Empty);
+                entireContent = entireContent.Replace("Option Explicit On", string.Empty);
+            }
+
             builder.Append(entireContent);
             return builder.ToString();
         }

@@ -9,6 +9,13 @@ namespace NMG.Core.ByCode
 {
     public class DBColumnMapper
     {
+        private readonly Language _language;
+
+        public DBColumnMapper(Language language)
+        {
+            _language = language;
+        }
+
 //Id(x => x.Id, map =>
 //{
 //    map.Column("ID");
@@ -17,12 +24,25 @@ namespace NMG.Core.ByCode
         public string IdSequenceMap(Column column, string sequenceName, ITextFormatter formatter)
         {
             var builder = new StringBuilder();
-            builder.AppendFormat("Id(x => x.{0}, map => ", formatter.FormatText(column.Name));
-            builder.AppendLine();
-            builder.AppendLine("\t\t\t\t{");
-            builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
-            builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, g => g.Params(new { sequence = \"" + sequenceName + "\" }));");
-            builder.Append("\t\t\t\t});");
+            switch (_language)
+            {
+                case Language.CSharp:
+                    builder.AppendFormat("Id(x => x.{0}, map => ", formatter.FormatText(column.Name));
+                    builder.AppendLine();
+                    builder.AppendLine("\t\t\t\t{");
+                    builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
+                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, g => g.Params(new { sequence = \"" + sequenceName + "\" }));");
+                    builder.Append("\t\t\t\t});");
+                    break;
+                case Language.VB:
+                    builder.AppendFormat("Id(Function(x) x.{0}, Sub(map)", formatter.FormatText(column.Name));
+                    builder.AppendLine();
+                    builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\")");
+                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, Function(g) g.Params(New { sequence = \"" + sequenceName + "\" }))");
+                    builder.Append("\t\t\t\tEnd Sub)");
+                    break;
+            }
+
             return builder.ToString();
         }
 
@@ -44,13 +64,29 @@ namespace NMG.Core.ByCode
         public string CompositeIdMap(IList<Column> columns, ITextFormatter formatter)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("ComposedId(compId =>");
-            builder.AppendLine("\t\t\t\t{");
-            foreach (var column in columns)
+
+
+            switch (_language)
             {
-                builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(\"" + column.Name + "\"));");
+                case Language.CSharp:
+                    builder.AppendLine("ComposedId(compId =>");
+                    builder.AppendLine("\t\t\t\t{");
+                    foreach (var column in columns)
+                    {
+                        builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(\"" + column.Name + "\"));");
+                    }
+                    builder.Append("\t\t\t\t});");
+                    break;
+                case Language.VB:
+                    builder.AppendLine("ComposedId(Sub(compId)");
+                    foreach (var column in columns)
+                    {
+                        builder.AppendLine("\t\t\t\t\tcompId.Property(Function(x) x." + formatter.FormatText(column.Name) + ", Sub(m) m.Column(\"" + column.Name + "\"))");
+                    }
+                    builder.AppendLine("\t\t\t\tEnd Sub)");
+                    break;
             }
-            builder.Append("\t\t\t\t});");
+
             return builder.ToString();
         }
         
@@ -109,19 +145,41 @@ namespace NMG.Core.ByCode
         {
             // Outer property definition
             var outerStrBuilder = new StringBuilder();
-            switch (mapList.Count)
+
+            switch (_language)
             {
-                case 0:
-                    outerStrBuilder.AppendFormat("{0}(x => x.{1})", byCodeProperty, propertyName);
+                case Language.CSharp:
+                    switch (mapList.Count)
+                    {
+                        case 0:
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1})", byCodeProperty, propertyName);
+                            break;
+                        case 1:
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {2});", byCodeProperty, propertyName, mapList.First());
+                            break;
+                        case 2:
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {{ {2}; }});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}; {1}", c, s)));
+                            break;
+                        default:
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => \r\n\t\t\t{{\r\n\t\t\t\t{2};\r\n\t\t\t}});", byCodeProperty,propertyName, mapList.Aggregate((c, s) => string.Format("{0};\r\n\t\t\t\t{1}", c, s)));
+                            break;
+                    }
                     break;
-                case 1:
-                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {2});", byCodeProperty, propertyName, mapList.First());
-                    break;
-                case 2:
-                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {{ {2} }});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}; {1};", c, s)));
-                    break;
-                default:
-                    outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => \r\n\t\t\t{{\r\n\t\t\t\t{2}\r\n\t\t\t}});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}\r\n\t\t\t\t{1};", c, s)));
+                case Language.VB:
+                    if (byCodeProperty.ToLower() == "property") byCodeProperty = "[Property]";
+
+                    switch (mapList.Count)
+                    {
+                        case 0:
+                            outerStrBuilder.AppendFormat("{0}(Function(x) x.{1})", byCodeProperty, propertyName);
+                            break;
+                        case 1:
+                            outerStrBuilder.AppendFormat("{0}(Function(x) x.{1}, Sub(map) {2})", byCodeProperty, propertyName, mapList.First());
+                            break;
+                        default:
+                            outerStrBuilder.AppendFormat("{0}(Function(x) x.{1}, Sub(map)\r\n\t\t\t\t\t\t{2}\r\n\t\t\t\t\tEnd Sub)", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}\r\n\t\t\t\t\t\t{1}", c, s)));
+                            break;
+                    }
                     break;
             }
 
