@@ -29,22 +29,25 @@ namespace NMG.Core.Reader
 				using (conn) {
 					using (var tableDetailsCommand = conn.CreateCommand()) {
 						tableDetailsCommand.CommandText = string.Format(
-                            @"
-						SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name,
-                               columnproperty(object_id(c.table_schema + '.' + c.table_name), c.column_name,'IsIdentity') IsIdentity
-						from information_schema.columns c
-							left outer join (
-								information_schema.constraint_column_usage ccu
-								join information_schema.table_constraints tc on (
-									tc.table_schema = ccu.table_schema
-									and tc.constraint_name = ccu.constraint_name
-									and tc.constraint_type <> 'CHECK'
-								)
-							) on (
-								c.table_schema = ccu.table_schema and ccu.table_schema = '{1}'
-								and c.table_name = ccu.table_name
-								and c.column_name = ccu.column_name
-							)
+                            @"SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name,
+       columnproperty(object_id(c.table_schema + '.' + c.table_name), c.column_name,'IsIdentity') IsIdentity, 
+       (SELECT CASE WHEN count(1) = 0 THEN 0 ELSE 1 END 
+       FROM information_schema.table_constraints x 
+       INNER JOIN information_schema.constraint_column_usage ccux ON c.table_name = ccux.table_name and c.column_name = ccux.column_name and c.table_schema = ccux.table_schema
+       WHERE x.constraint_type = 'UNIQUE' and x.table_schema = ccux.table_schema and x.constraint_name = ccux.constraint_name) IsUnique
+from information_schema.columns c
+	left outer join (
+		information_schema.constraint_column_usage ccu
+		join information_schema.table_constraints tc on (
+			tc.table_schema = ccu.table_schema
+			and tc.constraint_name = ccu.constraint_name
+			and NOT tc.constraint_type IN ('CHECK','UNIQUE')
+		)
+	) on (
+		c.table_schema = ccu.table_schema and ccu.table_schema = 'dbo'
+		and c.table_name = ccu.table_name
+		and c.column_name = ccu.column_name
+	)
 						where c.table_name = '{0}'
 							  and c.table_schema ='{1}'
 						order by c.table_name, c.ordinal_position",
@@ -60,6 +63,7 @@ namespace NMG.Core.Reader
 								var numericPrecision = sqlDataReader["numeric_precision"] as int?;
 								var numericScale = sqlDataReader["numeric_scale"] as int?;
 							    var constraintName = sqlDataReader["constraint_name"].ToString();
+							    var isUnique = Convert.ToBoolean(sqlDataReader["IsUnique"]);
 								bool isPrimaryKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.PrimaryKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 								bool isForeignKey = (!sqlDataReader.IsDBNull(3) && sqlDataReader.GetString(3).Equals(SqlServerConstraintType.ForeignKey.ToString(), StringComparison.CurrentCultureIgnoreCase));
 
@@ -73,6 +77,7 @@ namespace NMG.Core.Reader
                                                     IsIdentity = isIdentity,
 													IsPrimaryKey = isPrimaryKey,
 													IsForeignKey = isForeignKey,
+                                                    IsUnique = isUnique,
 													MappedDataType = m.MapFromDBType(ServerType.SqlServer, dataType, characterMaxLenth, numericPrecision, numericScale).ToString(),
 													DataLength = characterMaxLenth,
                                                     DataScale = numericScale,
