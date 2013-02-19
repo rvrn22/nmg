@@ -17,6 +17,9 @@ namespace NMG.Core.TextFormatter
     {
         public virtual string FormatText(string text)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
             var result = RemovePrefix(text);
 
             if (result.Length != 0 && char.IsNumber(result.ToCharArray(0, 1)[0]))

@@ -54,7 +54,7 @@ namespace NHibernateMappingGenerator
             // Belt and braces
             if (applicationSettings == null)
             {
-                applicationSettings = new ApplicationSettings();
+                LoadApplicationSettings();
             }
 
             var connectionDialog = new ConnectionDialog();
@@ -134,74 +134,81 @@ namespace NHibernateMappingGenerator
         
         protected override void OnLoad(EventArgs e)
         {
-            var appSettings = ApplicationSettings.Load();
-            if (appSettings != null)
+            LoadApplicationSettings();
+        }
+
+        private void LoadApplicationSettings()
+        {
+            applicationSettings = ApplicationSettings.Load();
+            if (applicationSettings != null)
             {
                 // Display all previous connections
-                connectionNameComboBox.DataSource = appSettings.Connections;
+                connectionNameComboBox.DataSource = applicationSettings.Connections;
                 connectionNameComboBox.DisplayMember = "Name";
 
                 // Set the last used connection
-                var lastUsedConnection = appSettings.Connections.FirstOrDefault(connection => connection.Id == appSettings.LastUsedConnection);
-                _currentConnection = lastUsedConnection ?? appSettings.Connections.FirstOrDefault();
+                var lastUsedConnection =
+                    applicationSettings.Connections.FirstOrDefault(connection => connection.Id == applicationSettings.LastUsedConnection);
+                _currentConnection = lastUsedConnection ?? applicationSettings.Connections.FirstOrDefault();
                 connectionNameComboBox.SelectedItem = _currentConnection;
 
-                nameSpaceTextBox.Text = appSettings.NameSpace;
-                namespaceMapTextBox.Text = appSettings.NameSpaceMap;
-                assemblyNameTextBox.Text = appSettings.AssemblyName;
-                fluentMappingOption.Checked = appSettings.IsFluent;
-                cSharpRadioButton.Checked = appSettings.Language == Language.CSharp;
-                autoPropertyRadioBtn.Checked = appSettings.IsAutoProperty;
-                folderTextBox.Text = appSettings.FolderPath;
-                textBoxInheritence.Text = appSettings.InheritenceAndInterfaces;
-                comboBoxForeignCollection.Text = appSettings.ForeignEntityCollectionType;
-                textBoxClassNamePrefix.Text = appSettings.ClassNamePrefix;
-                wcfDataContractCheckBox.Checked = appSettings.GenerateWcfContracts;
-                partialClassesCheckBox.Checked = appSettings.GeneratePartialClasses;
-                useLazyLoadingCheckBox.Checked = appSettings.UseLazy;
-                includeLengthAndScaleCheckBox.Checked = appSettings.IncludeLengthAndScale;
-                includeForeignKeysCheckBox.Checked = appSettings.IncludeForeignKeys;
+                nameSpaceTextBox.Text = applicationSettings.NameSpace;
+                namespaceMapTextBox.Text = applicationSettings.NameSpaceMap;
+                assemblyNameTextBox.Text = applicationSettings.AssemblyName;
+                fluentMappingOption.Checked = applicationSettings.IsFluent;
+                cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
+                autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
+                folderTextBox.Text = applicationSettings.FolderPath;
+                textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
+                comboBoxForeignCollection.Text = applicationSettings.ForeignEntityCollectionType;
+                textBoxClassNamePrefix.Text = applicationSettings.ClassNamePrefix;
+                wcfDataContractCheckBox.Checked = applicationSettings.GenerateWcfContracts;
+                partialClassesCheckBox.Checked = applicationSettings.GeneratePartialClasses;
+                useLazyLoadingCheckBox.Checked = applicationSettings.UseLazy;
+                includeLengthAndScaleCheckBox.Checked = applicationSettings.IncludeLengthAndScale;
+                includeForeignKeysCheckBox.Checked = applicationSettings.IncludeForeignKeys;
 
-                fluentMappingOption.Checked = appSettings.IsFluent;
-                nhFluentMappingStyle.Checked = appSettings.IsNhFluent;
-                castleMappingOption.Checked = appSettings.IsCastle;
-                byCodeMappingOption.Checked = appSettings.IsByCode;
+                fluentMappingOption.Checked = applicationSettings.IsFluent;
+                nhFluentMappingStyle.Checked = applicationSettings.IsNhFluent;
+                castleMappingOption.Checked = applicationSettings.IsCastle;
+                byCodeMappingOption.Checked = applicationSettings.IsByCode;
 
-                if (appSettings.FieldPrefixRemovalList == null)
-                    appSettings.FieldPrefixRemovalList = new List<string>();
+                if (applicationSettings.FieldPrefixRemovalList == null)
+                    applicationSettings.FieldPrefixRemovalList = new List<string>();
 
-                fieldPrefixListBox.Items.AddRange(appSettings.FieldPrefixRemovalList.ToArray());
+                fieldPrefixListBox.Items.AddRange(applicationSettings.FieldPrefixRemovalList.ToArray());
                 removeFieldPrefixButton.Enabled = false;
 
-                prefixRadioButton.Checked = !string.IsNullOrEmpty(appSettings.Prefix);
-                prefixTextBox.Text = appSettings.Prefix;
-                camelCasedRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
-                pascalCasedRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.PascalCase);
-                sameAsDBRadioButton.Checked = (appSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
+                prefixRadioButton.Checked = !string.IsNullOrEmpty(applicationSettings.Prefix);
+                prefixTextBox.Text = applicationSettings.Prefix;
+                camelCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.CamelCase);
+                pascalCasedRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.PascalCase);
+                sameAsDBRadioButton.Checked = (applicationSettings.FieldNamingConvention == FieldNamingConvention.SameAsDatabase);
 
-                sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked && !camelCasedRadioButton.Checked);
+                sameAsDBRadioButton.Checked = (!prefixRadioButton.Checked && !pascalCasedRadioButton.Checked &&
+                                               !camelCasedRadioButton.Checked);
 
-                generateInFoldersCheckBox.Checked = appSettings.GenerateInFolders;
+                generateInFoldersCheckBox.Checked = applicationSettings.GenerateInFolders;
 
-                SetCodeControlFormatting(appSettings);
+                SetCodeControlFormatting(applicationSettings);
             }
             else
             {
+                // Default application settings
                 autoPropertyRadioBtn.Checked = true;
                 sameAsDBRadioButton.Checked = true;
                 cSharpRadioButton.Checked = true;
                 fluentMappingOption.Checked = true;
                 comboBoxForeignCollection.Text = "IList";
+                
+                CaptureApplicationSettings();
             }
+
             if (!prefixRadioButton.Checked)
             {
                 prefixLabel.Visible = prefixTextBox.Visible = false;
             }
 
-            if (appSettings == null)
-            {
-                CaptureApplicationSettings();
-            }
         }
 
         private void ToggleColumnsBasedOnAppSettings(ApplicationSettings appSettings)
@@ -285,10 +292,7 @@ namespace NHibernateMappingGenerator
             applicationSettings.UseLazy = useLazyLoadingCheckBox.Checked;
             applicationSettings.IncludeForeignKeys = includeForeignKeysCheckBox.Checked;
             applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
-            if (_currentConnection == null)
-                applicationSettings.LastUsedConnection = null;
-            else
-                applicationSettings.LastUsedConnection = _currentConnection.Id;
+            applicationSettings.LastUsedConnection = _currentConnection == null ? (Guid?) null : _currentConnection.Id;
         }
 
         private void BindData()

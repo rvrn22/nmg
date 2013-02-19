@@ -143,6 +143,8 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static string MakePlural(this string word)
         {
+            if (string.IsNullOrEmpty(word)) return word;
+
             return ApplyRules(_plurals, word);
         }
 
@@ -153,6 +155,8 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static string MakeSingular(this string word)
         {
+            if (string.IsNullOrEmpty(word)) return word;
+
             return ApplyRules(_singulars, word);
         }
 
@@ -164,6 +168,8 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         private static string ApplyRules(IList<InflectorRule> rules, string word)
         {
+            if (string.IsNullOrEmpty(word)) return word;
+
             string result = word;
             if (!_uncountables.Contains(word.ToLower()))
             {
@@ -187,6 +193,8 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static string ToTitleCase(this string word)
         {
+            if (string.IsNullOrEmpty(word)) return word;
+
             return Regex.Replace(ToHumanCase(AddUnderscores(word)), @"\b([a-z])",
                                  match => match.Captures[0].Value.ToUpper());
         }
