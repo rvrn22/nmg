@@ -188,7 +188,10 @@ namespace NHibernateMappingGenerator
                 prefixLabel.Visible = prefixTextBox.Visible = false;
             }
 
-            applicationSettings = appSettings;
+            if (appSettings == null)
+            {
+                CaptureApplicationSettings();
+            }
         }
 
         private void ToggleColumnsBasedOnAppSettings(ApplicationSettings appSettings)

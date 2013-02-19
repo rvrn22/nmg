@@ -342,18 +342,4 @@ namespace NMG.Core.Reader
         }
     }
 
-    public class SybaseDataType
-    {
-        public SybaseDataType(string sybaseType)
-        {
-            if (sybaseType.Contains("("))
-            {
-                var typeSplit = sybaseType.Replace(")", string.Empty).Split('(');
-                DataType = typeSplit[0];
-                DataLength = int.Parse(typeSplit[1]);
-            }
-        }
-        public string DataType { get; set; }
-        public int? DataLength { get; set; }
-    }
 }
