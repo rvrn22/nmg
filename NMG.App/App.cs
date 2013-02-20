@@ -225,6 +225,10 @@ namespace NHibernateMappingGenerator
             var scaleColumn = dbTableDetailsGridView.Columns["DataScale"];
             if (scaleColumn != null)
                 scaleColumn.Visible = appSettings.IncludeLengthAndScale;
+
+            var cSharpTypeColumn = dbTableDetailsGridView.Columns["cSharpType"];
+            if (cSharpTypeColumn != null)
+                cSharpTypeColumn.Visible = !appSettings.IsByCode;
         }
 
         private void SetCodeControlFormatting(ApplicationSettings appSettings)
