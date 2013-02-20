@@ -93,7 +93,15 @@ from information_schema.columns c
                             // Need to find the table name associated with the FK
 						    foreach (var c in table.Columns)
 						    {
-						        c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+						        if (c.IsForeignKey)
+						        {
+						            string referencedTableName;
+						            string referencedColumnName;
+						            GetForeignKeyReferenceDetails(c.ConstraintName, out referencedTableName, out referencedColumnName);
+
+						            c.ForeignKeyTableName = referencedTableName;
+						            c.ForeignKeyColumnName = referencedColumnName;
+						        }
 						    }
 							table.ForeignKeys = DetermineForeignKeyReferences(table);
 							table.HasManyRelationships = DetermineHasManyRelationships(table);
@@ -205,36 +213,59 @@ from information_schema.columns c
             return foreignKeys;
         }
 
-		private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
+		private void GetForeignKeyReferenceDetails(string constraintName, out string referencedTableName, out string referencedColumnName)
 		{
-			string referencedTableName;
+			referencedTableName = string.Empty;
+		    referencedColumnName = string.Empty;
 			
 			var conn = new SqlConnection(connectionStr);
 			conn.Open();
 			try {
-				using (conn) {
-					SqlCommand tableCommand = conn.CreateCommand();
-					tableCommand.CommandText = String.Format(
-						@"
-						select pk_table = pk.table_name
-						from information_schema.referential_constraints c
-						inner join information_schema.table_constraints fk on c.constraint_name = fk.constraint_name
-						inner join information_schema.table_constraints pk on c.unique_constraint_name = pk.constraint_name
-						inner join information_schema.key_column_usage cu on c.constraint_name = cu.constraint_name
-						inner join (
-						select i1.table_name, i2.column_name
-						from information_schema.table_constraints i1
-						inner join information_schema.key_column_usage i2 on i1.constraint_name = i2.constraint_name
-						where i1.constraint_type = 'PRIMARY KEY'
-						) pt on pt.table_name = pk.table_name
-						where fk.table_name = '{0}' and cu.column_name = '{1}'",
-						selectedTableName, columnName);
-					referencedTableName = (string)tableCommand.ExecuteScalar();
-				}
+			    using (conn)
+			    {
+			        using (var tableDetailsCommand = conn.CreateCommand())
+			        {
+
+			            SqlCommand tableCommand = conn.CreateCommand();
+			            tableDetailsCommand.CommandText = String.Format(
+			                @"
+SELECT  
+     KCU1.CONSTRAINT_NAME AS FK_CONSTRAINT_NAME 
+    ,KCU1.TABLE_NAME AS FK_TABLE_NAME 
+    ,KCU1.COLUMN_NAME AS FK_COLUMN_NAME 
+    ,KCU1.ORDINAL_POSITION AS FK_ORDINAL_POSITION 
+    ,KCU2.CONSTRAINT_NAME AS REFERENCED_CONSTRAINT_NAME 
+    ,KCU2.TABLE_NAME AS REFERENCED_TABLE_NAME 
+    ,KCU2.COLUMN_NAME AS REFERENCED_COLUMN_NAME 
+    ,KCU2.ORDINAL_POSITION AS REFERENCED_ORDINAL_POSITION 
+FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS AS RC 
+
+LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU1 
+    ON KCU1.CONSTRAINT_CATALOG = RC.CONSTRAINT_CATALOG  
+    AND KCU1.CONSTRAINT_SCHEMA = RC.CONSTRAINT_SCHEMA 
+    AND KCU1.CONSTRAINT_NAME = RC.CONSTRAINT_NAME 
+
+LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU2 
+    ON KCU2.CONSTRAINT_CATALOG = RC.UNIQUE_CONSTRAINT_CATALOG  
+    AND KCU2.CONSTRAINT_SCHEMA = RC.UNIQUE_CONSTRAINT_SCHEMA 
+    AND KCU2.CONSTRAINT_NAME = RC.UNIQUE_CONSTRAINT_NAME 
+    AND KCU2.ORDINAL_POSITION = KCU1.ORDINAL_POSITION 
+   WHERE KCU1.CONSTRAINT_NAME = '{0}'",
+			                constraintName);
+
+			            using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
+			            {
+			                while (sqlDataReader.Read())
+			                {
+			                    referencedTableName = sqlDataReader["REFERENCED_TABLE_NAME"].ToString();
+			                    referencedColumnName = sqlDataReader["REFERENCED_COLUMN_NAME"].ToString();
+			                }
+			            }
+			        }
+			    }
 			} finally {
 				conn.Close();
 			}
-			return referencedTableName;
 		}
 
 		// http://blog.sqlauthority.com/2006/11/01/sql-server-query-to-display-foreign-key-relationships-and-name-of-the-constraint-for-each-table-in-database/

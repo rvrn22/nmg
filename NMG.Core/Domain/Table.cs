@@ -94,6 +94,8 @@ namespace NMG.Core.Domain
         public int? DataPrecision { get; set; }
         public int? DataScale { get; set; }
         public string ForeignKeyTableName { get; set; }
+        public string ForeignKeyColumnName { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

@@ -213,20 +213,19 @@ namespace NMG.Core.ByCode
             var builder = new StringBuilder();
             if (fk.Columns.Count() == 1)
             {
-                if (_language == Language.CSharp)
+                var mapList = new List<string>();
+                mapList.Add("map.Column(\"" + fk.Columns.First().Name + "\")");
+
+                // PropertyRef - Used with a FK that doesnt map to a primary key on referenced table.
+                if (!string.IsNullOrEmpty(fk.Columns.First().ForeignKeyColumnName))
                 {
-                    builder.AppendFormat("\t\t\tManyToOne<{0}>(x => x.{1}, map => {{ map.Column(\"{2}\"); }});",
-                                         formatter.FormatSingular(fk.References),
-                                         formatter.FormatSingular(fk.UniquePropertyName), 
-                                         fk.Columns.First().Name);
+                    mapList.Add("map.PropertyRef(\"" + formatter.FormatText(fk.Columns.First().ForeignKeyColumnName) + "\")");
                 }
-                else if (_language == Language.VB)
-                {
-                    builder.AppendFormat("\t\t\tManyToOne(Of {0})(Function(x) x.{1}, Sub(map) map.Column(\"{2}\"))",
-                                         formatter.FormatSingular(fk.References),
-                                         formatter.FormatSingular(fk.UniquePropertyName), 
-                                         fk.Columns.First().Name);
-                }
+
+                builder.AppendLine(
+                    FormatCode(string.Format("\t\t\tManyToOne(Of {0})", formatter.FormatSingular(fk.References)),
+                    formatter.FormatSingular(fk.UniquePropertyName),
+                    mapList));
             }
             else
             {
