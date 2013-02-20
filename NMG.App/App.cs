@@ -155,7 +155,6 @@ namespace NHibernateMappingGenerator
                 nameSpaceTextBox.Text = applicationSettings.NameSpace;
                 namespaceMapTextBox.Text = applicationSettings.NameSpaceMap;
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
-                fluentMappingOption.Checked = applicationSettings.IsFluent;
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
                 vbRadioButton.Checked = applicationSettings.Language == Language.VB;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
@@ -197,9 +196,12 @@ namespace NHibernateMappingGenerator
             {
                 // Default application settings
                 autoPropertyRadioBtn.Checked = true;
-                sameAsDBRadioButton.Checked = true;
+                pascalCasedRadioButton.Checked = true;
                 cSharpRadioButton.Checked = true;
-                fluentMappingOption.Checked = true;
+                byCodeMappingOption.Checked = true;
+                includeForeignKeysCheckBox.Checked = true;
+                useLazyLoadingCheckBox.Checked = true;
+
                 comboBoxForeignCollection.Text = "IList";
                 
                 CaptureApplicationSettings();
