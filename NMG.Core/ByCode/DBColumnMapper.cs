@@ -189,7 +189,22 @@ namespace NMG.Core.ByCode
         public string Bag(HasMany hasMany, ITextFormatter formatter)
         {
             var builder = new StringBuilder();
-            builder.Append("\t\t\tBag<" + formatter.FormatSingular(hasMany.Reference) + ">(x => x." + formatter.FormatPlural(hasMany.Reference) + ", colmap =>  { colmap.Key(x => x.Column(\"" + hasMany.ReferenceColumn + "\"));  }, map => { map.OneToMany(x => x.Class(typeof(" + formatter.FormatSingular(hasMany.Reference) + "))); });");
+            if (_language == Language.CSharp)
+            {
+                builder.AppendFormat(
+                    "\t\t\tBag<{0}>(x => x.{1}, colmap =>  {{ colmap.Key(x => x.Column(\"{2}\"));  }}, map => {{ map.OneToMany(x => x.Class(typeof({0}))); }});",
+                    formatter.FormatSingular(hasMany.Reference), 
+                    formatter.FormatPlural(hasMany.Reference),
+                    hasMany.ReferenceColumn);
+            }
+            else if (_language == Language.VB)
+            {
+                builder.AppendFormat(
+                    "\t\t\tBag(Of {0})(Function(x) x.{1}, Sub(colmap) colmap.Key(Function(x) x.Column(\"{2}\")), Sub(map) map.OneToMany(Function(x) x.[Class](GetType({0}))))",
+                    formatter.FormatSingular(hasMany.Reference),
+                    formatter.FormatPlural(hasMany.Reference),
+                    hasMany.ReferenceColumn);
+            }
             return builder.ToString();
         }
         
@@ -198,32 +213,67 @@ namespace NMG.Core.ByCode
             var builder = new StringBuilder();
             if (fk.Columns.Count() == 1)
             {
-                builder.Append("\t\t\tManyToOne<" + formatter.FormatSingular(fk.References) + ">(x => x." +
-                               formatter.FormatSingular(fk.UniquePropertyName) + ", map => { map.Column(\"" +
-                               fk.Columns.First().Name + "\"); });");
+                if (_language == Language.CSharp)
+                {
+                    builder.AppendFormat("\t\t\tManyToOne<{0}>(x => x.{1}, map => {{ map.Column(\"{2}\"); }});",
+                                         formatter.FormatSingular(fk.References),
+                                         formatter.FormatSingular(fk.UniquePropertyName), 
+                                         fk.Columns.First().Name);
+                }
+                else if (_language == Language.VB)
+                {
+                    builder.AppendFormat("\t\t\tManyToOne(Of {0})(Function(x) x.{1}, Sub(map) map.Column(\"{2}\"))",
+                                         formatter.FormatSingular(fk.References),
+                                         formatter.FormatSingular(fk.UniquePropertyName), 
+                                         fk.Columns.First().Name);
+                }
             }
             else
             {
                 // Composite Foreign Key
                 // eg ManyToOne<TesteHeader>(x => x.TesteHeader, map => map.Columns(new Action<IColumnMapper>[] { x => x.Name("HeadIdOne"), x => x.Name("HeadIdTwo") }));
-
-                builder.AppendFormat("\t\t\tManyToOne<{0}>(x => x.{1}, map => map.Columns(new Action<IColumnMapper>[] {{ ",
-                                     formatter.FormatSingular(fk.References),
-                                     formatter.FormatSingular(fk.UniquePropertyName));
-
-                var lastColumn = fk.Columns.Last();
-                foreach (var column in fk.Columns)
+                if (_language == Language.CSharp)
                 {
-                    builder.AppendFormat("x.Name(\"{0}\")",column.Name);
+                    builder.AppendFormat(
+                        "\t\t\tManyToOne<{0}>(x => x.{1}, map => map.Columns(new Action<IColumnMapper>[] {{ ",
+                        formatter.FormatSingular(fk.References),
+                        formatter.FormatSingular(fk.UniquePropertyName));
 
-                    var isLastColumn = lastColumn == column;
-                    if (!isLastColumn)
+                    var lastColumn = fk.Columns.Last();
+                    foreach (var column in fk.Columns)
                     {
-                        builder.Append(", ");
-                    }
-                }
+                        builder.AppendFormat("x.Name(\"{0}\")", column.Name);
 
-                builder.Append(" }))");
+                        var isLastColumn = lastColumn == column;
+                        if (!isLastColumn)
+                        {
+                            builder.Append(", ");
+                        }
+                    }
+
+                    builder.Append(" }))");
+                }
+                else if (_language == Language.VB)
+                {
+                    builder.AppendFormat(
+                        "\t\t\tManyToOne(Of {0})(Function(x) x.{1}, Sub(map) map.Columns(new Action<IColumnMapper>[] {{",
+                        formatter.FormatSingular(fk.References),
+                        formatter.FormatSingular(fk.UniquePropertyName));
+
+                    var lastColumn = fk.Columns.Last();
+                    foreach (var column in fk.Columns)
+                    {
+                        builder.AppendFormat("x.Name(\"{0}\")", column.Name);
+
+                        var isLastColumn = lastColumn == column;
+                        if (!isLastColumn)
+                        {
+                            builder.Append(", ");
+                        }
+                    }
+
+                    builder.Append(" }))");
+                }
             }
             return builder.ToString();
         }

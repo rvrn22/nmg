@@ -157,6 +157,7 @@ namespace NHibernateMappingGenerator
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
+                vbRadioButton.Checked = applicationSettings.Language == Language.VB;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
                 folderTextBox.Text = applicationSettings.FolderPath;
                 textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
