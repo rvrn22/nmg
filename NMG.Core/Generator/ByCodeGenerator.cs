@@ -21,7 +21,8 @@ namespace NMG.Core.Generator
         
         public override void Generate(bool writeToFile = true)
         {
-            var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name), "Map");
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
             
@@ -66,7 +67,7 @@ namespace NMG.Core.Generator
 
             constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));
 
-            var mapper = new DBColumnMapper(appPrefs.Language);
+            var mapper = new DBColumnMapper(appPrefs);
 
             // Id or ComposedId Map 
             if (Table.PrimaryKey != null)

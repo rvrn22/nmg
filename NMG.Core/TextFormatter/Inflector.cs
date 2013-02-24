@@ -298,6 +298,8 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static string MakeInitialLowerCase(this string word)
         {
+            if (string.IsNullOrEmpty(word)) return word;
+
             return String.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
         }
 

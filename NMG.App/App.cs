@@ -46,6 +46,8 @@ namespace NHibernateMappingGenerator
             {
                 // Update map and domain code to reflect changes in grid.
                 GenerateAndDisplayCode(_currentTable);
+
+                ToggleColumnsBasedOnAppSettings(applicationSettings);
             }
         }
 
@@ -231,6 +233,24 @@ namespace NHibernateMappingGenerator
             var cSharpTypeColumn = dbTableDetailsGridView.Columns["cSharpType"];
             if (cSharpTypeColumn != null)
                 cSharpTypeColumn.Visible = !appSettings.IsByCode;
+
+            var fkTableNameColumn = dbTableDetailsGridView.Columns["ForeignKeyTableName"];
+            var fkColNameColumn = dbTableDetailsGridView.Columns["ForeignKeyColumnName"];
+            if (fkColNameColumn != null && fkTableNameColumn != null)
+            {
+                if (_currentTable.ForeignKeys.Count != 0)
+                {
+                    // Disable foreign key columns
+                    fkTableNameColumn.ReadOnly = false;
+                    fkColNameColumn.ReadOnly = false;
+                }
+                else
+                {
+                    // Enable foreign key columns
+                    fkTableNameColumn.ReadOnly = true;
+                    fkColNameColumn.ReadOnly = true;
+                }
+            }
         }
 
         private void SetCodeControlFormatting(ApplicationSettings appSettings)

@@ -51,7 +51,7 @@ namespace NMG.Core.Generator
                                              Type = new CodeTypeReference(type)
                                          };
 
-            string fieldName = propertyName.MakeFirstCharLowerCase();
+            string fieldName = "_" + propertyName.MakeFirstCharLowerCase();
             var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
                                                                                 fieldName);
             var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
@@ -75,7 +75,7 @@ namespace NMG.Core.Generator
                 Type = new CodeTypeReference(typeName)
             };
 
-            string fieldName = propertyName.MakeFirstCharLowerCase();
+            string fieldName = "_" + propertyName.MakeFirstCharLowerCase();
             var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
                                                                                 fieldName);
             var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
@@ -105,7 +105,7 @@ namespace NMG.Core.Generator
             if (setFieldAsNullable)
                 codeMemberProperty.Type.TypeArguments.Add(type);
 
-            string fieldName = propertyName.MakeFirstCharLowerCase();
+            string fieldName = "_" + propertyName.MakeFirstCharLowerCase();
             var codeFieldReferenceExpression = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
                                                                                 fieldName);
             var returnStatement = new CodeMethodReturnStatement(codeFieldReferenceExpression);
@@ -169,26 +169,20 @@ namespace NMG.Core.Generator
             return codeMemberProperty;
         }
 
-        public CodeMemberField CreateField(Type type, string fieldName)
-        {
-            var codeMemberField = new CodeMemberField(type, fieldName);
-            return codeMemberField;
-        }
-
         public CodeMemberField CreateField(string typeName, string fieldName)
         {
             var codeMemberField = new CodeMemberField(typeName, fieldName);
             return codeMemberField;
         }
 
-        public CodeMemberField CreateField(Type type, string fieldName, bool isFirstCharLowerCase)
+        public CodeMemberField CreateField(Type type, string fieldName)
         {
             string firstCharLowerCaseFieldName = fieldName.MakeFirstCharLowerCase();
             var codeMemberField = new CodeMemberField(type, firstCharLowerCaseFieldName);
             return codeMemberField;
         }
 
-        public CodeMemberField CreateField(Type type, string fieldName, bool isFirstCharLowerCase, bool fieldIsNull)
+        public CodeMemberField CreateField(Type type, string fieldName, bool fieldIsNull)
         {
             bool setFieldAsNullable = fieldIsNull && IsNullable(type);
             string firstCharLowerCaseFieldName = fieldName.MakeFirstCharLowerCase();

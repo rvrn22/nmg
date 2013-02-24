@@ -44,7 +44,7 @@ from information_schema.columns c
 			and NOT tc.constraint_type IN ('CHECK','UNIQUE')
 		)
 	) on (
-		c.table_schema = ccu.table_schema and ccu.table_schema = 'dbo'
+		c.table_schema = ccu.table_schema
 		and c.table_name = ccu.table_name
 		and c.column_name = ccu.column_name
 	)
@@ -237,7 +237,8 @@ SELECT
     ,KCU2.CONSTRAINT_NAME AS REFERENCED_CONSTRAINT_NAME 
     ,KCU2.TABLE_NAME AS REFERENCED_TABLE_NAME 
     ,KCU2.COLUMN_NAME AS REFERENCED_COLUMN_NAME 
-    ,KCU2.ORDINAL_POSITION AS REFERENCED_ORDINAL_POSITION 
+    ,KCU2.ORDINAL_POSITION AS REFERENCED_ORDINAL_POSITION
+    ,KU.Column_Name as REFERENCED_TABLE_PK_COL
 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS AS RC 
 
 LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU1 
@@ -250,7 +251,14 @@ LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU2
     AND KCU2.CONSTRAINT_SCHEMA = RC.UNIQUE_CONSTRAINT_SCHEMA 
     AND KCU2.CONSTRAINT_NAME = RC.UNIQUE_CONSTRAINT_NAME 
     AND KCU2.ORDINAL_POSITION = KCU1.ORDINAL_POSITION 
-   WHERE KCU1.CONSTRAINT_NAME = '{0}'",
+    
+LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
+	ON TC.TABLE_NAME = KCU2.TABLE_NAME AND
+	   TC.TABLE_SCHEMA = KCU2.TABLE_SCHEMA
+LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU 
+	ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND 
+	   TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME
+WHERE KCU1.CONSTRAINT_NAME = '{0}'",
 			                constraintName);
 
 			            using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
@@ -258,7 +266,9 @@ LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU2
 			                while (sqlDataReader.Read())
 			                {
 			                    referencedTableName = sqlDataReader["REFERENCED_TABLE_NAME"].ToString();
-			                    referencedColumnName = sqlDataReader["REFERENCED_COLUMN_NAME"].ToString();
+                                var referencedPkColumnName = sqlDataReader["REFERENCED_TABLE_PK_COL"].ToString();
+			                    var refColumnName = sqlDataReader["REFERENCED_COLUMN_NAME"].ToString();
+                                referencedColumnName = refColumnName == referencedPkColumnName ? string.Empty : refColumnName;
 			                }
 			            }
 			        }

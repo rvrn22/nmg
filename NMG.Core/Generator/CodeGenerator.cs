@@ -8,6 +8,7 @@ using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using NMG.Core.Domain;
 using System.Text;
+using NMG.Core.TextFormatter;
 
 namespace NMG.Core.Generator
 {
@@ -25,7 +26,8 @@ namespace NMG.Core.Generator
 
         public override void Generate(bool writeToFile = true)
         {
-            var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name));
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name));
             var compileUnit = GetCompileUnit(className);
 
             if (writeToFile)
@@ -69,19 +71,20 @@ namespace NMG.Core.Generator
             if (Table.HasManyRelationships.Count == 0)
                 return compileUnit;
 
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
             var constructorStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
             {
                 
                 if (appPrefs.Language == Language.CSharp)
                 {
-                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}<{1}{2}>", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix,Formatter.FormatSingular(hasMany.Reference)),Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
-                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}<{1}{2}>", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference)), Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
+                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference))));
                 }
                 else if (appPrefs.Language == Language.VB)
                 {
-                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}(Of {1}{2})", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference)), Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
-                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = New {1}(Of {2}{3})()", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, Formatter.FormatSingular(hasMany.Reference))));
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}(Of {1}{2})", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference)), Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
+                    constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = New {1}(Of {2}{3})()", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference))));
                 }
             }
 
@@ -107,51 +110,72 @@ namespace NMG.Core.Generator
             }
         }
 
-        private void CreateFields(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
+        private void CreateFields(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper,
+                                  CodeTypeDeclaration newType)
         {
-            foreach (var pk in Table.PrimaryKey.Columns)
+            if (Table.PrimaryKey != null)
             {
-                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(pk.Name), true));
+                foreach (var pk in Table.PrimaryKey.Columns)
+                {
+                    var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength,
+                                                             pk.DataPrecision, pk.DataScale);
+                    newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(pk.Name),
+                                                                         true));
+                }
             }
+
+            var pascalCaseTextFormatter = new TextFormatter.PascalCaseTextFormatter();
 
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                newType.Members.Add(codeGenerationHelper.CreateField(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName)));
+                var fieldName = Formatter.FormatSingular(fk.UniquePropertyName);
+                var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
+                newType.Members.Add(codeGenerationHelper.CreateField(typeName, fieldName));
             }
 
-            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
                 if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
                     continue;
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(column.Name), true, column.IsNullable));
+                var fieldName = Formatter.FormatText(column.Name);
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, fieldName, column.IsNullable));
             }
         }
 
         private void CreateFullProperties(CodeGenerationHelper codeGenerationHelper, DataTypeMapper mapper, CodeTypeDeclaration newType)
         {
-            foreach (var pk in Table.PrimaryKey.Columns)
+            var camelCaseFormatter = new CamelCaseTextFormatter();
+            if (Table.PrimaryKey != null)
             {
-                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(pk.Name), true));
-                newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(pk.Name), appPrefs.UseLazy));
+                
+                foreach (var pk in Table.PrimaryKey.Columns)
+                {
+                    var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength,
+                                                             pk.DataPrecision, pk.DataScale);
+                    newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(pk.Name),
+                                                                         true));
+                    newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(pk.Name),
+                                                                            appPrefs.UseLazy));
+                }
             }
 
+            var pascalCaseFormatter = new PascalCaseTextFormatter();
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                newType.Members.Add(codeGenerationHelper.CreateField(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName)));
-                newType.Members.Add(codeGenerationHelper.CreateProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
+                var typeName = appPrefs.ClassNamePrefix + pascalCaseFormatter.FormatSingular(fk.References);
+                newType.Members.Add(codeGenerationHelper.CreateField(typeName, "_" + camelCaseFormatter.FormatSingular(fk.UniquePropertyName)));
+                newType.Members.Add(codeGenerationHelper.CreateProperty(typeName, Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
             }
 
-            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
                 if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
                     continue;
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, Formatter.FormatText(column.Name), true, column.IsNullable));
+                newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(column.Name), column.IsNullable));
                 newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
             }
         }
@@ -169,14 +193,16 @@ namespace NMG.Core.Generator
                                                                                 appPrefs.UseLazy));
                 }
             }
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
 
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(appPrefs.ClassNamePrefix + Formatter.FormatSingular(fk.References), Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
+                var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
+                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(typeName, Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
             }
 
-            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true))
+            foreach (var column in Table.Columns.Where(x => x.IsPrimaryKey != true && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
                 if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
                     continue;

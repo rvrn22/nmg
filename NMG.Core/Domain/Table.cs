@@ -48,6 +48,7 @@ namespace NMG.Core.Domain
 		            fk.UniquePropertyName = fk.Columns.First().Name;
 		        }
 		    }
+
     	}
     }
 
