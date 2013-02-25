@@ -37,6 +37,14 @@ namespace NHibernateMappingGenerator
             this.connectBtn = new System.Windows.Forms.Button();
             this.sequencesComboBox = new System.Windows.Forms.ComboBox();
             this.dbTableDetailsGridView = new System.Windows.Forms.DataGridView();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.IsIdentity = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderTextBox = new System.Windows.Forms.TextBox();
             this.generateButton = new System.Windows.Forms.Button();
@@ -97,7 +105,6 @@ namespace NHibernateMappingGenerator
             this.useLazyLoadingCheckBox = new System.Windows.Forms.CheckBox();
             this.includeForeignKeysCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.nhFluentMappingStyle = new System.Windows.Forms.RadioButton();
             this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
             this.hbmMappingOption = new System.Windows.Forms.RadioButton();
@@ -115,14 +122,6 @@ namespace NHibernateMappingGenerator
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cSharpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.isPrimaryKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.isForeignKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.isNullable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.IsIdentity = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.isUniqueKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -202,6 +201,52 @@ namespace NHibernateMappingGenerator
             this.dbTableDetailsGridView.RowHeadersVisible = false;
             this.dbTableDetailsGridView.Size = new System.Drawing.Size(913, 357);
             this.dbTableDetailsGridView.TabIndex = 5;
+            // 
+            // columnName
+            // 
+            this.columnName.DataPropertyName = "Name";
+            this.columnName.HeaderText = "Column Name";
+            this.columnName.Name = "columnName";
+            this.columnName.ReadOnly = true;
+            // 
+            // columnDataType
+            // 
+            this.columnDataType.HeaderText = "Data Type";
+            this.columnDataType.Name = "columnDataType";
+            this.columnDataType.ReadOnly = true;
+            // 
+            // cSharpType
+            // 
+            this.cSharpType.HeaderText = "C# Type";
+            this.cSharpType.Name = "cSharpType";
+            this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // isPrimaryKey
+            // 
+            this.isPrimaryKey.HeaderText = "Primary Key";
+            this.isPrimaryKey.Name = "isPrimaryKey";
+            // 
+            // isForeignKey
+            // 
+            this.isForeignKey.HeaderText = "Foreign Key";
+            this.isForeignKey.Name = "isForeignKey";
+            // 
+            // isNullable
+            // 
+            this.isNullable.HeaderText = "Nullable";
+            this.isNullable.Name = "isNullable";
+            // 
+            // IsIdentity
+            // 
+            this.IsIdentity.DataPropertyName = "IsIdentity";
+            this.IsIdentity.HeaderText = "Identity";
+            this.IsIdentity.Name = "IsIdentity";
+            // 
+            // isUniqueKey
+            // 
+            this.isUniqueKey.HeaderText = "Unique Key";
+            this.isUniqueKey.Name = "isUniqueKey";
             // 
             // folderTextBox
             // 
@@ -839,28 +884,16 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.nhFluentMappingStyle);
             this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
             this.groupBox3.Controls.Add(this.byCodeMappingOption);
             this.groupBox3.Location = new System.Drawing.Point(527, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 140);
+            this.groupBox3.Size = new System.Drawing.Size(217, 140);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Mapping Style";
-            // 
-            // nhFluentMappingStyle
-            // 
-            this.nhFluentMappingStyle.AutoSize = true;
-            this.nhFluentMappingStyle.Location = new System.Drawing.Point(6, 88);
-            this.nhFluentMappingStyle.Name = "nhFluentMappingStyle";
-            this.nhFluentMappingStyle.Size = new System.Drawing.Size(135, 17);
-            this.nhFluentMappingStyle.TabIndex = 9;
-            this.nhFluentMappingStyle.TabStop = true;
-            this.nhFluentMappingStyle.Text = "NH 3.2 Fluent Mapping";
-            this.nhFluentMappingStyle.UseVisualStyleBackColor = true;
             // 
             // castleMappingOption
             // 
@@ -898,12 +931,12 @@ namespace NHibernateMappingGenerator
             // byCodeMappingOption
             // 
             this.byCodeMappingOption.AutoSize = true;
-            this.byCodeMappingOption.Location = new System.Drawing.Point(6, 110);
+            this.byCodeMappingOption.Location = new System.Drawing.Point(6, 88);
             this.byCodeMappingOption.Name = "byCodeMappingOption";
-            this.byCodeMappingOption.Size = new System.Drawing.Size(109, 17);
+            this.byCodeMappingOption.Size = new System.Drawing.Size(207, 17);
             this.byCodeMappingOption.TabIndex = 10;
             this.byCodeMappingOption.TabStop = true;
-            this.byCodeMappingOption.Text = "By Code Mapping";
+            this.byCodeMappingOption.Text = "By Code Mapping (NH3.2 Loquacious)";
             this.byCodeMappingOption.UseVisualStyleBackColor = true;
             // 
             // groupBox2
@@ -1044,52 +1077,6 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
-            // columnName
-            // 
-            this.columnName.DataPropertyName = "Name";
-            this.columnName.HeaderText = "Column Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
-            // 
-            // columnDataType
-            // 
-            this.columnDataType.HeaderText = "Data Type";
-            this.columnDataType.Name = "columnDataType";
-            this.columnDataType.ReadOnly = true;
-            // 
-            // cSharpType
-            // 
-            this.cSharpType.HeaderText = "C# Type";
-            this.cSharpType.Name = "cSharpType";
-            this.cSharpType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.cSharpType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // isPrimaryKey
-            // 
-            this.isPrimaryKey.HeaderText = "Primary Key";
-            this.isPrimaryKey.Name = "isPrimaryKey";
-            // 
-            // isForeignKey
-            // 
-            this.isForeignKey.HeaderText = "Foreign Key";
-            this.isForeignKey.Name = "isForeignKey";
-            // 
-            // isNullable
-            // 
-            this.isNullable.HeaderText = "Nullable";
-            this.isNullable.Name = "isNullable";
-            // 
-            // IsIdentity
-            // 
-            this.IsIdentity.DataPropertyName = "IsIdentity";
-            this.IsIdentity.HeaderText = "Identity";
-            this.IsIdentity.Name = "IsIdentity";
-            // 
-            // isUniqueKey
-            // 
-            this.isUniqueKey.HeaderText = "Unique Key";
-            this.isUniqueKey.Name = "isUniqueKey";
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1194,7 +1181,6 @@ namespace NHibernateMappingGenerator
         private Panel pOracleOnlyOptions;
         private Button cancelButton;
         private CheckBox wcfDataContractCheckBox;
-        private RadioButton nhFluentMappingStyle;
         private ListBox tablesListBox;
         private Label labelInheritence;
         private TextBox textBoxInheritence;

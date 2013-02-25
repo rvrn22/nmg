@@ -114,11 +114,6 @@ namespace NHibernateMappingGenerator
             get { return vbRadioButton.Checked ? Language.VB : Language.CSharp; }
         }
 
-        public bool IsNhFluent
-        {
-            get { return nhFluentMappingStyle.Checked; }
-        }
-
         public bool IsFluent
         {
             get { return fluentMappingOption.Checked; }
@@ -171,7 +166,6 @@ namespace NHibernateMappingGenerator
                 includeForeignKeysCheckBox.Checked = applicationSettings.IncludeForeignKeys;
 
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
-                nhFluentMappingStyle.Checked = applicationSettings.IsNhFluent;
                 castleMappingOption.Checked = applicationSettings.IsCastle;
                 byCodeMappingOption.Checked = applicationSettings.IsByCode;
 
@@ -309,7 +303,6 @@ namespace NHibernateMappingGenerator
             applicationSettings.FieldPrefixRemovalList = applicationSettings.FieldPrefixRemovalList;
             applicationSettings.FieldNamingConvention = GetFieldNamingConvention();
             applicationSettings.Prefix = prefixTextBox.Text;
-            applicationSettings.IsNhFluent = IsNhFluent;
             applicationSettings.IsCastle = IsCastle;
             applicationSettings.ClassNamePrefix = textBoxClassNamePrefix.Text;
             applicationSettings.GeneratePartialClasses = partialClassesCheckBox.Checked;
@@ -687,7 +680,6 @@ namespace NHibernateMappingGenerator
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
-                                                 IsNhFluent = IsNhFluent,
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = appSettings.GeneratePartialClasses,
                                                  GenerateWcfDataContract = appSettings.GenerateWcfContracts,

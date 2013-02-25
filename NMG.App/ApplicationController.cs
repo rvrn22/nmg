@@ -10,7 +10,6 @@ namespace NHibernateMappingGenerator
         private readonly CastleGenerator castleGenerator;
         private readonly CodeGenerator codeGenerator;
         private readonly FluentGenerator fluentGenerator;
-        private readonly NHFluentGenerator nhFluentGenerator;
         private readonly MappingGenerator mappingGenerator;
         private readonly ContractGenerator contractGenerator;
         private readonly ByCodeGenerator byCodeGenerator;
@@ -20,7 +19,6 @@ namespace NHibernateMappingGenerator
             this.applicationPreferences = applicationPreferences;
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
-            nhFluentGenerator = new NHFluentGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
             contractGenerator = new ContractGenerator(applicationPreferences, table);
             byCodeGenerator = new ByCodeGenerator(applicationPreferences, table);
@@ -42,12 +40,7 @@ namespace NHibernateMappingGenerator
             codeGenerator.Generate(writeToFile);
             GeneratedDomainCode = codeGenerator.GeneratedCode;
 
-            if (applicationPreferences.IsNhFluent)
-            {
-                nhFluentGenerator.Generate(writeToFile);
-                GeneratedMapCode = nhFluentGenerator.GeneratedCode;
-            }
-            else if (applicationPreferences.IsFluent)
+            if (applicationPreferences.IsFluent)
             {
                 fluentGenerator.Generate(writeToFile);
                 GeneratedMapCode = fluentGenerator.GeneratedCode;
