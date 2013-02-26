@@ -228,7 +228,7 @@ namespace NHibernateMappingGenerator
             if (cSharpTypeColumn != null)
                 cSharpTypeColumn.Visible = !appSettings.IsByCode;
 
-            var fkTableNameColumn = dbTableDetailsGridView.Columns["ForeignKeyTableName"];
+            /*var fkTableNameColumn = dbTableDetailsGridView.Columns["ForeignKeyTableName"];
             var fkColNameColumn = dbTableDetailsGridView.Columns["ForeignKeyColumnName"];
             if (fkColNameColumn != null && fkTableNameColumn != null)
             {
@@ -244,7 +244,7 @@ namespace NHibernateMappingGenerator
                     fkTableNameColumn.ReadOnly = true;
                     fkColNameColumn.ReadOnly = true;
                 }
-            }
+            }*/
         }
 
         private void SetCodeControlFormatting(ApplicationSettings appSettings)
@@ -411,7 +411,7 @@ namespace NHibernateMappingGenerator
             toolStripStatusLabel1.Text = string.Empty;
             try
             {
-                dbTableDetailsGridView.AutoGenerateColumns = true;
+                //dbTableDetailsGridView.AutoGenerateColumns = true;
                 _currentTable = selectedTable;
                 gridData = metadataReader.GetTableDetails(selectedTable, ownersComboBox.SelectedItem.ToString()) ??
                            new List<Column>();
