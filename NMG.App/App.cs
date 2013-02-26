@@ -156,6 +156,7 @@ namespace NHibernateMappingGenerator
                 vbRadioButton.Checked = applicationSettings.Language == Language.VB;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
                 folderTextBox.Text = applicationSettings.FolderPath;
+                domainFolderTextBox.Text = applicationSettings.DomainFolderPath;
                 textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
                 comboBoxForeignCollection.Text = applicationSettings.ForeignEntityCollectionType;
                 textBoxClassNamePrefix.Text = applicationSettings.ClassNamePrefix;
@@ -298,6 +299,7 @@ namespace NHibernateMappingGenerator
             applicationSettings.IsFluent = fluentMappingOption.Checked;
             applicationSettings.IsAutoProperty = autoPropertyRadioBtn.Checked;
             applicationSettings.FolderPath = folderTextBox.Text;
+            applicationSettings.DomainFolderPath = domainFolderTextBox.Text;
             applicationSettings.InheritenceAndInterfaces = textBoxInheritence.Text;
             applicationSettings.ForeignEntityCollectionType = comboBoxForeignCollection.Text;
             applicationSettings.FieldPrefixRemovalList = applicationSettings.FieldPrefixRemovalList;
@@ -531,6 +533,16 @@ namespace NHibernateMappingGenerator
             }
         }
 
+        private void domainFolderSelectButton_Click(object sender, EventArgs e)
+        {
+            var diagResult = folderBrowserDialog.ShowDialog();
+
+            if (diagResult == DialogResult.OK)
+            {
+                domainFolderTextBox.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
         private void GenerateClicked(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = string.Empty;
@@ -658,18 +670,28 @@ namespace NHibernateMappingGenerator
             {
                 Directory.CreateDirectory(folderPath);
             }
+            var domainFolderPath = AddSlashToFolderPath(domainFolderTextBox.Text);
             if (appSettings.GenerateInFolders)
             {
                 Directory.CreateDirectory(folderPath + "Contract");
                 Directory.CreateDirectory(folderPath + "Domain");
                 Directory.CreateDirectory(folderPath + "Mapping");
+                domainFolderPath = folderPath;
             }
-
+            else
+            {
+                // Domain folder is specified by user
+                if (!Directory.Exists(domainFolderPath))
+                {
+                    Directory.CreateDirectory(domainFolderPath);
+                }
+            }
 
             var applicationPreferences = new ApplicationPreferences
                                              {
                                                  ServerType = _currentConnection.Type,
                                                  FolderPath = folderPath,
+                                                 DomainFolderPath = domainFolderPath,
                                                  TableName = tableName.Name,
                                                  NameSpaceMap = namespaceMapTextBox.Text,
                                                  NameSpace = nameSpaceTextBox.Text,

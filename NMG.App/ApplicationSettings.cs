@@ -36,6 +36,8 @@ namespace NHibernateMappingGenerator
 
         public string FolderPath { get; set; }
 
+        public string DomainFolderPath { get; set; }
+
         public string ForeignEntityCollectionType { get; set; }
 
         public string InheritenceAndInterfaces { get; set; }

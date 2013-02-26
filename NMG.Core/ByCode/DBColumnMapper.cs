@@ -200,7 +200,7 @@ namespace NMG.Core.ByCode
             if (_language == Language.CSharp)
             {
                 builder.AppendFormat(
-                    "\t\t\tBag(x => x.{0}, colmap =>  {{ colmap.Key(x => x.Column(\"{1}\"));  }}, map => {{ map.OneToMany(); }});",
+                    "\t\t\tBag(x => x.{0}, colmap =>  {{ colmap.Key(x => x.Column(\"{1}\")); colmap.Inverse(true); }}, map => {{ map.OneToMany(); }});",
                     formatter.FormatPlural(hasMany.Reference),
                     hasMany.ReferenceColumn);
             }

@@ -13,7 +13,9 @@ namespace NMG.Core.Generator
     {
         protected Language language;
 
-        protected AbstractCodeGenerator(string filePath, string additionalFolder, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table, ApplicationPreferences appPrefs)
+        protected AbstractCodeGenerator(
+            string filePath, string additionalFolder, string tableName, string nameSpace, string assemblyName, string sequenceName, 
+            Table table, ApplicationPreferences appPrefs)
             : base(filePath, additionalFolder, tableName, nameSpace, assemblyName, sequenceName, table, appPrefs)
         {
         }

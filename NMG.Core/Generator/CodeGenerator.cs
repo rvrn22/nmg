@@ -18,7 +18,7 @@ namespace NMG.Core.Generator
         private readonly Language language;
 
         public CodeGenerator(ApplicationPreferences appPrefs, Table table)
-            : base(appPrefs.FolderPath, "Domain", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
+            : base(appPrefs.DomainFolderPath, "Domain", appPrefs.TableName, appPrefs.NameSpace, appPrefs.AssemblyName, appPrefs.Sequence, table, appPrefs)
         {
             this.appPrefs = appPrefs;
             language = appPrefs.Language;
