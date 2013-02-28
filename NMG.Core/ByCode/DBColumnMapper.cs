@@ -160,7 +160,7 @@ namespace NMG.Core.ByCode
                     switch (mapList.Count)
                     {
                         case 0:
-                            outerStrBuilder.AppendFormat("{0}(x => x.{1})", byCodeProperty, propertyName);
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1});", byCodeProperty, propertyName);
                             break;
                         case 1:
                             outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {2});", byCodeProperty, propertyName, mapList.First());

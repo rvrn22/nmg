@@ -21,7 +21,7 @@ namespace NMG.Core.Generator
 
         public override void Generate(bool writeToFile = true)
         {
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
             var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
@@ -40,7 +40,7 @@ namespace NMG.Core.Generator
             var newType = compileUnit.Namespaces[0].Types[0];
             
             newType.IsPartial = appPrefs.GeneratePartialClasses;
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
             newType.BaseTypes.Add(string.Format("ClassMap<{0}{1}>", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name)));
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};

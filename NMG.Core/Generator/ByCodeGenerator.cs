@@ -22,6 +22,8 @@ namespace NMG.Core.Generator
         public override void Generate(bool writeToFile = true)
         {
             var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            pascalCaseTextFormatter.PrefixRemovalList = appPrefs.FieldPrefixRemovalList;
+
             var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);

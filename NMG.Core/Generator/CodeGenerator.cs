@@ -26,7 +26,8 @@ namespace NMG.Core.Generator
 
         public override void Generate(bool writeToFile = true)
         {
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
+
             var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name));
             var compileUnit = GetCompileUnit(className);
 
@@ -71,7 +72,7 @@ namespace NMG.Core.Generator
             if (Table.HasManyRelationships.Count == 0)
                 return compileUnit;
 
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
             var constructorStatements = new CodeStatementCollection();
             foreach (var hasMany in Table.HasManyRelationships)
             {
@@ -161,11 +162,11 @@ namespace NMG.Core.Generator
                 }
             }
 
-            var pascalCaseFormatter = new PascalCaseTextFormatter();
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
-                var typeName = appPrefs.ClassNamePrefix + pascalCaseFormatter.FormatSingular(fk.References);
+                var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
                 newType.Members.Add(codeGenerationHelper.CreateField(typeName, "_" + camelCaseFormatter.FormatSingular(fk.UniquePropertyName)));
                 newType.Members.Add(codeGenerationHelper.CreateProperty(typeName, Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
             }
@@ -193,8 +194,7 @@ namespace NMG.Core.Generator
                                                                                 appPrefs.UseLazy));
                 }
             }
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
-
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
             // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
