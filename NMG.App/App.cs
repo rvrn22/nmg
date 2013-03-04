@@ -154,6 +154,9 @@ namespace NHibernateMappingGenerator
                 assemblyNameTextBox.Text = applicationSettings.AssemblyName;
                 cSharpRadioButton.Checked = applicationSettings.Language == Language.CSharp;
                 vbRadioButton.Checked = applicationSettings.Language == Language.VB;
+                noValidationRadioButton.Checked = applicationSettings.ValidationStyle == ValidationStyle.None;
+                nhibernateValidationRadioButton.Checked = applicationSettings.ValidationStyle == ValidationStyle.Nhibernate;
+                dataAnnotationsRadioButton.Checked = applicationSettings.ValidationStyle == ValidationStyle.Microsoft;
                 autoPropertyRadioBtn.Checked = applicationSettings.IsAutoProperty;
                 folderTextBox.Text = applicationSettings.FolderPath;
                 domainFolderTextBox.Text = applicationSettings.DomainFolderPath;
@@ -296,6 +299,12 @@ namespace NHibernateMappingGenerator
             applicationSettings.NameSpaceMap = namespaceMapTextBox.Text;
             applicationSettings.AssemblyName = assemblyNameTextBox.Text;
             applicationSettings.Language = cSharpRadioButton.Checked ? Language.CSharp : Language.VB;
+
+            var validationStyle = ValidationStyle.None;
+            if (dataAnnotationsRadioButton.Checked) validationStyle = ValidationStyle.Microsoft;
+            if (nhibernateValidationRadioButton.Checked) validationStyle = ValidationStyle.Nhibernate;
+
+            applicationSettings.ValidationStyle = validationStyle;
             applicationSettings.IsFluent = fluentMappingOption.Checked;
             applicationSettings.IsAutoProperty = autoPropertyRadioBtn.Checked;
             applicationSettings.FolderPath = folderTextBox.Text;
@@ -711,10 +720,11 @@ namespace NHibernateMappingGenerator
                                                  GenerateInFolders = appSettings.GenerateInFolders,
                                                  ClassNamePrefix = appSettings.ClassNamePrefix,
                                                  IsByCode = appSettings.IsByCode,
-                                                 UseLazy = useLazyLoadingCheckBox.Checked,
+                                                 UseLazy = appSettings.UseLazy,
                                                  FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,
-                                                 IncludeForeignKeys = includeForeignKeysCheckBox.Checked,
-                                                 IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked
+                                                 IncludeForeignKeys = appSettings.IncludeForeignKeys,
+                                                 IncludeLengthAndScale = appSettings.IncludeLengthAndScale,
+                                                 ValidatorStyle = appSettings.ValidationStyle
                                              };
 
             return applicationPreferences;

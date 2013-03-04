@@ -167,7 +167,7 @@ namespace NMG.Core.Generator
             foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
             {
                 var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
-                newType.Members.Add(codeGenerationHelper.CreateField(typeName, "_" + camelCaseFormatter.FormatSingular(fk.UniquePropertyName)));
+                newType.Members.Add(codeGenerationHelper.CreateField(typeName, "_" + camelCaseFormatter.FormatSingular(fk.UniquePropertyName)));              
                 newType.Members.Add(codeGenerationHelper.CreateProperty(typeName, Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
             }
 
@@ -177,7 +177,36 @@ namespace NMG.Core.Generator
                     continue;
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                 newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(column.Name), column.IsNullable));
-                newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
+                var property = codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy);
+                AttachValidatorAttributes(ref property, column);
+                newType.Members.Add(property);
+            }
+        }
+
+        private void AttachValidatorAttributes(ref CodeMemberProperty property, Column column)
+        {
+            switch (appPrefs.ValidatorStyle)
+            {
+                case ValidationStyle.Microsoft:
+                    if (!column.IsNullable)
+                    {
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration("Required"));
+                    }
+                    if (column.DataLength.HasValue & column.DataLength > 0 & column.MappedDataType == "System.String" & appPrefs.IncludeLengthAndScale)
+                    {
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration(string.Format("StringLength({0})", column.DataLength)));
+                    }
+                    break;
+                case ValidationStyle.Nhibernate:
+                    if (!column.IsNullable)
+                    {
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration("NotNullNotEmpty"));
+                    }
+                    if (column.DataLength.HasValue & column.DataLength > 0 & column.MappedDataType == "System.String" & appPrefs.IncludeLengthAndScale)
+                    {
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration(string.Format("Length({0})", column.DataLength)));
+                    }
+                    break;
             }
         }
 
@@ -206,8 +235,12 @@ namespace NMG.Core.Generator
             {
                 if (!appPrefs.IncludeForeignKeys && column.IsForeignKey)
                     continue;
+
                 var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
-                newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy));
+
+                var property = codeGenerationHelper.CreateAutoProperty(mapFromDbType, Formatter.FormatText(column.Name), column.IsNullable, appPrefs.UseLazy);
+                AttachValidatorAttributes(ref property, column);
+                newType.Members.Add(property);
             }
         }
 
@@ -403,23 +436,40 @@ namespace NMG.Core.Generator
 
         private string AddStandardHeader(string entireContent)
         {
-            var builder = new StringBuilder();
-            if (appPrefs.Language == Language.CSharp)
-            {
-                builder.AppendLine("using System;");
-                builder.AppendLine("using System.Text;");
-                builder.AppendLine("using System.Collections.Generic;");
-                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
-                    builder.AppendLine("using Iesi.Collections.Generic;");
-            }
-            else if (appPrefs.Language == Language.VB)
-            {
-                builder.AppendLine("Imports System");
-                builder.AppendLine("Imports System.Text");
-                builder.AppendLine("Imports System.Collections.Generic");
-                if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
-                    builder.AppendLine("Imports Iesi.Collections.Generic");
+            var scopeStatements = new List<string>();
 
+            scopeStatements.Add("System");
+            scopeStatements.Add("System.Text");
+            scopeStatements.Add("System.Collections.Generic");
+            if (appPrefs.ValidatorStyle == ValidationStyle.Microsoft)
+            {
+                scopeStatements.Add("System.ComponentModel");
+                scopeStatements.Add("System.ComponentModel.DataAnnotations");
+            }
+            if (appPrefs.ValidatorStyle == ValidationStyle.Nhibernate)
+            {
+                scopeStatements.Add("NHibernate.Validator.Constraints");
+            }
+            if (appPrefs.ForeignEntityCollectionType.Contains("Iesi.Collections"))
+            {
+                scopeStatements.Add("Iesi.Collections.Generic");
+            }
+
+            var builder = new StringBuilder();
+            foreach (var statement in scopeStatements)
+            {
+                if (appPrefs.Language == Language.CSharp)
+                {
+                    builder.AppendLine(string.Format("using {0};", statement));
+                }
+                else if (appPrefs.Language == Language.VB)
+                {
+                    builder.AppendLine(string.Format("Imports {0}", statement));
+                }
+            }
+
+            if (appPrefs.Language == Language.VB)
+            {
                 entireContent = entireContent.Replace("Option Strict Off", string.Empty);
                 entireContent = entireContent.Replace("Option Explicit On", string.Empty);
             }

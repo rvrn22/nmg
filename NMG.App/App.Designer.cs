@@ -129,6 +129,10 @@ namespace NHibernateMappingGenerator
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.validationStyleGroupBox = new System.Windows.Forms.GroupBox();
+            this.dataAnnotationsRadioButton = new System.Windows.Forms.RadioButton();
+            this.nhibernateValidationRadioButton = new System.Windows.Forms.RadioButton();
+            this.noValidationRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -155,6 +159,7 @@ namespace NHibernateMappingGenerator
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.validationStyleGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // dbConnStrLabel
@@ -490,7 +495,7 @@ namespace NHibernateMappingGenerator
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(919, 378);
+            this.tabPage2.Size = new System.Drawing.Size(919, 351);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Map Code";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -507,7 +512,7 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
             this.mapCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.mapCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mapCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 372);
+            this.mapCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 345);
             this.mapCodeFastColoredTextBox.TabIndex = 0;
             // 
             // tabPage3
@@ -516,7 +521,7 @@ namespace NHibernateMappingGenerator
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(919, 378);
+            this.tabPage3.Size = new System.Drawing.Size(919, 351);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Domain Code";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -533,7 +538,7 @@ namespace NHibernateMappingGenerator
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
             this.domainCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.domainCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.domainCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 372);
+            this.domainCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 345);
             this.domainCodeFastColoredTextBox.TabIndex = 0;
             // 
             // groupBox5
@@ -693,13 +698,14 @@ namespace NHibernateMappingGenerator
             this.advanceSettingsTabPage.Controls.Add(this.groupBox9);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox8);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox7);
+            this.advanceSettingsTabPage.Controls.Add(this.validationStyleGroupBox);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox3);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox2);
             this.advanceSettingsTabPage.Controls.Add(this.groupBox1);
             this.advanceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.advanceSettingsTabPage.Name = "advanceSettingsTabPage";
             this.advanceSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 718);
+            this.advanceSettingsTabPage.Size = new System.Drawing.Size(1165, 691);
             this.advanceSettingsTabPage.TabIndex = 2;
             this.advanceSettingsTabPage.Text = "Preferences";
             this.advanceSettingsTabPage.UseVisualStyleBackColor = true;
@@ -711,9 +717,9 @@ namespace NHibernateMappingGenerator
             this.groupBox10.Controls.Add(this.fieldPrefixListBox);
             this.groupBox10.Controls.Add(this.label7);
             this.groupBox10.Controls.Add(this.fieldPrefixTextBox);
-            this.groupBox10.Location = new System.Drawing.Point(212, 311);
+            this.groupBox10.Location = new System.Drawing.Point(527, 152);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(515, 165);
+            this.groupBox10.Size = new System.Drawing.Size(309, 222);
             this.groupBox10.TabIndex = 8;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Table and Field Formatting";
@@ -743,7 +749,7 @@ namespace NHibernateMappingGenerator
             this.fieldPrefixListBox.FormattingEnabled = true;
             this.fieldPrefixListBox.Location = new System.Drawing.Point(19, 70);
             this.fieldPrefixListBox.Name = "fieldPrefixListBox";
-            this.fieldPrefixListBox.Size = new System.Drawing.Size(210, 82);
+            this.fieldPrefixListBox.Size = new System.Drawing.Size(210, 134);
             this.fieldPrefixListBox.TabIndex = 6;
             this.fieldPrefixListBox.SelectedIndexChanged += new System.EventHandler(this.OnFieldPrefixListBoxSelectedIndexChanged);
             // 
@@ -766,9 +772,9 @@ namespace NHibernateMappingGenerator
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.generateInFoldersCheckBox);
-            this.groupBox9.Location = new System.Drawing.Point(6, 311);
+            this.groupBox9.Location = new System.Drawing.Point(212, 152);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(200, 63);
+            this.groupBox9.Size = new System.Drawing.Size(309, 63);
             this.groupBox9.TabIndex = 8;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Files";
@@ -793,9 +799,9 @@ namespace NHibernateMappingGenerator
             this.groupBox8.Controls.Add(this.labelInheritence);
             this.groupBox8.Controls.Add(this.textBoxClassNamePrefix);
             this.groupBox8.Controls.Add(this.textBoxInheritence);
-            this.groupBox8.Location = new System.Drawing.Point(212, 152);
+            this.groupBox8.Location = new System.Drawing.Point(212, 222);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(515, 153);
+            this.groupBox8.Size = new System.Drawing.Size(309, 181);
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Mapping Options";
@@ -808,7 +814,7 @@ namespace NHibernateMappingGenerator
             "IList",
             "ICollection",
             "Iesi.Collections.Generic.ISet"});
-            this.comboBoxForeignCollection.Location = new System.Drawing.Point(9, 82);
+            this.comboBoxForeignCollection.Location = new System.Drawing.Point(15, 126);
             this.comboBoxForeignCollection.Name = "comboBoxForeignCollection";
             this.comboBoxForeignCollection.Size = new System.Drawing.Size(193, 21);
             this.comboBoxForeignCollection.TabIndex = 20;
@@ -816,7 +822,7 @@ namespace NHibernateMappingGenerator
             // wcfDataContractCheckBox
             // 
             this.wcfDataContractCheckBox.AutoSize = true;
-            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(7, 43);
+            this.wcfDataContractCheckBox.Location = new System.Drawing.Point(13, 87);
             this.wcfDataContractCheckBox.Name = "wcfDataContractCheckBox";
             this.wcfDataContractCheckBox.Size = new System.Drawing.Size(171, 17);
             this.wcfDataContractCheckBox.TabIndex = 1;
@@ -826,7 +832,7 @@ namespace NHibernateMappingGenerator
             // labelForeignEntity
             // 
             this.labelForeignEntity.AutoSize = true;
-            this.labelForeignEntity.Location = new System.Drawing.Point(6, 66);
+            this.labelForeignEntity.Location = new System.Drawing.Point(12, 110);
             this.labelForeignEntity.Name = "labelForeignEntity";
             this.labelForeignEntity.Size = new System.Drawing.Size(196, 13);
             this.labelForeignEntity.TabIndex = 6;
@@ -835,7 +841,7 @@ namespace NHibernateMappingGenerator
             // partialClassesCheckBox
             // 
             this.partialClassesCheckBox.AutoSize = true;
-            this.partialClassesCheckBox.Location = new System.Drawing.Point(7, 20);
+            this.partialClassesCheckBox.Location = new System.Drawing.Point(13, 64);
             this.partialClassesCheckBox.Name = "partialClassesCheckBox";
             this.partialClassesCheckBox.Size = new System.Drawing.Size(141, 17);
             this.partialClassesCheckBox.TabIndex = 0;
@@ -845,7 +851,7 @@ namespace NHibernateMappingGenerator
             // labelCLassNamePrefix
             // 
             this.labelCLassNamePrefix.AutoSize = true;
-            this.labelCLassNamePrefix.Location = new System.Drawing.Point(6, 113);
+            this.labelCLassNamePrefix.Location = new System.Drawing.Point(12, 157);
             this.labelCLassNamePrefix.Name = "labelCLassNamePrefix";
             this.labelCLassNamePrefix.Size = new System.Drawing.Size(95, 13);
             this.labelCLassNamePrefix.TabIndex = 5;
@@ -854,7 +860,7 @@ namespace NHibernateMappingGenerator
             // labelInheritence
             // 
             this.labelInheritence.AutoSize = true;
-            this.labelInheritence.Location = new System.Drawing.Point(212, 16);
+            this.labelInheritence.Location = new System.Drawing.Point(10, 19);
             this.labelInheritence.Name = "labelInheritence";
             this.labelInheritence.Size = new System.Drawing.Size(300, 13);
             this.labelInheritence.TabIndex = 5;
@@ -862,16 +868,16 @@ namespace NHibernateMappingGenerator
             // 
             // textBoxClassNamePrefix
             // 
-            this.textBoxClassNamePrefix.Location = new System.Drawing.Point(104, 110);
+            this.textBoxClassNamePrefix.Location = new System.Drawing.Point(110, 154);
             this.textBoxClassNamePrefix.Name = "textBoxClassNamePrefix";
             this.textBoxClassNamePrefix.Size = new System.Drawing.Size(98, 20);
             this.textBoxClassNamePrefix.TabIndex = 4;
             // 
             // textBoxInheritence
             // 
-            this.textBoxInheritence.Location = new System.Drawing.Point(215, 32);
+            this.textBoxInheritence.Location = new System.Drawing.Point(13, 35);
             this.textBoxInheritence.Name = "textBoxInheritence";
-            this.textBoxInheritence.Size = new System.Drawing.Size(283, 20);
+            this.textBoxInheritence.Size = new System.Drawing.Size(287, 20);
             this.textBoxInheritence.TabIndex = 4;
             // 
             // groupBox7
@@ -959,7 +965,7 @@ namespace NHibernateMappingGenerator
             this.groupBox3.Controls.Add(this.byCodeMappingOption);
             this.groupBox3.Location = new System.Drawing.Point(527, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(217, 140);
+            this.groupBox3.Size = new System.Drawing.Size(309, 140);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Mapping Style";
@@ -1012,9 +1018,9 @@ namespace NHibernateMappingGenerator
             // 
             this.groupBox2.Controls.Add(this.vbRadioButton);
             this.groupBox2.Controls.Add(this.cSharpRadioButton);
-            this.groupBox2.Location = new System.Drawing.Point(321, 6);
+            this.groupBox2.Location = new System.Drawing.Point(340, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 140);
+            this.groupBox2.Size = new System.Drawing.Size(181, 140);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Language";
@@ -1051,7 +1057,7 @@ namespace NHibernateMappingGenerator
             this.groupBox1.Controls.Add(this.sameAsDBRadioButton);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(309, 140);
+            this.groupBox1.Size = new System.Drawing.Size(328, 140);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generated Property Name";
@@ -1146,6 +1152,49 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
+            // validationStyleGroupBox
+            // 
+            this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
+            this.validationStyleGroupBox.Controls.Add(this.noValidationRadioButton);
+            this.validationStyleGroupBox.Controls.Add(this.nhibernateValidationRadioButton);
+            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 311);
+            this.validationStyleGroupBox.Name = "validationStyleGroupBox";
+            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 92);
+            this.validationStyleGroupBox.TabIndex = 6;
+            this.validationStyleGroupBox.TabStop = false;
+            this.validationStyleGroupBox.Text = "Validation Style";
+            // 
+            // dataAnnotationsRadioButton
+            // 
+            this.dataAnnotationsRadioButton.AutoSize = true;
+            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(6, 64);
+            this.dataAnnotationsRadioButton.Name = "dataAnnotationsRadioButton";
+            this.dataAnnotationsRadioButton.Size = new System.Drawing.Size(130, 17);
+            this.dataAnnotationsRadioButton.TabIndex = 5;
+            this.dataAnnotationsRadioButton.Text = ".Net Data Annotations";
+            this.dataAnnotationsRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // nhibernateValidationRadioButton
+            // 
+            this.nhibernateValidationRadioButton.AutoSize = true;
+            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(6, 41);
+            this.nhibernateValidationRadioButton.Name = "nhibernateValidationRadioButton";
+            this.nhibernateValidationRadioButton.Size = new System.Drawing.Size(128, 17);
+            this.nhibernateValidationRadioButton.TabIndex = 4;
+            this.nhibernateValidationRadioButton.Text = "NHibernate Validators";
+            this.nhibernateValidationRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // noValidationRadioButton
+            // 
+            this.noValidationRadioButton.AutoSize = true;
+            this.noValidationRadioButton.Checked = true;
+            this.noValidationRadioButton.Location = new System.Drawing.Point(6, 19);
+            this.noValidationRadioButton.Name = "noValidationRadioButton";
+            this.noValidationRadioButton.Size = new System.Drawing.Size(51, 17);
+            this.noValidationRadioButton.TabIndex = 4;
+            this.noValidationRadioButton.Text = "None";
+            this.noValidationRadioButton.UseVisualStyleBackColor = true;
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1195,6 +1244,8 @@ namespace NHibernateMappingGenerator
             this.groupBox1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.validationStyleGroupBox.ResumeLayout(false);
+            this.validationStyleGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1298,6 +1349,10 @@ namespace NHibernateMappingGenerator
         private Label label8;
         private TextBox domainFolderTextBox;
         private Button domainFolderSelectButton;
+        private GroupBox validationStyleGroupBox;
+        private RadioButton dataAnnotationsRadioButton;
+        private RadioButton noValidationRadioButton;
+        private RadioButton nhibernateValidationRadioButton;
     }
 }
 

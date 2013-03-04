@@ -68,6 +68,8 @@ namespace NMG.Core
 
         public List<string> FieldPrefixRemovalList { get; set; }
 
+        public ValidationStyle ValidatorStyle { get; set; }
+
         public static ApplicationPreferences Default()
         {
             var preferences = new ApplicationPreferences

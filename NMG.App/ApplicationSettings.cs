@@ -68,6 +68,8 @@ namespace NHibernateMappingGenerator
 
         public List<string> FieldPrefixRemovalList { get; set; }
 
+        public ValidationStyle ValidationStyle { get; set; }
+
 
         public void Save()
         {
