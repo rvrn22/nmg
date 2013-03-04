@@ -80,6 +80,7 @@
     <Compile Include="Domain\Language.cs" />
     <Compile Include="Domain\PrimaryKeyType.cs" />
     <Compile Include="Domain\Table.cs" />
+    <Compile Include="Domain\ValidationStyle.cs" />
     <Compile Include="FieldNamingConvention.cs" />
     <Compile Include="Fluent\DBColumnMapper.cs" />
     <Compile Include="Fluent\Constants.cs" />
