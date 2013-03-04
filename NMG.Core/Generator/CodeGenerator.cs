@@ -194,7 +194,7 @@ namespace NMG.Core.Generator
                     }
                     if (column.DataLength.HasValue & column.DataLength > 0 & column.MappedDataType == "System.String" & appPrefs.IncludeLengthAndScale)
                     {
-                        property.CustomAttributes.Add(new CodeAttributeDeclaration(string.Format("StringLength({0})", column.DataLength)));
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration("StringLength", new CodeAttributeArgument(new CodePrimitiveExpression(column.DataLength))));
                     }
                     break;
                 case ValidationStyle.Nhibernate:
@@ -204,7 +204,7 @@ namespace NMG.Core.Generator
                     }
                     if (column.DataLength.HasValue & column.DataLength > 0 & column.MappedDataType == "System.String" & appPrefs.IncludeLengthAndScale)
                     {
-                        property.CustomAttributes.Add(new CodeAttributeDeclaration(string.Format("Length({0})", column.DataLength)));
+                        property.CustomAttributes.Add(new CodeAttributeDeclaration("Length", new CodeAttributeArgument(new CodePrimitiveExpression(column.DataLength))));
                     }
                     break;
             }
