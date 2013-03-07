@@ -99,7 +99,7 @@ namespace NMG.Core.Generator
             {
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + mapper.Map(column, Formatter, appPrefs.IncludeLengthAndScale)));
             }
-            
+
             // Many To One Mapping
             foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
