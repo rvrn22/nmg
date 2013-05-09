@@ -50,6 +50,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ingres.Client, Version=2.1.0.0, Culture=neutral, PublicKeyToken=363043b363d069c5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Ingres .NET Data Provider\Ingres.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Npgsql">
       <HintPath>..\Lib\Npgsql2.0.11-bin-ms.net3.5sp1\Npgsql.dll</HintPath>
     </Reference>
@@ -99,6 +103,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Reader\IConstraintTypeResolver.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
+    <Compile Include="Reader\IngresMetadataReader.cs" />
     <Compile Include="Reader\MysqlConstraintType.cs" />
     <Compile Include="Reader\MysqlMetadataReader.cs" />
     <Compile Include="Reader\NpgsqlConstraintType.cs" />

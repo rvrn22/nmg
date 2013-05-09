@@ -7,6 +7,7 @@ namespace NMG.Core.Domain
         PostgreSQL, 
         MySQL,
         SQLite,
+        Ingres,
         Sybase
     }
 }
