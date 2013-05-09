@@ -247,7 +247,7 @@ namespace NMG.Core.ByCode
                     var lastColumn = fk.Columns.Last();
                     foreach (var column in fk.Columns)
                     {
-                        builder.AppendFormat("x.Name(\"{0}\")", column.Name);
+                        builder.AppendFormat("x => x.Name(\"{0}\")", column.Name);
 
                         var isLastColumn = lastColumn == column;
                         if (!isLastColumn)
@@ -256,7 +256,7 @@ namespace NMG.Core.ByCode
                         }
                     }
 
-                    builder.Append(" }))");
+                    builder.Append(" }));");
                 }
                 else if (_language == Language.VB)
                 {
