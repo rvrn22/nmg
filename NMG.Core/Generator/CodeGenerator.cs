@@ -134,7 +134,8 @@ namespace NMG.Core.Generator
                 // Note that a foreign key referencing a primary within the same table will end up giving you a foreign key property with the same name as the table.
                 foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
                 {
-                    var fieldName = Formatter.FormatSingular(fk.UniquePropertyName);
+                    var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name; 
+                    var fieldName = Formatter.FormatSingular(propertyName);
                     var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
                     newType.Members.Add(codeGenerationHelper.CreateField(typeName, fieldName));
                 }
@@ -172,8 +173,9 @@ namespace NMG.Core.Generator
                 foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
                 {
                     var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
-                    newType.Members.Add(codeGenerationHelper.CreateField(typeName,string.Format("_{0}", camelCaseFormatter.FormatSingular(fk.UniquePropertyName))));
-                    newType.Members.Add(codeGenerationHelper.CreateProperty(typeName,Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
+                    var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name; 
+                    newType.Members.Add(codeGenerationHelper.CreateField(typeName, string.Format("_{0}", camelCaseFormatter.FormatSingular(propertyName))));
+                    newType.Members.Add(codeGenerationHelper.CreateProperty(typeName, Formatter.FormatSingular(propertyName), appPrefs.UseLazy));
                 }
             }
 
@@ -236,7 +238,9 @@ namespace NMG.Core.Generator
                 foreach (var fk in Table.ForeignKeys.Where(fk => !string.IsNullOrEmpty(fk.References)))
                 {
                     var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.References);
-                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(typeName, Formatter.FormatSingular(fk.UniquePropertyName), appPrefs.UseLazy));
+                    var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name;
+                    var fieldName = Formatter.FormatSingular(propertyName);
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(typeName, fieldName, appPrefs.UseLazy));
                 }
             }
 

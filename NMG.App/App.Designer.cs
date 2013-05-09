@@ -135,6 +135,7 @@ namespace NHibernateMappingGenerator
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.EnableInflectionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.nameAsForeignTableCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -886,6 +887,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.nameAsForeignTableCheckBox);
             this.groupBox7.Controls.Add(this.includeHasManyCheckBox);
             this.groupBox7.Controls.Add(this.includeLengthAndScaleCheckBox);
             this.groupBox7.Controls.Add(this.autoPropertyRadioBtn);
@@ -895,7 +897,7 @@ namespace NHibernateMappingGenerator
             this.groupBox7.Controls.Add(this.includeForeignKeysCheckBox);
             this.groupBox7.Location = new System.Drawing.Point(6, 152);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(200, 187);
+            this.groupBox7.Size = new System.Drawing.Size(200, 251);
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
@@ -903,7 +905,7 @@ namespace NHibernateMappingGenerator
             // includeHasManyCheckBox
             // 
             this.includeHasManyCheckBox.AutoSize = true;
-            this.includeHasManyCheckBox.Location = new System.Drawing.Point(6, 134);
+            this.includeHasManyCheckBox.Location = new System.Drawing.Point(6, 157);
             this.includeHasManyCheckBox.Name = "includeHasManyCheckBox";
             this.includeHasManyCheckBox.Size = new System.Drawing.Size(173, 17);
             this.includeHasManyCheckBox.TabIndex = 10;
@@ -913,7 +915,7 @@ namespace NHibernateMappingGenerator
             // includeLengthAndScaleCheckBox
             // 
             this.includeLengthAndScaleCheckBox.AutoSize = true;
-            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 157);
+            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 180);
             this.includeLengthAndScaleCheckBox.Name = "includeLengthAndScaleCheckBox";
             this.includeLengthAndScaleCheckBox.Size = new System.Drawing.Size(148, 17);
             this.includeLengthAndScaleCheckBox.TabIndex = 9;
@@ -971,15 +973,16 @@ namespace NHibernateMappingGenerator
             this.includeForeignKeysCheckBox.TabIndex = 8;
             this.includeForeignKeysCheckBox.Text = "Include Foreign Keys";
             this.includeForeignKeysCheckBox.UseVisualStyleBackColor = true;
+            this.includeForeignKeysCheckBox.CheckedChanged += new System.EventHandler(this.includeForeignKeysCheckBox_CheckedChanged);
             // 
             // validationStyleGroupBox
             // 
             this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
             this.validationStyleGroupBox.Controls.Add(this.noValidationRadioButton);
             this.validationStyleGroupBox.Controls.Add(this.nhibernateValidationRadioButton);
-            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 345);
+            this.validationStyleGroupBox.Location = new System.Drawing.Point(341, 48);
             this.validationStyleGroupBox.Name = "validationStyleGroupBox";
-            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 58);
+            this.validationStyleGroupBox.Size = new System.Drawing.Size(181, 98);
             this.validationStyleGroupBox.TabIndex = 6;
             this.validationStyleGroupBox.TabStop = false;
             this.validationStyleGroupBox.Text = "Validation Style";
@@ -987,7 +990,7 @@ namespace NHibernateMappingGenerator
             // dataAnnotationsRadioButton
             // 
             this.dataAnnotationsRadioButton.AutoSize = true;
-            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(63, 17);
+            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(6, 40);
             this.dataAnnotationsRadioButton.Name = "dataAnnotationsRadioButton";
             this.dataAnnotationsRadioButton.Size = new System.Drawing.Size(130, 17);
             this.dataAnnotationsRadioButton.TabIndex = 5;
@@ -1009,7 +1012,7 @@ namespace NHibernateMappingGenerator
             // nhibernateValidationRadioButton
             // 
             this.nhibernateValidationRadioButton.AutoSize = true;
-            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(63, 34);
+            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(6, 63);
             this.nhibernateValidationRadioButton.Name = "nhibernateValidationRadioButton";
             this.nhibernateValidationRadioButton.Size = new System.Drawing.Size(128, 17);
             this.nhibernateValidationRadioButton.TabIndex = 4;
@@ -1079,7 +1082,7 @@ namespace NHibernateMappingGenerator
             this.groupBox2.Controls.Add(this.cSharpRadioButton);
             this.groupBox2.Location = new System.Drawing.Point(340, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(181, 140);
+            this.groupBox2.Size = new System.Drawing.Size(181, 36);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Language";
@@ -1087,7 +1090,7 @@ namespace NHibernateMappingGenerator
             // vbRadioButton
             // 
             this.vbRadioButton.AutoSize = true;
-            this.vbRadioButton.Location = new System.Drawing.Point(6, 42);
+            this.vbRadioButton.Location = new System.Drawing.Point(84, 13);
             this.vbRadioButton.Name = "vbRadioButton";
             this.vbRadioButton.Size = new System.Drawing.Size(39, 17);
             this.vbRadioButton.TabIndex = 5;
@@ -1098,7 +1101,7 @@ namespace NHibernateMappingGenerator
             // 
             this.cSharpRadioButton.AutoSize = true;
             this.cSharpRadioButton.Checked = true;
-            this.cSharpRadioButton.Location = new System.Drawing.Point(6, 19);
+            this.cSharpRadioButton.Location = new System.Drawing.Point(6, 13);
             this.cSharpRadioButton.Name = "cSharpRadioButton";
             this.cSharpRadioButton.Size = new System.Drawing.Size(39, 17);
             this.cSharpRadioButton.TabIndex = 4;
@@ -1221,6 +1224,16 @@ namespace NHibernateMappingGenerator
             this.EnableInflectionsCheckBox.TabIndex = 22;
             this.EnableInflectionsCheckBox.Text = "Load Inflections to Singularize or Pruralize";
             this.EnableInflectionsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // nameAsForeignTableCheckBox
+            // 
+            this.nameAsForeignTableCheckBox.AutoSize = true;
+            this.nameAsForeignTableCheckBox.Location = new System.Drawing.Point(29, 134);
+            this.nameAsForeignTableCheckBox.Name = "nameAsForeignTableCheckBox";
+            this.nameAsForeignTableCheckBox.Size = new System.Drawing.Size(136, 17);
+            this.nameAsForeignTableCheckBox.TabIndex = 11;
+            this.nameAsForeignTableCheckBox.Text = "Name as Foreign Table";
+            this.nameAsForeignTableCheckBox.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -1382,6 +1395,7 @@ namespace NHibernateMappingGenerator
         private RadioButton nhibernateValidationRadioButton;
         private CheckBox includeHasManyCheckBox;
         private CheckBox EnableInflectionsCheckBox;
+        private CheckBox nameAsForeignTableCheckBox;
     }
 }
 

@@ -169,6 +169,7 @@ namespace NHibernateMappingGenerator
                 useLazyLoadingCheckBox.Checked = applicationSettings.UseLazy;
                 includeLengthAndScaleCheckBox.Checked = applicationSettings.IncludeLengthAndScale;
                 includeForeignKeysCheckBox.Checked = applicationSettings.IncludeForeignKeys;
+                nameAsForeignTableCheckBox.Checked = applicationSettings.NameFkAsForeignTable;
                 includeHasManyCheckBox.Checked = applicationSettings.IncludeHasMany;
 
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
@@ -202,6 +203,7 @@ namespace NHibernateMappingGenerator
                 cSharpRadioButton.Checked = true;
                 byCodeMappingOption.Checked = true;
                 includeForeignKeysCheckBox.Checked = true;
+                nameAsForeignTableCheckBox.Checked = true;
                 includeHasManyCheckBox.Checked = false;
                 useLazyLoadingCheckBox.Checked = true;
 
@@ -326,6 +328,7 @@ namespace NHibernateMappingGenerator
             applicationSettings.IsByCode = IsByCode;
             applicationSettings.UseLazy = useLazyLoadingCheckBox.Checked;
             applicationSettings.IncludeForeignKeys = includeForeignKeysCheckBox.Checked;
+            applicationSettings.NameFkAsForeignTable = nameAsForeignTableCheckBox.Checked;
             applicationSettings.IncludeHasMany = includeHasManyCheckBox.Checked;
             applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
             applicationSettings.LastUsedConnection = _currentConnection == null ? (Guid?) null : _currentConnection.Id;
@@ -731,6 +734,7 @@ namespace NHibernateMappingGenerator
                                                  UseLazy = appSettings.UseLazy,
                                                  FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,
                                                  IncludeForeignKeys = appSettings.IncludeForeignKeys,
+                                                 NameFkAsForeignTable = appSettings.NameFkAsForeignTable,
                                                  IncludeHasMany = appSettings.IncludeHasMany,
                                                  IncludeLengthAndScale = appSettings.IncludeLengthAndScale,
                                                  ValidatorStyle = appSettings.ValidationStyle
@@ -871,6 +875,11 @@ namespace NHibernateMappingGenerator
             applicationController.Generate(writeToFile: false);
             mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
             domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
+        }
+
+        private void includeForeignKeysCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            nameAsForeignTableCheckBox.Enabled = includeForeignKeysCheckBox.Checked;
         }
 
     }
