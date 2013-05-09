@@ -105,6 +105,7 @@ namespace NHibernateMappingGenerator
             this.textBoxClassNamePrefix = new System.Windows.Forms.TextBox();
             this.textBoxInheritence = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.includeHasManyCheckBox = new System.Windows.Forms.CheckBox();
             this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
             this.propertyRadioBtn = new System.Windows.Forms.RadioButton();
@@ -882,6 +883,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.includeHasManyCheckBox);
             this.groupBox7.Controls.Add(this.includeLengthAndScaleCheckBox);
             this.groupBox7.Controls.Add(this.autoPropertyRadioBtn);
             this.groupBox7.Controls.Add(this.propertyRadioBtn);
@@ -890,15 +892,25 @@ namespace NHibernateMappingGenerator
             this.groupBox7.Controls.Add(this.includeForeignKeysCheckBox);
             this.groupBox7.Location = new System.Drawing.Point(6, 152);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(200, 153);
+            this.groupBox7.Size = new System.Drawing.Size(200, 187);
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
             // 
+            // includeHasManyCheckBox
+            // 
+            this.includeHasManyCheckBox.AutoSize = true;
+            this.includeHasManyCheckBox.Location = new System.Drawing.Point(6, 134);
+            this.includeHasManyCheckBox.Name = "includeHasManyCheckBox";
+            this.includeHasManyCheckBox.Size = new System.Drawing.Size(173, 17);
+            this.includeHasManyCheckBox.TabIndex = 10;
+            this.includeHasManyCheckBox.Text = "Include \"Has Many\" (Inverse\'s)";
+            this.includeHasManyCheckBox.UseVisualStyleBackColor = true;
+            // 
             // includeLengthAndScaleCheckBox
             // 
             this.includeLengthAndScaleCheckBox.AutoSize = true;
-            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 127);
+            this.includeLengthAndScaleCheckBox.Location = new System.Drawing.Point(6, 157);
             this.includeLengthAndScaleCheckBox.Name = "includeLengthAndScaleCheckBox";
             this.includeLengthAndScaleCheckBox.Size = new System.Drawing.Size(148, 17);
             this.includeLengthAndScaleCheckBox.TabIndex = 9;
@@ -950,7 +962,7 @@ namespace NHibernateMappingGenerator
             // includeForeignKeysCheckBox
             // 
             this.includeForeignKeysCheckBox.AutoSize = true;
-            this.includeForeignKeysCheckBox.Location = new System.Drawing.Point(6, 107);
+            this.includeForeignKeysCheckBox.Location = new System.Drawing.Point(6, 111);
             this.includeForeignKeysCheckBox.Name = "includeForeignKeysCheckBox";
             this.includeForeignKeysCheckBox.Size = new System.Drawing.Size(125, 17);
             this.includeForeignKeysCheckBox.TabIndex = 8;
@@ -1157,9 +1169,9 @@ namespace NHibernateMappingGenerator
             this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
             this.validationStyleGroupBox.Controls.Add(this.noValidationRadioButton);
             this.validationStyleGroupBox.Controls.Add(this.nhibernateValidationRadioButton);
-            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 311);
+            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 345);
             this.validationStyleGroupBox.Name = "validationStyleGroupBox";
-            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 92);
+            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 58);
             this.validationStyleGroupBox.TabIndex = 6;
             this.validationStyleGroupBox.TabStop = false;
             this.validationStyleGroupBox.Text = "Validation Style";
@@ -1167,7 +1179,7 @@ namespace NHibernateMappingGenerator
             // dataAnnotationsRadioButton
             // 
             this.dataAnnotationsRadioButton.AutoSize = true;
-            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(6, 64);
+            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(63, 17);
             this.dataAnnotationsRadioButton.Name = "dataAnnotationsRadioButton";
             this.dataAnnotationsRadioButton.Size = new System.Drawing.Size(130, 17);
             this.dataAnnotationsRadioButton.TabIndex = 5;
@@ -1177,7 +1189,7 @@ namespace NHibernateMappingGenerator
             // nhibernateValidationRadioButton
             // 
             this.nhibernateValidationRadioButton.AutoSize = true;
-            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(6, 41);
+            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(63, 34);
             this.nhibernateValidationRadioButton.Name = "nhibernateValidationRadioButton";
             this.nhibernateValidationRadioButton.Size = new System.Drawing.Size(128, 17);
             this.nhibernateValidationRadioButton.TabIndex = 4;
@@ -1188,7 +1200,7 @@ namespace NHibernateMappingGenerator
             // 
             this.noValidationRadioButton.AutoSize = true;
             this.noValidationRadioButton.Checked = true;
-            this.noValidationRadioButton.Location = new System.Drawing.Point(6, 19);
+            this.noValidationRadioButton.Location = new System.Drawing.Point(6, 17);
             this.noValidationRadioButton.Name = "noValidationRadioButton";
             this.noValidationRadioButton.Size = new System.Drawing.Size(51, 17);
             this.noValidationRadioButton.TabIndex = 4;
@@ -1353,6 +1365,7 @@ namespace NHibernateMappingGenerator
         private RadioButton dataAnnotationsRadioButton;
         private RadioButton noValidationRadioButton;
         private RadioButton nhibernateValidationRadioButton;
+        private CheckBox includeHasManyCheckBox;
     }
 }
 

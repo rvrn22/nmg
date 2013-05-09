@@ -168,6 +168,7 @@ namespace NHibernateMappingGenerator
                 useLazyLoadingCheckBox.Checked = applicationSettings.UseLazy;
                 includeLengthAndScaleCheckBox.Checked = applicationSettings.IncludeLengthAndScale;
                 includeForeignKeysCheckBox.Checked = applicationSettings.IncludeForeignKeys;
+                includeHasManyCheckBox.Checked = applicationSettings.IncludeHasMany;
 
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
                 castleMappingOption.Checked = applicationSettings.IsCastle;
@@ -200,6 +201,7 @@ namespace NHibernateMappingGenerator
                 cSharpRadioButton.Checked = true;
                 byCodeMappingOption.Checked = true;
                 includeForeignKeysCheckBox.Checked = true;
+                includeHasManyCheckBox.Checked = false;
                 useLazyLoadingCheckBox.Checked = true;
 
                 comboBoxForeignCollection.Text = "IList";
@@ -322,6 +324,7 @@ namespace NHibernateMappingGenerator
             applicationSettings.IsByCode = IsByCode;
             applicationSettings.UseLazy = useLazyLoadingCheckBox.Checked;
             applicationSettings.IncludeForeignKeys = includeForeignKeysCheckBox.Checked;
+            applicationSettings.IncludeHasMany = includeHasManyCheckBox.Checked;
             applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
             applicationSettings.LastUsedConnection = _currentConnection == null ? (Guid?) null : _currentConnection.Id;
         }
@@ -621,7 +624,9 @@ namespace NHibernateMappingGenerator
         {
             var appSettings = e.Argument as ApplicationSettings; 
             var items = tablesListBox.Items;
-            Parallel.ForEach(items.Cast<Table>(), (table, loopState) =>
+            var pOptions = new ParallelOptions();
+            pOptions.MaxDegreeOfParallelism = Environment.ProcessorCount;
+            Parallel.ForEach(items.Cast<Table>(), pOptions, (table, loopState) =>
             {
                 if (worker != null && worker.CancellationPending && !loopState.IsStopped)
                 {
@@ -723,6 +728,7 @@ namespace NHibernateMappingGenerator
                                                  UseLazy = appSettings.UseLazy,
                                                  FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,
                                                  IncludeForeignKeys = appSettings.IncludeForeignKeys,
+                                                 IncludeHasMany = appSettings.IncludeHasMany,
                                                  IncludeLengthAndScale = appSettings.IncludeLengthAndScale,
                                                  ValidatorStyle = appSettings.ValidationStyle
                                              };

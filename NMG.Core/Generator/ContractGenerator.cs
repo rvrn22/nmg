@@ -47,11 +47,12 @@ namespace NMG.Core.Generator
             {
                 if(column.IsPrimaryKey)
                 {
-                    foreach (var foreignKeyTable in table.HasManyRelationships)
-                    {
-						var fkEntityName = appPrefs.ClassNamePrefix + foreignKeyTable.Reference.MakeSingular().GetPreferenceFormattedText(appPrefs);
-						newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute("IList<" + fkEntityName + ">", foreignKeyTable.Reference.MakePlural().GetPreferenceFormattedText(appPrefs)));
-                    }
+                    if(appPrefs.IncludeHasMany)
+                        foreach (var foreignKeyTable in table.HasManyRelationships)
+                        {
+						    var fkEntityName = appPrefs.ClassNamePrefix + foreignKeyTable.Reference.MakeSingular().GetPreferenceFormattedText(appPrefs);
+						    newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute("IList<" + fkEntityName + ">", foreignKeyTable.Reference.MakePlural().GetPreferenceFormattedText(appPrefs)));
+                        }
 
                     var primaryKeyType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                     newType.Members.Add(codeGenerationHelper.CreateAutoPropertyWithDataMemberAttribute(primaryKeyType.Name, "Id"));

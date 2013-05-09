@@ -63,6 +63,8 @@ namespace NHibernateMappingGenerator
         public bool UseLazy { get; set; }
 
         public bool IncludeForeignKeys { get; set; }
+        
+        public bool IncludeHasMany { get; set; }
 
         public bool IncludeLengthAndScale { get; set; }
 

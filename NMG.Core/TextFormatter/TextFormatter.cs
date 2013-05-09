@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace NMG.Core.TextFormatter
 {
@@ -21,6 +22,17 @@ namespace NMG.Core.TextFormatter
                 return text;
 
             var result = RemovePrefix(text);
+
+            // Cannot have class or property with not allowed chars
+            result = result
+                .Replace("%", "Porcentaje") //Means Percentage in spanish
+                .Replace("á", "a")
+                .Replace("é", "e")
+                .Replace("í", "i")
+                .Replace("ó", "o")
+                .Replace("ú", "u");
+            //Ommit any chars except letters and numbers in class or properties.
+            result = Regex.Replace(result, "[^a-zA-Z0-9]", String.Empty);
 
             if (result.Length != 0 && char.IsNumber(result.ToCharArray(0, 1)[0]))
             {

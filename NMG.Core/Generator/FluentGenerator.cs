@@ -45,18 +45,19 @@ namespace NMG.Core.Generator
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
-            constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
+            if (appPrefs.UseLazy)
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + "LazyLoad();"));
 
             if(UsesSequence)
             {
 				constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
                     Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, appPrefs.Sequence)));
             }
-            else if (Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+            else if (Table.PrimaryKey !=null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }
-            else
+            else if (Table.PrimaryKey != null)
             {
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
             }
@@ -72,9 +73,10 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
-			Table.HasManyRelationships.ToList().ForEach(x => 
-				constructor.Statements.Add(new OneToMany(Formatter).Create(x))
-				);
+            if (appPrefs.IncludeHasMany)
+                Table.HasManyRelationships.ToList().ForEach(x =>
+                        constructor.Statements.Add(new OneToMany(Formatter).Create(x))
+                    );
 
             newType.Members.Add(constructor);
             return compileUnit;
@@ -82,7 +84,8 @@ namespace NMG.Core.Generator
 
         protected override string AddStandardHeader(string entireContent)
         {
-            entireContent = "using FluentNHibernate.Mapping;" + entireContent;
+            entireContent = "using " + appPrefs.NameSpace + "; " + entireContent;
+            entireContent = "using FluentNHibernate.Mapping;" + Environment.NewLine + entireContent;
             return base.AddStandardHeader(entireContent);
         }
 

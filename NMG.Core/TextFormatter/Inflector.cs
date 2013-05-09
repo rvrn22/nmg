@@ -32,6 +32,7 @@ namespace NMG.Core.TextFormatter
         /// </summary>
         static Inflector()
         {
+            /*
             AddPluralRule("$", "s");
             AddPluralRule("s$", "s");
             AddPluralRule("(ax|test)is$", "$1es");
@@ -92,6 +93,7 @@ namespace NMG.Core.TextFormatter
             AddUnknownCountRule("series");
             AddUnknownCountRule("fish");
             AddUnknownCountRule("sheep");
+            */
         }
 
         /// <summary>
@@ -249,8 +251,8 @@ namespace NMG.Core.TextFormatter
                     {
                         string word = words[i];
                         string restOfWord = word.Substring(1);
-                        if (restOfWord.IsUpperCase())
-                            restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
+                        //if (restOfWord.IsUpperCase())
+                        //    restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
                         char firstChar = char.ToUpper(word[0], CultureInfo.CurrentUICulture);
                         words[i] = String.Concat(firstChar, restOfWord);
                     }
