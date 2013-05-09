@@ -407,6 +407,9 @@ namespace NMG.Core.Generator
             entireContent = RemoveComments(entireContent);
             entireContent = AddStandardHeader(entireContent);
             entireContent = FixAutoProperties(entireContent);
+            entireContent = FixNullableTypes(entireContent);
+            //Fix Attrubutes with blank parenthesis
+            entireContent = entireContent.Replace("()]", "]");
 
             return entireContent;
         }
@@ -440,6 +443,38 @@ namespace NMG.Core.Generator
             End Set
         End Property";
                 entireContent = entireContent.Replace(blah, string.Empty);
+            }
+            return entireContent;
+        }
+
+        // Hack : Fix Nullable Types, use "int?" instead of System.Nullable<int>.
+        private string FixNullableTypes(string entireContent)
+        {
+            if (appPrefs.Language == Language.CSharp)
+            {
+                entireContent = entireContent.Replace("System.Nullable<bool>", "bool?");
+                entireContent = entireContent.Replace("System.Nullable<int>", "int?");
+                entireContent = entireContent.Replace("System.Nullable<byte>", "byte?");
+                entireContent = entireContent.Replace("System.Nullable<short>", "short?");
+                entireContent = entireContent.Replace("System.Nullable<long>", "long?");
+                entireContent = entireContent.Replace("System.Nullable<decimal>", "decimal?");
+                entireContent = entireContent.Replace("System.Nullable<float>", "float?");
+                entireContent = entireContent.Replace("System.Nullable<double>", "double?");
+                entireContent = entireContent.Replace("System.Nullable<System.DateTime>", "DateTime?");
+                //Just remove the "System." from DateTime type. (we already have the "using System;" statement)
+                entireContent = entireContent.Replace("System.DateTime", "DateTime");
+            }
+            else if (appPrefs.Language == Language.VB)
+            {
+                entireContent = entireContent.Replace("System.Nullable(Of Boolean)", "Boolean?");
+                entireContent = entireContent.Replace("System.Nullable(Of Integer)", "Integer?");
+                entireContent = entireContent.Replace("System.Nullable(Of Byte)", "Byte?");
+                entireContent = entireContent.Replace("System.Nullable(Of Short)", "Short?");
+                entireContent = entireContent.Replace("System.Nullable(Of Long)", "Long?");
+                entireContent = entireContent.Replace("System.Nullable(Of Decimal)", "Decimal?");
+                entireContent = entireContent.Replace("System.Nullable(Of Single)", "Single?");
+                entireContent = entireContent.Replace("System.Nullable(Of Double)", "Double?");
+                entireContent = entireContent.Replace("System.Nullable(Of Date)", "Date?");
             }
             return entireContent;
         }
