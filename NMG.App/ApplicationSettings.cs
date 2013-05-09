@@ -44,6 +44,8 @@ namespace NHibernateMappingGenerator
 
         public string ClassNamePrefix { get; set; }
 
+        public bool EnableInflections { get; set; }
+
         public bool GenerateWcfContracts { get; set; }
 
         public bool GeneratePartialClasses { get; set; }

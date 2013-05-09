@@ -163,6 +163,7 @@ namespace NHibernateMappingGenerator
                 textBoxInheritence.Text = applicationSettings.InheritenceAndInterfaces;
                 comboBoxForeignCollection.Text = applicationSettings.ForeignEntityCollectionType;
                 textBoxClassNamePrefix.Text = applicationSettings.ClassNamePrefix;
+                EnableInflectionsCheckBox.Checked = applicationSettings.EnableInflections;
                 wcfDataContractCheckBox.Checked = applicationSettings.GenerateWcfContracts;
                 partialClassesCheckBox.Checked = applicationSettings.GeneratePartialClasses;
                 useLazyLoadingCheckBox.Checked = applicationSettings.UseLazy;
@@ -318,6 +319,7 @@ namespace NHibernateMappingGenerator
             applicationSettings.Prefix = prefixTextBox.Text;
             applicationSettings.IsCastle = IsCastle;
             applicationSettings.ClassNamePrefix = textBoxClassNamePrefix.Text;
+            applicationSettings.EnableInflections = EnableInflectionsCheckBox.Checked;
             applicationSettings.GeneratePartialClasses = partialClassesCheckBox.Checked;
             applicationSettings.GenerateWcfContracts = wcfDataContractCheckBox.Checked;
             applicationSettings.GenerateInFolders = generateInFoldersCheckBox.Checked;
@@ -724,6 +726,7 @@ namespace NHibernateMappingGenerator
                                                  InheritenceAndInterfaces = appSettings.InheritenceAndInterfaces,
                                                  GenerateInFolders = appSettings.GenerateInFolders,
                                                  ClassNamePrefix = appSettings.ClassNamePrefix,
+                                                 EnableInflections = appSettings.EnableInflections
                                                  IsByCode = appSettings.IsByCode,
                                                  UseLazy = appSettings.UseLazy,
                                                  FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,

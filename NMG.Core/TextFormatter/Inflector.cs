@@ -26,13 +26,14 @@ namespace NMG.Core.TextFormatter
         private static readonly List<InflectorRule> _plurals = new List<InflectorRule>();
         private static readonly List<InflectorRule> _singulars = new List<InflectorRule>();
         private static readonly List<string> _uncountables = new List<string>();
+        public static bool EnableInflection { get; set; }
 
         /// <summary>
         /// Initializes the <see cref="Inflector"/> class.
         /// </summary>
         static Inflector()
         {
-            /*
+            if (!EnableInflection) return;
             AddPluralRule("$", "s");
             AddPluralRule("s$", "s");
             AddPluralRule("(ax|test)is$", "$1es");
@@ -93,7 +94,6 @@ namespace NMG.Core.TextFormatter
             AddUnknownCountRule("series");
             AddUnknownCountRule("fish");
             AddUnknownCountRule("sheep");
-            */
         }
 
         /// <summary>

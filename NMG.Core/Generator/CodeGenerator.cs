@@ -22,6 +22,7 @@ namespace NMG.Core.Generator
         {
             this.appPrefs = appPrefs;
             language = appPrefs.Language;
+            Inflector.EnableInflection = appPrefs.EnableInflections;
         }
 
         public override void Generate(bool writeToFile = true)
@@ -451,6 +452,7 @@ namespace NMG.Core.Generator
                 scopeStatements.Add("System.ComponentModel");
                 scopeStatements.Add("System.ComponentModel.DataAnnotations");
             }
+            
             if (appPrefs.ValidatorStyle == ValidationStyle.Nhibernate)
             {
                 scopeStatements.Add("NHibernate.Validator.Constraints");

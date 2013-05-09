@@ -130,6 +130,7 @@ namespace NHibernateMappingGenerator
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.EnableInflectionsCheckBox = new System.Windows.Forms.CheckBox();
             this.validationStyleGroupBox = new System.Windows.Forms.GroupBox();
             this.dataAnnotationsRadioButton = new System.Windows.Forms.RadioButton();
             this.nhibernateValidationRadioButton = new System.Windows.Forms.RadioButton();
@@ -775,7 +776,7 @@ namespace NHibernateMappingGenerator
             this.groupBox9.Controls.Add(this.generateInFoldersCheckBox);
             this.groupBox9.Location = new System.Drawing.Point(212, 152);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(309, 63);
+            this.groupBox9.Size = new System.Drawing.Size(309, 37);
             this.groupBox9.TabIndex = 8;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Files";
@@ -783,7 +784,7 @@ namespace NHibernateMappingGenerator
             // generateInFoldersCheckBox
             // 
             this.generateInFoldersCheckBox.AutoSize = true;
-            this.generateInFoldersCheckBox.Location = new System.Drawing.Point(7, 20);
+            this.generateInFoldersCheckBox.Location = new System.Drawing.Point(12, 14);
             this.generateInFoldersCheckBox.Name = "generateInFoldersCheckBox";
             this.generateInFoldersCheckBox.Size = new System.Drawing.Size(172, 17);
             this.generateInFoldersCheckBox.TabIndex = 0;
@@ -792,6 +793,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.EnableInflectionsCheckBox);
             this.groupBox8.Controls.Add(this.comboBoxForeignCollection);
             this.groupBox8.Controls.Add(this.wcfDataContractCheckBox);
             this.groupBox8.Controls.Add(this.labelForeignEntity);
@@ -800,9 +802,9 @@ namespace NHibernateMappingGenerator
             this.groupBox8.Controls.Add(this.labelInheritence);
             this.groupBox8.Controls.Add(this.textBoxClassNamePrefix);
             this.groupBox8.Controls.Add(this.textBoxInheritence);
-            this.groupBox8.Location = new System.Drawing.Point(212, 222);
+            this.groupBox8.Location = new System.Drawing.Point(212, 194);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(309, 181);
+            this.groupBox8.Size = new System.Drawing.Size(309, 209);
             this.groupBox8.TabIndex = 6;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Mapping Options";
@@ -1164,6 +1166,16 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
+            // EnableInflectionsCheckBox
+            // 
+            this.EnableInflectionsCheckBox.AutoSize = true;
+            this.EnableInflectionsCheckBox.Location = new System.Drawing.Point(13, 180);
+            this.EnableInflectionsCheckBox.Name = "EnableInflectionsCheckBox";
+            this.EnableInflectionsCheckBox.Size = new System.Drawing.Size(224, 17);
+            this.EnableInflectionsCheckBox.TabIndex = 21;
+            this.EnableInflectionsCheckBox.Text = "Load Inflections to Singularize or Pruralize";
+            this.EnableInflectionsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // validationStyleGroupBox
             // 
             this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
@@ -1366,6 +1378,7 @@ namespace NHibernateMappingGenerator
         private RadioButton noValidationRadioButton;
         private RadioButton nhibernateValidationRadioButton;
         private CheckBox includeHasManyCheckBox;
+        private CheckBox EnableInflectionsCheckBox;
     }
 }
 

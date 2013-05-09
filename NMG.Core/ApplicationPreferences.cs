@@ -47,6 +47,8 @@ namespace NMG.Core
         public string InheritenceAndInterfaces { get; set; }
 
         public string ClassNamePrefix { get; set; }
+        
+        public bool EnableInflections { get; set; }
 
         public Language Language { get; set; }
 
