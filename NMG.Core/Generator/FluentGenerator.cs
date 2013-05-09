@@ -103,9 +103,12 @@ namespace NMG.Core.Generator
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, ITextFormatter formatter)
         {
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
+            bool first = true;
             foreach (Column pkColumn in primaryKey.Columns)
             {
-				keyPropertyBuilder.Append(String.Format(".KeyProperty(x => x.{0}, \"{1}\")", formatter.FormatText(pkColumn.Name), pkColumn.Name));
+                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")", formatter.FormatText(pkColumn.Name), pkColumn.Name);
+                keyPropertyBuilder.Append(first ? tmp : "\n" + TABS + "             " + tmp);
+                first = false;
             }
 
             return new CodeSnippetStatement(TABS + string.Format("CompositeId(){0};", keyPropertyBuilder));
