@@ -726,7 +726,7 @@ namespace NHibernateMappingGenerator
                                                  InheritenceAndInterfaces = appSettings.InheritenceAndInterfaces,
                                                  GenerateInFolders = appSettings.GenerateInFolders,
                                                  ClassNamePrefix = appSettings.ClassNamePrefix,
-                                                 EnableInflections = appSettings.EnableInflections
+                                                 EnableInflections = appSettings.EnableInflections,
                                                  IsByCode = appSettings.IsByCode,
                                                  UseLazy = appSettings.UseLazy,
                                                  FieldPrefixRemovalList = appSettings.FieldPrefixRemovalList,

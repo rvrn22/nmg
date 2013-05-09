@@ -112,6 +112,10 @@ namespace NHibernateMappingGenerator
             this.fieldRadioBtn = new System.Windows.Forms.RadioButton();
             this.useLazyLoadingCheckBox = new System.Windows.Forms.CheckBox();
             this.includeForeignKeysCheckBox = new System.Windows.Forms.CheckBox();
+            this.validationStyleGroupBox = new System.Windows.Forms.GroupBox();
+            this.dataAnnotationsRadioButton = new System.Windows.Forms.RadioButton();
+            this.noValidationRadioButton = new System.Windows.Forms.RadioButton();
+            this.nhibernateValidationRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
@@ -131,10 +135,6 @@ namespace NHibernateMappingGenerator
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.EnableInflectionsCheckBox = new System.Windows.Forms.CheckBox();
-            this.validationStyleGroupBox = new System.Windows.Forms.GroupBox();
-            this.dataAnnotationsRadioButton = new System.Windows.Forms.RadioButton();
-            this.nhibernateValidationRadioButton = new System.Windows.Forms.RadioButton();
-            this.noValidationRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -157,11 +157,11 @@ namespace NHibernateMappingGenerator
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.validationStyleGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.validationStyleGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // dbConnStrLabel
@@ -509,6 +509,7 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.mapCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.mapCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mapCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.mapCodeFastColoredTextBox.IsReplaceMode = false;
             this.mapCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
@@ -535,6 +536,7 @@ namespace NHibernateMappingGenerator
             this.domainCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.domainCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.domainCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.domainCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.domainCodeFastColoredTextBox.IsReplaceMode = false;
             this.domainCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
@@ -793,7 +795,6 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox8
             // 
-            this.groupBox8.Controls.Add(this.EnableInflectionsCheckBox);
             this.groupBox8.Controls.Add(this.comboBoxForeignCollection);
             this.groupBox8.Controls.Add(this.wcfDataContractCheckBox);
             this.groupBox8.Controls.Add(this.labelForeignEntity);
@@ -971,6 +972,50 @@ namespace NHibernateMappingGenerator
             this.includeForeignKeysCheckBox.Text = "Include Foreign Keys";
             this.includeForeignKeysCheckBox.UseVisualStyleBackColor = true;
             // 
+            // validationStyleGroupBox
+            // 
+            this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
+            this.validationStyleGroupBox.Controls.Add(this.noValidationRadioButton);
+            this.validationStyleGroupBox.Controls.Add(this.nhibernateValidationRadioButton);
+            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 345);
+            this.validationStyleGroupBox.Name = "validationStyleGroupBox";
+            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 58);
+            this.validationStyleGroupBox.TabIndex = 6;
+            this.validationStyleGroupBox.TabStop = false;
+            this.validationStyleGroupBox.Text = "Validation Style";
+            // 
+            // dataAnnotationsRadioButton
+            // 
+            this.dataAnnotationsRadioButton.AutoSize = true;
+            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(63, 17);
+            this.dataAnnotationsRadioButton.Name = "dataAnnotationsRadioButton";
+            this.dataAnnotationsRadioButton.Size = new System.Drawing.Size(130, 17);
+            this.dataAnnotationsRadioButton.TabIndex = 5;
+            this.dataAnnotationsRadioButton.Text = ".Net Data Annotations";
+            this.dataAnnotationsRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // noValidationRadioButton
+            // 
+            this.noValidationRadioButton.AutoSize = true;
+            this.noValidationRadioButton.Checked = true;
+            this.noValidationRadioButton.Location = new System.Drawing.Point(6, 17);
+            this.noValidationRadioButton.Name = "noValidationRadioButton";
+            this.noValidationRadioButton.Size = new System.Drawing.Size(51, 17);
+            this.noValidationRadioButton.TabIndex = 4;
+            this.noValidationRadioButton.TabStop = true;
+            this.noValidationRadioButton.Text = "None";
+            this.noValidationRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // nhibernateValidationRadioButton
+            // 
+            this.nhibernateValidationRadioButton.AutoSize = true;
+            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(63, 34);
+            this.nhibernateValidationRadioButton.Name = "nhibernateValidationRadioButton";
+            this.nhibernateValidationRadioButton.Size = new System.Drawing.Size(128, 17);
+            this.nhibernateValidationRadioButton.TabIndex = 4;
+            this.nhibernateValidationRadioButton.Text = "NHibernate Validators";
+            this.nhibernateValidationRadioButton.UseVisualStyleBackColor = true;
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.castleMappingOption);
@@ -1063,6 +1108,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.EnableInflectionsCheckBox);
             this.groupBox1.Controls.Add(this.pascalCasedRadioButton);
             this.groupBox1.Controls.Add(this.prefixTextBox);
             this.groupBox1.Controls.Add(this.prefixRadioButton);
@@ -1088,9 +1134,9 @@ namespace NHibernateMappingGenerator
             // 
             // prefixTextBox
             // 
-            this.prefixTextBox.Location = new System.Drawing.Point(70, 110);
+            this.prefixTextBox.Location = new System.Drawing.Point(275, 88);
             this.prefixTextBox.Name = "prefixTextBox";
-            this.prefixTextBox.Size = new System.Drawing.Size(105, 20);
+            this.prefixTextBox.Size = new System.Drawing.Size(47, 20);
             this.prefixTextBox.TabIndex = 3;
             this.prefixTextBox.Text = "m_";
             // 
@@ -1108,7 +1154,7 @@ namespace NHibernateMappingGenerator
             // prefixLabel
             // 
             this.prefixLabel.AutoSize = true;
-            this.prefixLabel.Location = new System.Drawing.Point(22, 113);
+            this.prefixLabel.Location = new System.Drawing.Point(227, 92);
             this.prefixLabel.Name = "prefixLabel";
             this.prefixLabel.Size = new System.Drawing.Size(42, 13);
             this.prefixLabel.TabIndex = 2;
@@ -1169,55 +1215,12 @@ namespace NHibernateMappingGenerator
             // EnableInflectionsCheckBox
             // 
             this.EnableInflectionsCheckBox.AutoSize = true;
-            this.EnableInflectionsCheckBox.Location = new System.Drawing.Point(13, 180);
+            this.EnableInflectionsCheckBox.Location = new System.Drawing.Point(6, 111);
             this.EnableInflectionsCheckBox.Name = "EnableInflectionsCheckBox";
-            this.EnableInflectionsCheckBox.Size = new System.Drawing.Size(224, 17);
-            this.EnableInflectionsCheckBox.TabIndex = 21;
+            this.EnableInflectionsCheckBox.Size = new System.Drawing.Size(222, 17);
+            this.EnableInflectionsCheckBox.TabIndex = 22;
             this.EnableInflectionsCheckBox.Text = "Load Inflections to Singularize or Pruralize";
             this.EnableInflectionsCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // validationStyleGroupBox
-            // 
-            this.validationStyleGroupBox.Controls.Add(this.dataAnnotationsRadioButton);
-            this.validationStyleGroupBox.Controls.Add(this.noValidationRadioButton);
-            this.validationStyleGroupBox.Controls.Add(this.nhibernateValidationRadioButton);
-            this.validationStyleGroupBox.Location = new System.Drawing.Point(6, 345);
-            this.validationStyleGroupBox.Name = "validationStyleGroupBox";
-            this.validationStyleGroupBox.Size = new System.Drawing.Size(200, 58);
-            this.validationStyleGroupBox.TabIndex = 6;
-            this.validationStyleGroupBox.TabStop = false;
-            this.validationStyleGroupBox.Text = "Validation Style";
-            // 
-            // dataAnnotationsRadioButton
-            // 
-            this.dataAnnotationsRadioButton.AutoSize = true;
-            this.dataAnnotationsRadioButton.Location = new System.Drawing.Point(63, 17);
-            this.dataAnnotationsRadioButton.Name = "dataAnnotationsRadioButton";
-            this.dataAnnotationsRadioButton.Size = new System.Drawing.Size(130, 17);
-            this.dataAnnotationsRadioButton.TabIndex = 5;
-            this.dataAnnotationsRadioButton.Text = ".Net Data Annotations";
-            this.dataAnnotationsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // nhibernateValidationRadioButton
-            // 
-            this.nhibernateValidationRadioButton.AutoSize = true;
-            this.nhibernateValidationRadioButton.Location = new System.Drawing.Point(63, 34);
-            this.nhibernateValidationRadioButton.Name = "nhibernateValidationRadioButton";
-            this.nhibernateValidationRadioButton.Size = new System.Drawing.Size(128, 17);
-            this.nhibernateValidationRadioButton.TabIndex = 4;
-            this.nhibernateValidationRadioButton.Text = "NHibernate Validators";
-            this.nhibernateValidationRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // noValidationRadioButton
-            // 
-            this.noValidationRadioButton.AutoSize = true;
-            this.noValidationRadioButton.Checked = true;
-            this.noValidationRadioButton.Location = new System.Drawing.Point(6, 17);
-            this.noValidationRadioButton.Name = "noValidationRadioButton";
-            this.noValidationRadioButton.Size = new System.Drawing.Size(51, 17);
-            this.noValidationRadioButton.TabIndex = 4;
-            this.noValidationRadioButton.Text = "None";
-            this.noValidationRadioButton.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -1260,6 +1263,8 @@ namespace NHibernateMappingGenerator
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.validationStyleGroupBox.ResumeLayout(false);
+            this.validationStyleGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1268,8 +1273,6 @@ namespace NHibernateMappingGenerator
             this.groupBox1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.validationStyleGroupBox.ResumeLayout(false);
-            this.validationStyleGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
