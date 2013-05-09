@@ -280,7 +280,7 @@ namespace NMG.Core.Generator
                 foreach (var column in columns)
                 {
                     compareCode.Append(string.Format("{0} == t.{0}", column));
-                    compareCode.Append(column != lastCol ? " && " : ")");
+                    compareCode.Append(column != lastCol ? "\n\t\t\t && " : ")");
                 }
                 method.Statements.Add(new CodeSnippetStatement(compareCode.ToString()));
 
