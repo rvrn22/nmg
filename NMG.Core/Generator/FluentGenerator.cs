@@ -50,30 +50,35 @@ namespace NMG.Core.Generator
 
             if(UsesSequence)
             {
+                var fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
 				constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")",
-                    Formatter.FormatText(Table.PrimaryKey.Columns[0].Name), Table.PrimaryKey.Columns[0].Name, appPrefs.Sequence)));
+                    Formatter.FormatText(fieldName), fieldName, appPrefs.Sequence)));
             }
             else if (Table.PrimaryKey !=null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, Table.PrimaryKey.Columns[0].Name, Table.PrimaryKey.Columns[0].DataType, Formatter));
+                var fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, fieldName, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }
             else if (Table.PrimaryKey != null)
             {
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table.Name, Formatter));
             }
 
             // Many To One Mapping
             foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
                 var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name;
-                var fieldName = Formatter.FormatSingular(propertyName);
+                propertyName = Formatter.FormatSingular(propertyName);
+                var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
                 constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", fieldName, fk.Columns.First().Name)));
             }
 
             // Property Map
             foreach (var column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
-                var columnMapping = new DBColumnMapper().Map(column, Formatter, appPrefs.IncludeLengthAndScale);
+                var propertyName = Formatter.FormatText(column.Name);
+                var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
+                var columnMapping = new DBColumnMapper().Map(column, fieldName, Formatter, appPrefs.IncludeLengthAndScale);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
@@ -83,6 +88,11 @@ namespace NMG.Core.Generator
 
             newType.Members.Add(constructor);
             return compileUnit;
+        }
+
+        private static string FixPropertyWithSameClassName(string property, string className)
+        {
+            return property.ToLowerInvariant() == className.ToLowerInvariant() ? property + "Val" : property;
         }
 
         protected override string AddStandardHeader(string entireContent)
@@ -103,13 +113,15 @@ namespace NMG.Core.Generator
                                                        pkColumnName));
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, ITextFormatter formatter)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, string tableName, ITextFormatter formatter)
         {
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
             bool first = true;
             foreach (Column pkColumn in primaryKey.Columns)
             {
-                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")", formatter.FormatText(pkColumn.Name), pkColumn.Name);
+                var propertyName = formatter.FormatText(pkColumn.Name);
+                var fieldName = FixPropertyWithSameClassName(propertyName, tableName);
+                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")",fieldName, pkColumn.Name);
                 keyPropertyBuilder.Append(first ? tmp : "\n" + TABS + "             " + tmp);
                 first = false;
             }
