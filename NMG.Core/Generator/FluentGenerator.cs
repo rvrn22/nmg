@@ -62,6 +62,7 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Formatter));
             }
 
+            // Many To One Mapping
             foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
                 var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name;
@@ -69,16 +70,16 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", fieldName, fk.Columns.First().Name)));
             }
 
+            // Property Map
             foreach (var column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
                 var columnMapping = new DBColumnMapper().Map(column, Formatter, appPrefs.IncludeLengthAndScale);
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             }
 
+            // Bag (HasMany in FluentMapping)
             if (appPrefs.IncludeHasMany)
-                Table.HasManyRelationships.ToList().ForEach(x =>
-                        constructor.Statements.Add(new OneToMany(Formatter).Create(x))
-                    );
+                Table.HasManyRelationships.ToList().ForEach(x => constructor.Statements.Add(new OneToMany(Formatter).Create(x)));
 
             newType.Members.Add(constructor);
             return compileUnit;
