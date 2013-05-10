@@ -558,6 +558,7 @@ namespace NMG.Core.Generator
 
         private string GetCompleteFilePath(CodeDomProvider provider, string className)
         {
+            if (className.ToLowerInvariant() == "con") className = className + "Table";
             string fileName = filePath + className;
             return provider.FileExtension[0] == '.'
                        ? fileName + provider.FileExtension
