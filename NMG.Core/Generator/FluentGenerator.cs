@@ -57,20 +57,30 @@ namespace NMG.Core.Generator
             else if (Table.PrimaryKey !=null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
                 var fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, Table.PrimaryKey.Columns[0].Name, fieldName, Table.PrimaryKey.Columns[0].DataType, Formatter));
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(this.appPrefs, Table, Table.PrimaryKey.Columns[0].Name, fieldName, Table.PrimaryKey.Columns[0].DataType, Formatter));
             }
             else if (Table.PrimaryKey != null)
             {
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table.Name, Formatter));
+                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table, Formatter));
             }
 
             // Many To One Mapping
             foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
                 var propertyName = appPrefs.NameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name;
+                string name = propertyName;
                 propertyName = Formatter.FormatSingular(propertyName);
                 var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
-                constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", fieldName, fk.Columns.First().Name)));
+                var pkAlsoFkQty = (from fks in Table.ForeignKeys.Where(fks => fks.UniquePropertyName == name) select fks).Count();
+                if (pkAlsoFkQty > 1)
+                {
+                    constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\").ForeignKey(\"{2}\");", fieldName, fk.Columns.First().Name, fk.Columns.First().ConstraintName)));
+                }
+                else
+                {
+                    constructor.Statements.Add(new CodeSnippetStatement(string.Format(TABS + "References(x => x.{0}).Column(\"{1}\");", fieldName, fk.Columns.First().Name)));
+                }
+                
             }
 
             // Property Map
@@ -102,27 +112,32 @@ namespace NMG.Core.Generator
             return base.AddStandardHeader(entireContent);
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(ApplicationPreferences appPrefs, string pkColumnName, string propertyName, string pkColumnType, ITextFormatter formatter)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(ApplicationPreferences appPrefs, Table table, string pkColumnName, string propertyName, string pkColumnType, ITextFormatter formatter)
         {
             var dataTypeMapper = new DataTypeMapper();
             bool isPkTypeIntegral = (dataTypeMapper.MapFromDBType(appPrefs.ServerType, pkColumnType, null, null, null)).IsTypeIntegral();
 
             string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
-            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");",
-                                                       formatter.FormatText(propertyName),
+            var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
+            var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumnName) select fk).Count();
+            if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
+             return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");",
+                                                       formatter.FormatText(fieldName),
                                                        idGeneratorType,
                                                        pkColumnName));
         }
 
-        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, string tableName, ITextFormatter formatter)
+        private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, Table table, ITextFormatter formatter)
         {
             var keyPropertyBuilder = new StringBuilder(primaryKey.Columns.Count);
             bool first = true;
             foreach (Column pkColumn in primaryKey.Columns)
             {
                 var propertyName = formatter.FormatText(pkColumn.Name);
-                var fieldName = FixPropertyWithSameClassName(propertyName, tableName);
-                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")",fieldName, pkColumn.Name);
+                var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
+                var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumn.Name) select fk).Count();
+                if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
+             var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")",fieldName, pkColumn.Name);
                 keyPropertyBuilder.Append(first ? tmp : "\n" + TABS + "             " + tmp);
                 first = false;
             }
