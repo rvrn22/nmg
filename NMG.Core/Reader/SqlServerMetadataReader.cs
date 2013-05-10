@@ -51,7 +51,7 @@ from information_schema.columns c
 						where c.table_name = '{0}'
 							  and c.table_schema ='{1}'
 						order by c.table_name, c.ordinal_position",
-							table.Name, owner);
+							table.Name.Replace("'", "''"), owner);
 
 						using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default)) {
 							while (sqlDataReader.Read()) {
@@ -302,7 +302,7 @@ WHERE KCU1.CONSTRAINT_NAME = '{0}'",
 						  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE d on a.CONSTRAINT_NAME = d.CONSTRAINT_NAME
 						WHERE b.TABLE_NAME = '{0}'
 						ORDER BY 1,2",
-								table.Name);
+								table.Name.Replace("'","''"));
 						SqlDataReader reader = command.ExecuteReader();
 
 						while (reader.Read()) {
