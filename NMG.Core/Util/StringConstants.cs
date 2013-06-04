@@ -18,5 +18,8 @@
 
         public static string SYBASE_CONN_STR_TEMPLATE =
             "Provider=ASAProv;UID=uidname;PWD=password;DatabaseName=databasename;EngineName=enginename;CommLinks=TCPIP{host=servername}";
+
+        public static string INGRES_CONN_STR_TEMPLATE = "Host=localhost;Port=II7;Database=myDb;User ID=myUser;Password=myPassword;";
+
     }
 }

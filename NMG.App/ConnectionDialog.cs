@@ -100,6 +100,8 @@ namespace NHibernateMappingGenerator
                     return StringConstants.SQLITE_CONN_STR_TEMPLATE;
                 case ServerType.Sybase:
                     return StringConstants.SYBASE_CONN_STR_TEMPLATE;
+                case ServerType.Ingres:
+                    return StringConstants.INGRES_CONN_STR_TEMPLATE;
                 default:
                     return StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
             }

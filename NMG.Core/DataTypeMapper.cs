@@ -56,6 +56,8 @@ namespace NMG.Core
                     return MapFromPostgreDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.Sybase:
                     return MapFromSqlServerDBType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.Ingres:
+                    return MapFromIngresDbType(dataType, dataLength, dataPrecision, dataScale);
             }
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }
@@ -224,5 +226,58 @@ namespace NMG.Core
                            typeof (string);
             }
         }
+
+        private Type MapFromIngresDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        {
+            if (string.Equals(dataType, "INGRESDATE", StringComparison.OrdinalIgnoreCase))
+            {
+                return typeof(System.DateTime);
+            }
+
+            if (string.Equals(dataType, "INTEGER", StringComparison.OrdinalIgnoreCase))
+            {
+                if (dataPrecision.HasValue)
+                {
+                    switch (dataPrecision.Value)
+                    {
+                        case 1:
+                        case 2:
+                            return typeof(System.Int16);
+                        case 4:
+                            return typeof(System.Int32);
+                        case 8:
+                            return typeof(System.Int64);
+                    }
+                }
+            }
+
+            if (string.Equals(dataType, "DECIMAL", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(dataType, "MONEY", StringComparison.OrdinalIgnoreCase))
+            {
+                return typeof(System.Decimal);
+            }
+
+            if (string.Equals(dataType, "FLOAT", StringComparison.OrdinalIgnoreCase))
+            {
+                if (dataPrecision.HasValue)
+                {
+                    switch (dataPrecision.Value)
+                    {
+                        case 4:
+                            return typeof(System.Single);
+                        case 8:
+                            return typeof(System.Double);
+                    }
+                }
+            }
+
+            if (string.Equals(dataType, "BYTE", StringComparison.OrdinalIgnoreCase))
+            {
+                return typeof(byte[]);
+            }
+
+            return typeof(System.String);
+        }
+
     }
 }
