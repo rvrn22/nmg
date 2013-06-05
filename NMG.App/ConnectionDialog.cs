@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Microsoft.Data.ConnectionUI;
 using NMG.Core.Domain;
@@ -102,6 +96,8 @@ namespace NHibernateMappingGenerator
                     return StringConstants.SYBASE_CONN_STR_TEMPLATE;
                 case ServerType.Ingres:
                     return StringConstants.INGRES_CONN_STR_TEMPLATE;
+                case ServerType.CUBRID:
+                    return StringConstants.CUBRID_CONN_STR_TEMPLATE;
                 default:
                     return StringConstants.POSTGRESQL_CONN_STR_TEMPLATE;
             }

@@ -21,5 +21,8 @@
 
         public static string INGRES_CONN_STR_TEMPLATE = "Host=localhost;Port=II7;Database=myDb;User ID=myUser;Password=myPassword;";
 
+
+        public static string CUBRID_CONN_STR_TEMPLATE =
+            "server=localhost;port=33000;database=demodb;user=dba;password=";
     }
 }

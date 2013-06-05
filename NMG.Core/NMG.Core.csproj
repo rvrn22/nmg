@@ -54,6 +54,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Ingres .NET Data Provider\Ingres.Client.dll</HintPath>
     </Reference>
+    <Reference Include="CUBRID.Data">
+      <HintPath>..\Lib\CUBRID\CUBRID.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Npgsql">
       <HintPath>..\Lib\Npgsql2.0.11-bin-ms.net3.5sp1\Npgsql.dll</HintPath>
     </Reference>
@@ -92,6 +95,7 @@
     <Compile Include="Generator\CastleGenerator.cs" />
     <Compile Include="Generator\CodeGenerationHelper.cs" />
     <Compile Include="Generator\ContractGenerator.cs" />
+    <Compile Include="Generator\CUBRIDMappingGenerator.cs" />
     <Compile Include="Generator\FluentGenerator.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />
     <Compile Include="Generator\CodeGenerator.cs" />
@@ -101,6 +105,8 @@
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Reader\CUBRIDConstraintType.cs" />
+    <Compile Include="Reader\CUBRIDMetadataReader.cs" />
     <Compile Include="Reader\IConstraintTypeResolver.cs" />
     <Compile Include="Reader\IMetadataReader.cs" />
     <Compile Include="Reader\IngresMetadataReader.cs" />

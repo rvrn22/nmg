@@ -21,6 +21,8 @@ namespace NMG.Core
                     return new SybaseMetadataReader(connectionStr);
                 case ServerType.Ingres:
                     return new IngresMetadataReader(connectionStr);
+                case ServerType.CUBRID:
+                    return new CUBRIDMetadataReader(connectionStr);
                 default:
                     return new NpgsqlMetadataReader(connectionStr);
             }

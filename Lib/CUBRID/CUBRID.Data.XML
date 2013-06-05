@@ -1,0 +1,2955 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CUBRID.Data</name>
+    </assembly>
+    <members>
+        <member name="T:CUBRID.Data.CUBRIDClient.ColumnMetaData">
+            <summary>
+              Class used to store column metadata.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.ColumnMetaData.ToString">
+            <summary>
+              Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns> A <see cref="T:System.String"/> that represents this instance. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.Type">
+            <summary>
+              Gets or sets the type.
+            </summary>
+            <value> The type. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.Scale">
+            <summary>
+              Gets or sets the scale.
+            </summary>
+            <value> The scale. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.Precision">
+            <summary>
+              Gets or sets the precision.
+            </summary>
+            <value> The precision. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.RealName">
+            <summary>
+              Gets or sets the name of the real.
+            </summary>
+            <value> The name of the real. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.Table">
+            <summary>
+              Gets or sets the table.
+            </summary>
+            <value> The table. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.Name">
+            <summary>
+              Gets or sets the name.
+            </summary>
+            <value> The name. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsNullable">
+            <summary>
+              Gets or sets a value indicating whether this column is nullable.
+            </summary>
+            <value> <c>true</c> if this instance is nullable; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.DefaultValue">
+            <summary>
+              Gets or sets the default value.
+            </summary>
+            <value> The default value. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsAutoIncrement">
+            <summary>
+              Gets or sets a value indicating whether this column is auto increment.
+            </summary>
+            <value> <c>true</c> if this instance is auto increment; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsUniqueKey">
+            <summary>
+              Gets or sets a value indicating whether this column is unique key.
+            </summary>
+            <value> <c>true</c> if this instance is unique key; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsPrimaryKey">
+            <summary>
+              Gets or sets a value indicating whether this column is primary key.
+            </summary>
+            <value> <c>true</c> if this instance is primary key; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsForeignKey">
+            <summary>
+              Gets or sets a value indicating whether this column is foreign key.
+            </summary>
+            <value> <c>true</c> if this instance is foreign key; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsReverseIndex">
+            <summary>
+              Gets or sets a value indicating whether this column is reverse index.
+            </summary>
+            <value> <c>true</c> if this instance is reverse index; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsReverseUnique">
+            <summary>
+              Gets or sets a value indicating whether this column is reverse unique.
+            </summary>
+            <value> <c>true</c> if this instance is reverse unique; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.ColumnMetaData.IsShared">
+            <summary>
+              Gets or sets a value indicating whether this column is shared.
+            </summary>
+            <value> <c>true</c> if this instance is shared; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CASFunctionCode">
+            <summary>
+              CAS Function codes
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDStatementType">
+            <summary>
+              CUBRID Statement types
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDIsolationLevel">
+            <summary>
+              CUBRID Transaction isolation levels
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDDataType">
+            <summary>
+              CUBRID data types
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsAutoIncrementable">
+            <summary>
+              Is column Auto incrementable?
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsFixedLength">
+            <summary>
+              Is column Fixed Length?
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsFixedPrecisionScale">
+            <summary>
+              Is column Fixed Precision Scale?
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsLong">
+            <summary>
+              Is column Long?
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsNullable">
+            <summary>
+              Is column Nullable?
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.IsTrue">
+            <summary>
+              Is true?
+              (to be used when a int type is needed instead of a boolean)
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.IsTrue.No">
+            <summary>
+            No
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.IsTrue.Yes">
+            <summary>
+            Yes
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult">
+            <summary>
+              Class storing multiple batches execution results.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.#ctor(System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult"/> class.
+            </summary>
+            <param name="count"> The count of results. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.getErrorCodes">
+            <summary>
+              Gets the error codes.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.getErrorMessages">
+            <summary>
+              Gets the error messages.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.getResults">
+            <summary>
+              Gets the results codes.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.Count">
+            <summary>
+              The number of results.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.getStatementTypes">
+            <summary>
+              Gets the type of the statements.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBatchResult.getErrorFlag">
+            <summary>
+              Gets the error prepareOption.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.GetBool(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="strValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.GetInt(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="strValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.ParseProperties(System.String)">
+            <summary>
+            Parse connection properties
+            </summary>
+            <param name="strProperties"></param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.SetProperty(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="strName"></param>
+            <param name="strValue"></param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.ParseAltHosts(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="altHosts"></param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.AlterHostCount">
+            <summary>
+            Get Alternative hosts count
+            </summary>
+            <returns>Alternative hosts count</returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.Reset">
+            <summary>
+            Reset all properties.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.AltHosts">
+            <summary>
+            altHosts=standby_broker1_host, standby_broker2_host, . . .: Specifies the broker information of the standby server, 
+            which is used for failover when it is impossible to connect to the active server. 
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LogBaseDir">
+            <summary>
+            A directory where a debug log file is created. 
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LogFile">
+            <summary>
+            A log file name for debugging 
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.RcTime">
+            <summary>
+            An interval between the attempts to connect to the active broker in which failure occurred.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LoginTimeout">
+            <summary>
+            Timeout value (unit: msec.) for database login.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.QueryTimeout">
+            <summary>
+            Timeout value(unit: mesc.) for database query.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.SlowQueryThresholdMillis">
+            <summary>
+             Timeout for slow query logging if slow query logging is enabled (default value: 60000, unit: milliseconds)
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LoadBalance">
+            <summary>
+            When this value is true, the applications try to connect with the main host and alternative hosts specified 
+            with altHost property as random order. (default value: false).
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LogSlowQueries">
+            <summary>
+            Whether to log slow query for debugging (default value: false)
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LogTraceApi">
+            <summary>
+            Whether to log the start and end of CCI functions
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.LogTraceNetwork">
+            <summary>
+            Whether to log network data content transferred of CCI functions
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.AutoCommit">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionProperties.PropertiesString">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDTrace.WriteLine(System.String)">
+            <summary>
+              write log
+            </summary>
+            <param name="strMessage"> </param>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDBlob">
+            <summary>
+              Implementation of the CUBRIDBlob class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDBlob"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDBlob"/> class.
+            </summary>
+            <param name="conn"> The conn. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.#ctor(System.Byte[],System.Int32,System.Int32,CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDBlob"/> class.
+            </summary>
+            <param name="responseBuffer"> The response buffer. </param>
+            <param name="readCursor"> The read cursor. </param>
+            <param name="size"> The size. </param>
+            <param name="conn"> The connection </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.InitBlob(System.Byte[])">
+            <summary>
+              Gets the LOB content as bytes array.
+            </summary>
+            <param name="packedLobHandleBuffer"> Buffer containing a packedLobHandle. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.GetBytes(System.Int64,System.Int32)">
+            <summary>
+              Gets the LOB content as bytes array.
+            </summary>
+            <param name="pos"> The position. </param>
+            <param name="length"> The length. </param>
+            <returns> A buffer containing the requested data </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.SetBytes(System.Int64,System.Byte[])">
+            <summary>
+              Sets the LOB content as bytes array.
+            </summary>
+            <param name="pos"> The position. </param>
+            <param name="bytes"> The bytes array. </param>
+            <returns> The number of written bytes </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDBlob.GetPackedLobHandle">
+            <summary>
+              Gets the packed LOB handle.
+            </summary>
+            <returns> The packed LOB handle. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDBlob.BlobLength">
+            <summary>
+              Gets or sets the length of the BLOB.
+            </summary>
+            <value> The length of the BLOB. </value>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDClob">
+            <summary>
+              Implementation of the CUBRIDClob class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDClob"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDClob"/> class.
+            </summary>
+            <param name="conn"> The conn. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.#ctor(System.Byte[],System.Int32,System.Int32,CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDClob"/> class.
+            </summary>
+            <param name="responseBuffer"> The response buffer. </param>
+            <param name="readCursor"> The read cursor. </param>
+            <param name="size"> The size. </param>
+            <param name="conn"> The connection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.GetString(System.Int64,System.Int32)">
+            <summary>
+              Gets the LOB content as String.
+            </summary>
+            <param name="pos"> The position. </param>
+            <param name="length"> The length. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.SetString(System.Int64,System.String)">
+            <summary>
+              Sets the LOB content from String.
+            </summary>
+            <param name="pos"> The position. </param>
+            <param name="str"> The string. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClob.GetPackedLobHandle">
+            <summary>
+              Gets the packed LOB handle.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDClob.ClobLength">
+            <summary>
+              Gets or sets the length of the CLOB.
+            </summary>
+            <value> The length of the CLOB. </value>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDMetaData">
+            <summary>
+              Implementation of the CUBRIDMetaData class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsNumericType(System.String)">
+            <summary>
+              Determines whether is numeric type the specified type name.
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is numeric type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsTextType(System.String)">
+            <summary>
+              Determines whether is text/string/char type the specified type name.
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is text/string/char type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsBitType(System.String)">
+            <summary>
+              Determines whether is bit type the specified type name
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is bit type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsCollectionType(System.String)">
+            <summary>
+              Determines whether is collection type the specified type name
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is collection type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsDateTimeType(System.String)">
+            <summary>
+              Determines whether is date time type the specified type name
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is date time type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.IsLOBType(System.String)">
+            <summary>
+              Determines whether is LOB type the specified type name
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> <c>true</c> if is LOB type the specified type name; otherwise, <c>false</c> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.SupportsScale(System.String)">
+            <summary>
+              Determine if data type supports the Scale property.
+            </summary>
+            <param name="typeName"> Name of the type. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDMetaData.NameToType(System.String)">
+            <summary>
+              Returns a CUBRID data type from a CUBRID data type name.
+            </summary>
+            <param name="typeName"> Data type name. </param>
+            <returns> </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider">
+            <summary>
+              CUBRID helper class which provides support for database schema
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.conn">
+            <summary>
+              The CUBRID connection
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider"/> class.
+            </summary>
+            <param name="connection"> The connection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetDatabases(System.String[])">
+            <summary>
+              Gets the list of databases.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetTables(System.String[])">
+            <summary>
+              Gets the tables.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetViews(System.String[])">
+            <summary>
+              Gets the views.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.QuoteDefaultValues(System.Data.DataTable)">
+            <summary>
+              Quotes the default values of DataTable rows.
+            </summary>
+            <param name="dt"> The DataTable to quote. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetColumns(System.String[])">
+            <summary>
+              Gets the table columns.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetIndexes(System.String[])">
+            <summary>
+              Gets the indexes.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetIndexColumns(System.String[])">
+            <summary>
+              Gets the index columns.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetExportedKeys(System.String[])">
+            <summary>
+              Gets the exported keys.
+            </summary>
+            <param name="filters"> The filters: table name </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetCrossReferenceKeys(System.String[])">
+            <summary>
+              Gets the cross reference keys.
+            </summary>
+            <param name="filters"> The filters: primary table name, foreign table name </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetForeignKeys(System.String[])">
+            <summary>
+              Gets the foreign keys.
+            </summary>
+            <param name="filters"> The filters: table name, column name </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetUsers(System.String[])">
+            <summary>
+              Gets the users.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetProcedures(System.String[])">
+            <summary>
+              Gets the procedures.
+            </summary>
+            <param name="filters"> The filters. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetDataTypes">
+            <summary>
+              Gets the data types.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetReservedWords">
+            <summary>
+              Gets the reserved words.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetNumericFunctions">
+            <summary>
+              Gets the Numeric-type functions.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetStringFunctions">
+            <summary>
+              Gets the String-type functions.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.FillTable(System.Data.DataTable,System.Object[][])">
+            <summary>
+              Fills the table.
+            </summary>
+            <param name="dt"> The DataTable </param>
+            <param name="data"> The data </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetSchema(System.String,System.String[])">
+            <summary>
+            Get CUBRID schema.
+            </summary>
+            <param name="collection"></param>
+            <param name="filters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDSchemaProvider.GetForeignKeys(System.Data.DataTable,System.String,System.String)">
+            <summary>
+              GetForeignKeys retrieves the foreign keys on the given tableName.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbProviderFactory" /> class.
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.Instance">
+            <summary>
+              Gets an instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory"/>. 
+              This can be used to retrieve strongly typed data objects.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateCommand">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbCommand"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbCommand</b> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateCommandBuilder">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbCommandBuilder"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbCommandBuilder</b> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateConnection">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbConnection"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbConnection</b> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateConnectionStringBuilder">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbConnectionStringBuilder"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbConnectionStringBuilder</b> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateDataAdapter">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbDataAdapter"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbDataAdapter</b> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CreateParameter">
+            <summary>
+              Returns a strongly typed <see cref="T:System.Data.Common.DbParameter"/> instance.
+            </summary>
+            <returns> A new strongly typed instance of <b>DbParameter</b> . </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDClientFactory.CanCreateDataSourceEnumerator">
+            <summary>
+              Returns true if a <b>CUBRIDDataSourceEnumerator</b> can be created, or otherwise false.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbCommand" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.#ctor(System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand"/> class.
+            </summary>
+            <param name="sql"> The SQL statement. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand"/> class.
+            </summary>
+            <param name="sql"> The SQL statement. </param>
+            <param name="conn"> The connection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDConnection,CUBRID.Data.CUBRIDClient.CUBRIDTransaction)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand"/> class.
+            </summary>
+            <param name="sql"> The SQL statement. </param>
+            <param name="conn"> The connection. </param>
+            <param name="transaction"> The transaction. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.Prepare">
+            <summary>
+              Creates a prepared (or compiled) version of the command on the data source.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.CreateDbParameter">
+            <summary>
+              Creates a new instance of a <see cref="T:System.Data.Common.DbParameter" /> object.
+            </summary>
+            <returns> A <see cref="T:System.Data.Common.DbParameter" /> object. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.ExecuteScalar">
+            <summary>
+              Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
+            </summary>
+            <returns> The first column of the first row in the result set. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.Cancel">
+            <summary>
+              Attempts to cancels the execution of a <see cref="T:System.Data.Common.DbCommand" />.
+              Not supported yet.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.GetGeneratedKeys">
+            <summary>
+              Gets the generated keys (Auto-increment columns).
+            </summary>
+            <returns> A <see cref="T:System.Data.Common.DbDataReader" /> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.ExecuteDbDataReader(System.Data.CommandBehavior)">
+            <summary>
+              Executes the command text against the connection.
+            </summary>
+            <param name="behavior"> An instance of <see cref="T:System.Data.CommandBehavior" /> . </param>
+            <returns> A <see cref="T:System.Data.Common.DbDataReader" /> . </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.ExecuteNonQuery">
+            <summary>
+              Executes a SQL statement against a connection object.
+            </summary>
+            <returns> The number of rows affected. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.Close">
+            <summary>
+            Close Command
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.System#ICloneable#Clone">
+            <summary>
+              Creates a new object that is a copy of the current instance.
+            </summary>
+            <returns> A new object that is a copy of this instance. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommand.Clone">
+            <summary>
+              Clones this instance.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.ColumnInfos">
+            <summary>
+              Gets the columns metadata.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.CommandText">
+            <summary>
+              Gets or sets the text command to run against the data source.
+            </summary>
+            <returns> The command SQL statement to execute. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.CommandTimeout">
+            <summary>
+              Gets or sets the wait time before terminating the attempt to execute a command and generating an error.
+            </summary>
+            <returns> The time in seconds to wait for the command to execute. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.CommandType">
+            <summary>
+              Indicates or specifies how the <see cref="P:System.Data.Common.DbCommand.CommandText" /> property is interpreted.
+            </summary>
+            <returns> One of the <see cref="T:System.Data.CommandType" /> values. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.DbConnection">
+            <summary>
+              Gets or sets the <see cref="T:System.Data.Common.DbConnection" /> used by this <see
+               cref="T:System.Data.Common.DbCommand" />.
+            </summary>
+            <returns> The connection to the data source. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.DbTransaction">
+            <summary>
+              Gets or sets the <see cref="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.DbTransaction" />.
+            </summary>
+            <returns> The transaction within which a Command object of a .NET Framework data provider executes. The default value is a null reference (Nothing in Visual Basic). </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.DesignTimeVisible">
+            <summary>
+              Gets or sets a value indicating whether the command object should be visible in a customized interface control.
+            </summary>
+            <returns> true, if the command object should be visible in a control; otherwise false. The default is true. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.UpdatedRowSource">
+            <summary>
+              Gets or sets how command results are applied to the <see cref="T:System.Data.DataRow" /> when used by the Update method of a <see
+               cref="T:System.Data.Common.DbDataAdapter" />.
+            </summary>
+            <returns> One of the <see cref="T:System.Data.UpdateRowSource" /> values. The default is Both unless the command is automatically generated. Then the default is None. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.DbParameterCollection">
+            <summary>
+              Gets the collection of <see cref="T:System.Data.Common.DbParameter" /> objects.
+            </summary>
+            <returns> The parameters of the SQL statement or stored procedure. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.Parameters">
+            <summary>
+              Gets the collection of <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> objects.
+            </summary>
+            <returns> The parameters of the SQL statement or stored procedure. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommand.IsPrepared">
+            <summary>
+              Gets a value indicating whether this instance is prepared.
+            </summary>
+            <value> <c>true</c> if this instance is prepared; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbCommandBuilder" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder"/> class.
+            </summary>
+            <param name="dataAdapter"> The data dataAdapter. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.ApplyParameterInfo(System.Data.Common.DbParameter,System.Data.DataRow,System.Data.StatementType,System.Boolean)">
+            <summary>
+              Allows the provider implementation of the <see cref="T:System.Data.Common.DbCommandBuilder" /> class to handle additional parameter properties.
+            </summary>
+            <param name="parameter"> A <see cref="T:System.Data.Common.DbParameter" /> to which the additional modifications are applied. </param>
+            <param name="row"> The <see cref="T:System.Data.DataRow" /> from the schema table provided by <see
+               cref="M:System.Data.Common.DbDataReader.GetSchemaTable" /> . </param>
+            <param name="statementType"> The type of command being generated; INSERT, UPDATE or DELETE. </param>
+            <param name="whereClause"> true if the parameter is part of the update or delete WHERE clause, false if it is part of the insert or update values. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetDeleteCommand">
+            <summary>
+              Gets the delete command.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetUpdateCommand">
+            <summary>
+              Gets the update command.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetInsertCommand">
+            <summary>
+              Gets the insert command.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetParameterName(System.String)">
+            <summary>
+              Gets the name of the parameter.
+            </summary>
+            <param name="unformattedParameterName"> Unformatted name of the parameter. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetParameterName(System.Int32)">
+            <summary>
+              Returns the name of the specified parameter in the format of ?p#. Use when building a custom command builder.
+            </summary>
+            <param name="parameterOrdinal"> The number to be included as part of the parameter's name.. </param>
+            <returns> The name of the parameter with the specified number appended as part of the parameter name. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.GetParameterPlaceholder(System.Int32)">
+            <summary>
+              Returns the placeholder for the parameter in the associated SQL statement.
+            </summary>
+            <param name="parameterOrdinal"> The number to be included as part of the parameter's name. </param>
+            <returns> The name of the parameter with the specified number appended. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.QuoteIdentifier(System.String)">
+            <summary>
+              Given an unquoted identifier in the correct catalog case, returns the correct quoted form of that identifier, including properly escaping any embedded quotes in the identifier.
+            </summary>
+            <param name="unquotedIdentifier"> The original unquoted identifier. </param>
+            <returns> The quoted version of the identifier. Embedded quotes within the identifier are properly escaped. </returns>
+            <PermissionSet>
+              <IPermission
+                class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                version="1" PathDiscovery="*AllFiles*" />
+            </PermissionSet>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.UnquoteIdentifier(System.String)">
+            <summary>
+              Given a quoted identifier, returns the correct unquoted form of that identifier, including properly un-escaping any embedded quotes in the identifier.
+            </summary>
+            <param name="quotedIdentifier"> The identifier that will have its embedded quotes removed. </param>
+            <returns> The unquoted identifier, with embedded quotes properly un-escaped. </returns>
+            <PermissionSet>
+              <IPermission
+                class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                version="1" PathDiscovery="*AllFiles*" />
+            </PermissionSet>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.SetRowUpdatingHandler(System.Data.Common.DbDataAdapter)">
+            <summary>
+              Registers the <see cref="T:System.Data.Common.DbCommandBuilder" /> to handle the <see
+               cref="E:System.Data.OleDb.OleDbDataAdapter.RowUpdating" /> event for a <see cref="T:System.Data.Common.DbDataAdapter" />.
+            </summary>
+            <param name="dataAdapter"> The <see cref="T:System.Data.Common.DbDataAdapter" /> to be used for the update. </param>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDCommandBuilder.DataAdapter">
+            <summary>
+              Gets or sets a <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter" /> object for which statements are automatically generated.
+            </summary>
+            <returns> A <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter" /> object. </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbConnection" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.#ctor(System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection"/> class.
+            </summary>
+            <param name="connString"> The connection string. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.System#ICloneable#Clone">
+            <summary>
+              Creates a new object that is a copy of the current instance.
+            </summary>
+            <returns> A new object that is a copy of this instance. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Clone">
+            <summary>
+              Creates a CUBRIDConnection clone
+            </summary>
+            <returns> CUBRIDConnection clone </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Dispose(System.Boolean)">
+            <summary>
+              Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Component" /> and optionally releases the managed resources.
+            </summary>
+            <param name="disposing"> true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetConnectionTimeout(System.Int32)">
+            <summary>
+              Sets the connection timeout.
+            </summary>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.ChangeDatabase(System.String)">
+            <summary>
+              Changes the current database for an open connection.
+            </summary>
+            <param name="databaseName"> Specifies the name of the database for the connection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.BeginDbTransaction(System.Data.IsolationLevel)">
+            <summary>
+              Starts a database transaction.
+            </summary>
+            <param name="isolationLevel"> Specifies the isolation level for the transaction. </param>
+            <returns> An object representing the new transaction. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.BeginTransaction">
+            <summary>
+              Begins the transaction.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.BeginTransaction(CUBRID.Data.CUBRIDClient.CUBRIDIsolationLevel)">
+            <summary>
+              Begins the transaction.
+            </summary>
+            <param name="iso"> The isolation level. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Close">
+            <summary>
+              Closes the connection to the database. This is the preferred method of closing any open connection.
+            </summary>
+            <exception cref="T:System.Data.Common.DbException">The connection-level error that occurred while opening the connection.</exception>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CreateDbCommand">
+            <summary>
+              Creates and returns a <see cref="T:System.Data.Common.DbCommand" /> object associated with the current connection.
+            </summary>
+            <returns> A <see cref="T:System.Data.Common.DbCommand" /> object. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CreateCommand">
+            <summary>
+              Creates a CUBRIDCommand.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Open">
+            <summary>
+              Opens a database connection with the settings specified by the <see
+               cref="P:System.Data.Common.DbConnection.ConnectionString" />.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.EncodingFromString(System.String)">
+            <summary>
+            </summary>
+            <param name="encoding"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetEncoding(System.String)">
+            <summary>
+              Sets the charset used to communicate with the database
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetEncoding">
+            <summary>
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Reconnect">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Connect(System.String,System.Int32)">
+            <summary>
+              Connect to the CUBRID DB.
+            </summary>
+            <param name="strServer"> The host name/IP. </param>
+            <param name="port"> The broker port. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SendDriverInfo">
+            <summary>
+              Send Driver information to CUBRID Database.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.ReceiveBrokerInfo">
+            <summary>
+              Receive broker information.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetIsolationLevel(CUBRID.Data.CUBRIDClient.CUBRIDIsolationLevel)">
+            <summary>
+              Sets the isolation level.
+            </summary>
+            <param name="level"> The level. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetIsolationLevel">
+            <summary>
+              Gets the isolation level.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetLockTimeout(System.Int32)">
+            <summary>
+              Specifies the connection lock timeout as seconds.
+            </summary>
+            <param name="value"> lock timeout value(Unit: seconds). </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetLockTimeout">
+            <summary>
+              Gets system parameter: CCI_PARAM_LOCK_TIMEOUT.
+            </summary>
+            <returns> Parameter value </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetDBParameter(CUBRID.Data.CUBRIDClient.CCIDbParam,System.Int32)">
+            <summary>
+              Configures a system parameter
+            </summary>
+            <param name="param_name"> System parameter name. </param>
+            <param name="nValue"> Parameter value </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetDBParameter(CUBRID.Data.CUBRIDClient.CCIDbParam)">
+            <summary>
+              Gets a parameter specified in the database.
+            </summary>
+            <param name="param_name"> System parameter name. </param>
+            <returns> Parameter value </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetAutoCommit(System.Boolean)">
+            <summary>
+              Sets the auto commit state of the connection.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetAutoCommit">
+            <summary>
+              Gets the auto commit state of the connection.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SetMaxStringLength(System.Int32)">
+            <summary>
+              Sets the max length of the string used for communicating with the database.
+            </summary>
+            <param name="val"> The max length value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetMaxStringLength">
+            <summary>
+              Gets the length of the max string.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.BatchExecuteNoQuery(System.String[])">
+            <summary>
+              Batch executes sql statements, without returning any resultsets.
+            </summary>
+            <param name="sqls"> The SQL commands to be executed. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Commit">
+            <summary>
+              Commits the transaction.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Rollback">
+            <summary>
+              Rollbacks the transaction.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetTableNameFromOID(System.String)">
+            <summary>
+              Gets the table name from OID.
+            </summary>
+            <param name="oidStr"> The OID. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CurrentDatabase">
+            <summary>
+              Gets the current database.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.AddElementToSet(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String,System.Object)">
+            <summary>
+              Adds the element to set.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.DropElementInSet(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String,System.Object)">
+            <summary>
+              Drops the element in set.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.UpdateElementInSequence(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String,System.Int32,System.Object)">
+            <summary>
+              Adds the element in sequence.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <param name="index"> The index. </param>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.InsertElementInSequence(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String,System.Int32,System.Object)">
+            <summary>
+              Inserts the element in sequence.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <param name="index"> The index. </param>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.DropElementInSequence(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String,System.Int32)">
+            <summary>
+              Drops the element in sequence.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <param name="index"> The index. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetCollectionSize(CUBRID.Data.CUBRIDClient.CUBRIDOid,System.String)">
+            <summary>
+              Gets the size of the collection.
+            </summary>
+            <param name="oid"> The oid. </param>
+            <param name="attributeName"> Name of the attribute. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetQueryPlanOnly(System.String)">
+            <summary>
+              Gets the query plan only.
+            </summary>
+            <param name="sql"> The SQL. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetDatabaseProductVersion">
+            <summary>
+              Gets the database version.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LOBNew(CUBRID.Data.CUBRIDClient.CUBRIDDataType)">
+            <summary>
+              Create a new LOB.
+            </summary>
+            <param name="lob_type"> The LOB type. </param>
+            <returns> The packed LOB handle. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LOBRead(System.Byte[],System.Int64,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+              LOB read.
+            </summary>
+            <param name="packedLobHandle"> The packed LOB handle. </param>
+            <param name="offset"> The offset. </param>
+            <param name="buf"> The buffer. </param>
+            <param name="start"> The start positon. </param>
+            <param name="len"> The length. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LOBWrite(System.Byte[],System.Int64,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+              LOB write.
+            </summary>
+            <param name="packedLobHandle"> The packed LOB handle. </param>
+            <param name="offset"> The offset. </param>
+            <param name="buf"> The buffer. </param>
+            <param name="start"> The start position. </param>
+            <param name="len"> The length. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.BatchExecute(System.String[])">
+            <summary>
+              Batch execute statements.
+            </summary>
+            <param name="batchSqlStmt"> The batch SQL statements. </param>
+            <returns> CUBRIDBatchResult </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetSchema">
+            <summary>
+              Returns schema information for the data source of this <see cref="T:System.Data.Common.DbConnection"/>.
+            </summary>
+            <returns> A <see cref="T:System.Data.DataTable"/> that contains schema information. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetSchema(System.String)">
+            <summary>
+              Returns schema information for the data source of this 
+              <see cref="T:System.Data.Common.DbConnection"/> using the specified string for the schema name.
+            </summary>
+            <paramList name="collectionName">Specifies the name of the schema to return.</paramList>
+            <returns> A <see cref="T:System.Data.DataTable"/> that contains schema information. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnection.GetSchema(System.String,System.String[])">
+            <summary>
+              Returns schema information for the data source of this <see cref="T:System.Data.Common.DbConnection"/>
+              using the specified string for the schema name and the specified string array 
+              for the restriction values.
+            </summary>
+            <param name="collectionName"> Specifies the name of the schema to return. </param>
+            <param name="filters"> Specifies a set of restriction values for the requested schema. </param>
+            <returns> A <see cref="T:System.Data.DataTable"/> that contains schema information. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SessionId">
+            <summary>
+              Gets or sets the session id.
+            </summary>
+            <value> The session id. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.DbVersion">
+            <summary>
+              Gets or sets the database version.
+            </summary>
+            <value> The database version. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LogTraceApi">
+            <summary>
+              Gets or sets the logTraceApi flag.
+            </summary>
+            <value> The value of the LogTraceApi flag. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LogTraceNetwork">
+            <summary>
+              Gets or sets the logTraceNetwork flag.
+            </summary>
+            <value> The value of the LogTraceNetwork flag. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.ConnectionString">
+            <summary>
+              Gets or sets the string used to open the connection.
+            </summary>
+            <returns> The connection string used to establish the initial connection. The exact contents of the connection string depend on the specific data source for this connection. The default value is an empty string. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.ConnectionTimeout">
+            <summary>
+              Gets the time to wait while establishing a connection before terminating the attempt and generating an error.
+            </summary>
+            <returns> The time (in seconds) to wait for a connection to open. The default value is determined by the specific type of connection that you are using. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.SchemaProvider">
+            <summary>
+              Gets the database schema provider.
+            </summary>
+            <returns> The current database schema provider. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.LockTimeout">
+            <summary>
+              Gets/Sets the connection lock timeout(Unit: milliseconds).
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Database">
+            <summary>
+              Gets the name of the current database after a connection is opened, or the database name specified in the connection string before the connection is opened.
+            </summary>
+            <returns> The name of the current database or the name of the database to be used after a connection is opened. The default value is an empty string. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.State">
+            <summary>
+              Gets a string that describes the state of the connection.
+            </summary>
+            <returns> The state of the connection. The format of the string returned depends on the specific type of connection you are using. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.ServerVersion">
+            <summary>
+              Gets a string that represents the version of the server to which the object is connected.
+            </summary>
+            <returns> The version of the database. The format of the string returned depends on the specific type of connection you are using. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.DataSource">
+            <summary>
+              Gets the name of the database server to which to connect.
+            </summary>
+            <returns> The name of the database server to which to connect. The default value is an empty string. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.AutoCommit">
+            <summary>
+              Gets the value indicating whether auto commit is set.
+            </summary>
+            <value> <c>true</c> if auto commit is set; otherwise, <c>false</c> . </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.MaxStringLength">
+            <summary>
+              Gets or sets the length of the max string.
+            </summary>
+            <value> The length of the max string. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.DbProviderFactory">
+            <summary>
+              Gets the <see cref="T:System.Data.Common.DbProviderFactory" /> for this <see cref="T:System.Data.Common.DbConnection" />.
+            </summary>
+            <returns> A <see cref="T:System.Data.Common.DbProviderFactory" /> . </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.Stream">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnection.IsolationLevel">
+            <summary>
+              Gets or sets the isolation level.
+            </summary>
+            <value> The isolation level. </value>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CUBRIDInfoMessageEventHandler">
+            <summary>
+              Represents the method that will handle the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CUBRIDInfoMessageEventArgs"/> event of a 
+              <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection"/>.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CUBRIDInfoMessageEventArgs">
+            <summary>
+              Provides data for the InfoMessage event.
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDConnection.CUBRIDInfoMessageEventArgs.errors">
+            <summary>
+              Collection of errors
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder">
+            <summary>
+              CUBRID implementation of <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> class.
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.validKeywords">
+            <summary>
+              Valid properties names in the connection string
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.connProperties">
+            <summary>
+              Connection properties values
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+            <param name="server"> The server address. </param>
+            <param name="port"> The broker port. </param>
+            <param name="database"> The CUBRID database. </param>
+            <param name="user"> The user id. </param>
+            <param name="password"> The password. </param>
+            <param name="charset"> Character set of database to be connected. </param>
+            <param name="autoCommit"> Turn ON/OFF of auto-commit mode. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.#ctor(System.String,System.Int32,System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+            <param name="server"> The server. </param>
+            <param name="port"> The port. </param>
+            <param name="database"> The database. </param>
+            <param name="user"> The user name. </param>
+            <param name="password"> The password. </param>
+            <param name="encoding"> Character set of database to be connected. </param>
+            <param name="autoCommit"> Turn ON/OFF of auto-commit mode. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.#ctor(System.String,System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+            <param name="server"> The server. </param>
+            <param name="database"> The database. </param>
+            <param name="user"> The user name. </param>
+            <param name="password"> The password. </param>
+            <param name="encoding"> Character set of database to be connected. </param>
+            <param name="autoCommit"> Turn ON/OFF of auto-commit mode. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.#ctor(System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+            <param name="connString"> The connection string. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.GetConnectionString">
+            <summary>
+              Gets the connection string.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.GetPropertyValue(System.String)">
+            <summary>
+              Gets the value of a connection string property.
+            </summary>
+            <param name="key"> The name of the property. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.SetPropertyValue(System.String,System.Object)">
+            <summary>
+              Sets the value of a connection string property.
+            </summary>
+            <param name="key"> The name of the property. </param>
+            <param name="value"> The value to set. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.BuildConnStringFromProperties">
+            <summary>
+              Buils a connection string from its properties.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Finalize">
+            <summary>
+              Destroys a instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder"/> class.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Server">
+            <summary>
+              Gets or sets the server address to connect to
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Port">
+            <summary>
+              Gets or sets the broker port to connect to
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Database">
+            <summary>
+              Gets or sets the name of the database to connect to
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.User">
+            <summary>
+              Gets or sets the user id that should be used to connect with.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Password">
+            <summary>
+              Gets/sets the database user password
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.Encoding">
+            <summary>
+              Gets/sets the database connection encoding
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDConnectionStringBuilder.AutoCommit">
+            <summary>
+              Gets/sets the database connection auto-commit mode
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter">
+            <summary>
+              CUBRID DataAdapter implementation
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDCommand)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter"/> class.
+            </summary>
+            <param name="selectCommand"> The select command. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDConnection)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter"/> class.
+            </summary>
+            <param name="selectCommandText"> The select command text. </param>
+            <param name="connection"> The connection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.#ctor(System.String,System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter"/> class.
+            </summary>
+            <param name="selectCommandText"> The select command text. </param>
+            <param name="selectConnString"> The select connection string. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.CreateRowUpdatedEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)">
+            <summary>
+              Initializes a new instance of the <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> class.
+            </summary>
+            <param name="dataRow"> The <see cref="T:System.Data.DataRow" /> used to update the data source. </param>
+            <param name="command"> The <see cref="T:System.Data.IDbCommand" /> executed during the <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> . </param>
+            <param name="statementType"> Whether the command is an UPDATE, INSERT, DELETE, or SELECT statement. </param>
+            <param name="tableMapping"> A <see cref="T:System.Data.Common.DataTableMapping" /> object. </param>
+            <returns> A new instance of the <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> class. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.CreateRowUpdatingEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)">
+            <summary>
+              Initializes a new instance of the <see cref="T:System.Data.Common.RowUpdatingEventArgs" /> class.
+            </summary>
+            <param name="dataRow"> The <see cref="T:System.Data.DataRow" /> that updates the data source. </param>
+            <param name="command"> The <see cref="T:System.Data.IDbCommand" /> to execute during the <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> . </param>
+            <param name="statementType"> Whether the command is an UPDATE, INSERT, DELETE, or SELECT statement. </param>
+            <param name="tableMapping"> A <see cref="T:System.Data.Common.DataTableMapping" /> object. </param>
+            <returns> A new instance of the <see cref="T:System.Data.Common.RowUpdatingEventArgs" /> class. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)">
+            <summary>
+              Raises the RowUpdating event of a .NET Framework data provider.
+            </summary>
+            <param name="value"> An <see cref="T:System.Data.Common.RowUpdatingEventArgs" /> that contains the event data. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)">
+            <summary>
+              Raises the RowUpdated event of a .NET Framework data provider.
+            </summary>
+            <param name="value"> A <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> that contains the event data. </param>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.DeleteCommand">
+            <summary>
+              Gets or sets a command for deleting records from the data set.
+            </summary>
+            <returns> An <see cref="T:System.Data.IDbCommand" /> used during <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> to delete records in the data source for deleted rows in the data set. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.InsertCommand">
+            <summary>
+              Gets or sets a command used to insert new records into the data source.
+            </summary>
+            <returns> A <see cref="T:System.Data.IDbCommand" /> used during <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> to insert records in the data source for new rows in the data set. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.SelectCommand">
+            <summary>
+              Gets or sets a command used to select records in the data source.
+            </summary>
+            <returns> A <see cref="T:System.Data.IDbCommand" /> that is used during <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> to select records from data source for placement in the data set. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.UpdateCommand">
+            <summary>
+              Gets or sets a command used to update records in the data source.
+            </summary>
+            <returns> A <see cref="T:System.Data.IDbCommand" /> used during <see
+               cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> to update records in the data source for modified rows in the data set. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.UpdateBatchSize">
+            <summary>
+              Gets or sets a value that enables or disables batch processing support, and specifies the number of commands that can be executed in a batch.
+            </summary>
+            <returns> The number of rows to process per batch. Value is Effect 0 There is no limit on the batch size. 1 Disables batch updating. &gt; 1 Changes are sent using batches of <see
+               cref="P:System.Data.Common.DbDataAdapter.UpdateBatchSize" /> operations at a time. When setting this to a value other than 1 ,all the commands associated with the <see
+               cref="T:System.Data.Common.DbDataAdapter" /> must have their <see cref="P:System.Data.IDbCommand.UpdatedRowSource" /> property set to None or OutputParameters. An exception will be thrown otherwise. </returns>
+            <PermissionSet>
+              <IPermission
+                class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                version="1" PathDiscovery="*AllFiles*" />
+            </PermissionSet>
+        </member>
+        <member name="E:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.RowUpdating">
+            <summary>
+              Occurs during Update before a command is executed.
+            </summary>
+        </member>
+        <member name="E:CUBRID.Data.CUBRIDClient.CUBRIDDataAdapter.RowUpdated">
+            <summary>
+              Occurs during Update after a command is executed.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatingEventHandler">
+            <summary>
+              CUBRIDRowUpdatingEventHandler
+            </summary>
+            <param name="sender"> The sender. </param>
+            <param name="e"> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatingEventArgs"/> instance containing the event data. </param>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatedEventHandler">
+            <summary>
+              CUBRIDRowUpdatedEventHandler
+            </summary>
+            <param name="sender"> The sender. </param>
+            <param name="e"> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatedEventArgs"/> instance containing the event data. </param>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatingEventArgs">
+            <summary>
+              CUBRID RowUpdatingEventArgs implementation.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatingEventArgs.#ctor(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)">
+            <summary>
+              Initializes a new instance of the CUBRIDRowUpdatingEventArgs class.
+            </summary>
+            <paramList name="row">The
+              <see cref="T:System.Data.DataRow"/>
+              to
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              .</paramList>
+            <paramList name="command">The
+              <see cref="T:System.Data.IDbCommand"/>
+              to execute during
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              .</paramList>
+            <paramList name="statementType">One of the
+              <see cref="T:System.Data.StatementType"/>
+              values that specifies the type of query executed.</paramList>
+            <paramList name="tableMapping">The
+              <see cref="T:System.Data.Common.DataTableMapping"/>
+              sent through an
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              .</paramList>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatingEventArgs.Command">
+            <summary>
+              Gets or sets the CUBRIDCommand to execute when performing the Update.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatedEventArgs">
+            <summary>
+              CUBRID RowUpdatedEventArgs implementation.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatedEventArgs.#ctor(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)">
+            <summary>
+              Initializes a new instance of the CUBRIDRowUpdatedEventArgs class.
+            </summary>
+            <paramList name="row">The
+              <see cref="T:System.Data.DataRow"/>
+              sent through an
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              .</paramList>
+            <paramList name="command">The
+              <see cref="T:System.Data.IDbCommand"/>
+              executed when
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              is called.</paramList>
+            <paramList name="statementType">One of the
+              <see cref="T:System.Data.StatementType"/>
+              values that specifies the type of query executed.</paramList>
+            <paramList name="tableMapping">The
+              <see cref="T:System.Data.Common.DataTableMapping"/>
+              sent through an
+              <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/>
+              .</paramList>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDRowUpdatedEventArgs.Command">
+            <summary>
+              Gets or sets the CUBRIDCommand executed when Update is called.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDDataReader">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbDataReader" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Close">
+            <summary>
+              Closes the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataReader"/> object.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetBoolean(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a Boolean.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetByte(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a byte.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+              Reads a stream of bytes from the specified column, starting at location indicated by <paramref name="dataOffset" />, into the buffer, starting at the location indicated by <paramref
+               name="bufferOffset" />.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <param name="dataOffset"> The index within the row from which to begin the read operation. </param>
+            <param name="buffer"> The buffer into which to copy the data. </param>
+            <param name="bufferOffset"> The index with the buffer to which the data will be copied. </param>
+            <param name="length"> The maximum number of characters to read. </param>
+            <returns> The actual number of bytes read. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetChar(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a single character.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)">
+            <summary>
+              Reads a stream of characters from the specified column, starting at location indicated by <paramref name="ordinal" />, into the buffer, starting at the location indicated by <paramref
+               name="dataOffset" />.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <param name="dataOffset"> The index within the row from which to begin the read operation. </param>
+            <param name="buffer"> The buffer into which to copy the data. </param>
+            <param name="bufferOffset"> The index with the buffer to which the data will be copied. </param>
+            <param name="length"> The maximum number of characters to read. </param>
+            <returns> The actual number of characters read. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDataTypeName(System.Int32)">
+            <summary>
+              Gets name of the data type of the specified column.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> A string representing the name of the data type. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetFieldType(System.Int32)">
+            <summary>
+              Gets the data type of the specified column.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The data type of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDateTime(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDecimal(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a <see cref="T:System.Decimal" /> object.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDouble(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a double-precision floating point number.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetFloat(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a single-precision floating point number.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetGuid(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a globally-unique identifier (GUID).
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetInt16(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a 16-bit signed integer.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetInt32(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a 32-bit signed integer.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetInt64(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a 64-bit signed integer.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetName(System.Int32)">
+            <summary>
+              Gets the name of the column, given the zero-based column ordinal.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The name of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetOrdinal(System.String)">
+            <summary>
+              Gets the column ordinal given the name of the column.
+            </summary>
+            <param name="name"> The name of the column. </param>
+            <returns> The zero-based column ordinal. </returns>
+            <exception cref="T:System.IndexOutOfRangeException">The name specified is not a valid column name.</exception>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetString(System.Int32)">
+            <summary>
+              Gets the value of the specified column as an instance of <see cref="T:System.String" />.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetSchemaTable">
+            <summary>
+              Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see
+               cref="T:System.Data.Common.DbDataReader" />.
+            </summary>
+            <returns> A <see cref="T:System.Data.DataTable" /> that describes the column metadata. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetValue(System.Int32)">
+            <summary>
+              Gets the value of the specified column as an instance of <see cref="T:System.Object" />.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetValues(System.Object[])">
+            <summary>
+              Gets all attribute columns in the collection for the current row.
+            </summary>
+            <param name="values"> An array of <see cref="T:System.Object" /> into which to copy the attribute columns. </param>
+            <returns> The number of instances of <see cref="T:System.Object" /> in the array. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.IsDBNull(System.Int32)">
+            <summary>
+              Gets a value that indicates whether the column contains nonexistent or missing values.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> true if the specified column is equivalent to <see cref="T:System.DBNull" /> ; otherwise false. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.NextResult">
+            <summary>
+              Advances the reader to the next result when reading the results of a batch of statements.
+            </summary>
+            <returns> true if there are more result sets; otherwise false. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Read">
+            <summary>
+              Advances the reader to the next record in a result set.
+            </summary>
+            <returns> true if there are more rows; otherwise false. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.ForceClose">
+            <summary>
+              Forced closes the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDDataReader"/> object.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Dispose(System.Boolean)">
+            <summary>
+              Releases the managed resources used by the <see cref="T:System.Data.Common.DbDataReader" /> and optionally releases the unmanaged resources.
+            </summary>
+            <param name="disposing"> true to release managed and unmanaged resources; false to release only unmanaged resources. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDate(System.Int32)">
+            <summary>
+              Gets the date in format yyyy-MM-dd.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDate(System.Int32,System.String)">
+            <summary>
+              Gets the date.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <param name="dateFormat"> The date format. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetTime(System.Int32)">
+            <summary>
+              Gets the time in format HH:mm:ss.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetTime(System.Int32,System.String)">
+            <summary>
+              Gets the time.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <param name="timeFormat"> The time format. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetTimestamp(System.Int32)">
+            <summary>
+              Gets the timestamp in format yyyy-MM-dd HH:mm:ss.SSS.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetTimestamp(System.Int32,System.String)">
+            <summary>
+              Gets the timestamp.
+            </summary>
+            <param name="ordinal"> The column ordinal. </param>
+            <param name="timestampFormat"> The timestamp format. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetShort(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a 16-bit signed integer.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetInt(System.Int32)">
+            <summary>
+              Gets the value of the specified column as a 32-bit signed integer.
+            </summary>
+            <param name="ordinal"> The zero-based column ordinal. </param>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetObject(System.String)">
+            <summary>
+              Gets the object value for the column.
+            </summary>
+            <param name="name"> The column name. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetOid">
+            <summary>
+              Gets the CUBRID OID.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetArray(System.Int32)">
+            <summary>
+              Gets the column value as array.
+            </summary>
+            <param name="index"> The index of the column. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetString(System.String)">
+            <summary>
+              Gets the value of the specified column as an instance of <see cref="T:System.String" />.
+            </summary>
+            <param name="name"> The name of the column. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetDataReader(System.Int32)">
+            <summary>
+              Gets the data reader.
+            </summary>
+            <param name="ordinal"> The ordinal. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetEnumerator">
+            <summary>
+              Returns an <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader.
+            </summary>
+            <returns> An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetObject(System.Int32)">
+            <summary>
+              Gets the object value for the column.
+            </summary>
+            <param name="index"> The column index. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetColumnName(System.Int32)">
+            <summary>
+              Gets the name of the column.
+            </summary>
+            <param name="index"> The column index. </param>
+            <returns> The column name </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetColumnTypeName(System.Int32)">
+            <summary>
+              Gets the name of the column type.
+            </summary>
+            <param name="index"> The column index. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetColumnType(System.Int32)">
+            <summary>
+              Gets the type of the column.
+            </summary>
+            <param name="index"> The column index. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.GetColumnCount">
+            <summary>
+              Gets the column count.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.HasRows">
+            <summary>
+              Gets a value that indicates whether this <see cref="T:System.Data.Common.DbDataReader" /> contains one or more rows.
+            </summary>
+            <returns> true if the <see cref="T:System.Data.Common.DbDataReader" /> contains one or more rows; otherwise false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.VisibleFieldCount">
+            <summary>
+              Gets the number of fields in the <see cref="T:System.Data.Common.DbDataReader" /> that are not hidden.
+            </summary>
+            <returns> The number of fields that are not hidden. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Depth">
+            <summary>
+              This method is not supported; always returns 0.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.FieldCount">
+            <summary>
+              Gets the number of columns in the current row.
+            </summary>
+            <returns> The number of columns in the current row. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.IsClosed">
+            <summary>
+              Gets a value indicating whether the <see cref="T:System.Data.Common.DbDataReader" /> is closed.
+            </summary>
+            <returns> true if the <see cref="T:System.Data.Common.DbDataReader" /> is closed; otherwise false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.RecordsAffected">
+            <summary>
+              Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.
+            </summary>
+            <returns> The number of rows changed, inserted, or deleted. -1 for SELECT statements; 0 if no rows were affected or the statement failed. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Item(System.Int32)">
+            <summary>
+              Gets the value of the specified column as an instance of <see cref="T:System.Object" />.
+            </summary>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDDataReader.Item(System.String)">
+            <summary>
+              Gets the value of the specified column as an instance of <see cref="T:System.Object" />.
+            </summary>
+            <returns> The value of the specified column. </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDException">
+            <summary>
+              The exception that is thrown when CUBRID returns an error.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDException.ErrorCode">
+            <summary>
+              Get CUBRID error code.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDException.Message">
+            <summary>
+              Get CUBRID error message.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDException.CUBRIDErrorCode">
+            <summary>
+              CUBRID error codes.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDOid">
+            <summary>
+              CUBRID class that support OID manipulation.
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.CUBRIDOid.OID_BYTE_SIZE">
+            <summary>
+              The size of the OID in CUBRID
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.#ctor(System.Byte[])">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDOid"/> class.
+            </summary>
+            <param name="oid"> The OID. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.#ctor(System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDOid"/> class.
+            </summary>
+            <param name="oidStr"> The OID. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.Page">
+            <summary>
+              Gets the OID Page.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.Slot">
+            <summary>
+              Gets the OID Slot.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.Volume">
+            <summary>
+              Gets the OID Volume.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDOid.ToString">
+            <summary>
+              Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns> A <see cref="T:System.String"/> that represents this instance. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDOid.Oid">
+            <summary>
+              Gets the OID.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter">
+            <summary>
+              CUBRID Implementation of the <see cref="T:System.Data.Common.DbParameter" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.Object)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDDataType)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="cubridDataType"> The CUBRID data type. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,System.Object)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="value"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,System.Data.DbType)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="dbType"> Data Type. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="cubridDataType"> CUBRID Data Type. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,System.Data.DbType,System.Data.ParameterDirection,System.String,System.Data.DataRowVersion,System.Object)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="type"> The data type. </param>
+            <param name="dir"> The direction. </param>
+            <param name="col"> The column name. </param>
+            <param name="ver"> The DataRow version. </param>
+            <param name="val"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="cubridDataType"> CUBRID data type. </param>
+            <param name="size"> The size. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType,System.Int32,System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="cubridDataType"> CUBRID data type. </param>
+            <param name="size"> The size. </param>
+            <param name="sourceColumn"> The source column. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType,System.Data.ParameterDirection,System.String,System.Data.DataRowVersion,System.Object)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="cubridDataType"> CUBRID data type. </param>
+            <param name="dir"> The direction. </param>
+            <param name="col"> The column. </param>
+            <param name="ver"> The DataRow version. </param>
+            <param name="val"> The value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.#ctor(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType,System.Int32,System.Data.ParameterDirection,System.Boolean,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Object)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter"/> class.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="cubridDataType"> CUBRID data type. </param>
+            <param name="size"> The size. </param>
+            <param name="direction"> The direction. </param>
+            <param name="isNullable"> If set to <c>true</c> is nullable. </param>
+            <param name="precision"> The precision. </param>
+            <param name="scale"> The scale. </param>
+            <param name="sourceColumn"> The source column. </param>
+            <param name="sourceVersion"> The source version. </param>
+            <param name="value"> The parameter value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.ResetDbType">
+            <summary>
+              Resets the DbType property to its original settings.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.SetDataTypesFromValue">
+            <summary>
+              Sets the data types from value.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Write(CUBRID.Data.CUBRIDClient.CUBRIDStream)">
+            <summary>
+              Writes the data to the stream.
+            </summary>
+            <param name="stream"> The stream. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.SetParameterEncoding(System.Text.Encoding)">
+            <summary>
+              Sets the parameter's encoding property.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.GetParameterEncoding">
+            <summary>
+              Returns the parameter's encoding property.
+            </summary>
+            <returns> The parameter's encoding property. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.ToString">
+            <summary>
+              Returns a <see cref="T:System.String"/> that represents this parameter instance.
+            </summary>
+            <returns> A <see cref="T:System.String"/> that represents this parameter instance. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Clone">
+            <summary>
+              Clones this instance.
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.CUBRIDDataType">
+            <summary>
+              Gets or sets the CUBRID data type.
+            </summary>
+            <value> The CUBRID data type. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.InnerCUBRIDDataType">
+            <summary>
+              Gets or sets the inner CUBRID data type.
+            </summary>
+            <value> The inner CUBRID data type. </value>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.SourceColumnNullMapping">
+            <summary>
+              Sets or gets a value which indicates whether the source column is nullable. This allows <see
+               cref="T:System.Data.Common.DbCommandBuilder" /> to correctly generate Update statements for nullable columns.
+            </summary>
+            <returns> True if the source column is nullable; false if it is not. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.DbType">
+            <summary>
+              Gets or sets the <see cref="T:System.Data.DbType" /> of the parameter.
+            </summary>
+            <returns> One of the <see cref="T:System.Data.DbType" /> values. The default is <see cref="F:System.Data.DbType.String" /> . </returns>
+            <exception cref="T:System.ArgumentException">The property is not set to a valid
+              <see cref="T:System.Data.DbType" />
+              .</exception>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Direction">
+            <summary>
+              Gets or sets a value that indicates whether the parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.
+            </summary>
+            <returns> One of the <see cref="T:System.Data.ParameterDirection" /> values. The default is Input. </returns>
+            <exception cref="T:System.ArgumentException">The property is not set to one of the valid
+              <see cref="T:System.Data.ParameterDirection" />
+              values.</exception>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.IsNullable">
+            <summary>
+              Gets or sets a value that indicates whether the parameter accepts null values.
+            </summary>
+            <returns> True if null values are accepted; otherwise false. The default is false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.ParameterName">
+            <summary>
+              Gets or sets the name of the <see cref="T:System.Data.Common.DbParameter" />.
+            </summary>
+            <returns> The name of the <see cref="T:System.Data.Common.DbParameter" /> . The default is an empty string (""). </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.SourceColumn">
+            <summary>
+              Gets or sets the name of the source column mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see
+               cref="P:System.Data.Common.DbParameter.Value" />.
+            </summary>
+            <returns> The name of the source column mapped to the <see cref="T:System.Data.DataSet" /> . The default is an empty string. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.SourceVersion">
+            <summary>
+              Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when you load <see
+               cref="P:System.Data.Common.DbParameter.Value" />.
+            </summary>
+            <returns> One of the <see cref="T:System.Data.DataRowVersion" /> values. The default is Current. </returns>
+            <exception cref="T:System.ArgumentException">The property is not set to one of the
+              <see cref="T:System.Data.DataRowVersion" />
+              values.</exception>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Value">
+            <summary>
+              Gets or sets the value of the parameter.
+            </summary>
+            <returns> An <see cref="T:System.Object" /> that is the value of the parameter. The default value is null. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Size">
+            <summary>
+              Gets or sets the maximum size, in bytes, of the data within the column.
+            </summary>
+            <returns> The maximum size, in bytes, of the data within the column. The default value is inferred from the parameter value. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Precision">
+            <summary>
+              Indicates the precision of numeric parameters.
+            </summary>
+            <returns> The maximum number of digits used to represent the Value property of a data provider Parameter object. The default value is 0, which indicates that a data provider sets the precision for Value. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Scale">
+            <summary>
+              Indicates the scale of numeric parameters.
+            </summary>
+            <returns> The number of decimal places. The default is 0. </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection">
+            <summary>
+              This class implements a collection of parameters tied to a <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDCommand"/>.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection"/> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Clear">
+            <summary>
+              Removes all <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> values from the <see
+               cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection" />.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.SetParametersEncoding(System.Text.Encoding)">
+            <summary>
+              Sets the collection's ebcoding.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.GetParametersEncoding">
+            <summary>
+              Gets the collection.
+            </summary>
+            <returns> The collection's encoding. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.ValidateIndex(System.Int32)">
+            <summary>
+              Validates the index value.
+            </summary>
+            <param name="index"> The index value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.GetParameter(System.Int32)">
+            <summary>
+              Returns the <see cref="T:System.Data.Common.DbParameter" /> object at the specified index in the collection.
+            </summary>
+            <param name="index"> The index of the <see cref="T:System.Data.Common.DbParameter" /> in the collection. </param>
+            <returns> The <see cref="T:System.Data.Common.DbParameter" /> object at the specified index in the collection. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.GetParameter(System.String)">
+            <summary>
+              Returns <see cref="T:System.Data.Common.DbParameter" /> the object with the specified name.
+            </summary>
+            <param name="parameterName"> The name of the <see cref="T:System.Data.Common.DbParameter" /> in the collection. </param>
+            <returns> The <see cref="T:System.Data.Common.DbParameter" /> the object with the specified name. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Add">
+            <summary>
+              Adds a new "empty" parameter to the collection.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Add(System.Object)">
+            <summary>
+              Adds a <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> item with the specified value to the <see
+               cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection" />.
+            </summary>
+            <param name="value"> The <see cref="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Value" /> of the <see
+               cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> to add to the collection. </param>
+            <returns> The index of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object in the collection. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Add(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType)">
+            <summary>
+              Adds a parameter with the specified parameter name.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="dataType"> CUBRID Data Type. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Add(System.String,CUBRID.Data.CUBRIDClient.CUBRIDDataType,System.Int32)">
+            <summary>
+              Adds a parameter with the specified parameter name.
+            </summary>
+            <param name="parameterName"> Name of the parameter. </param>
+            <param name="dataType"> CUBRID Data Type. </param>
+            <param name="size"> The size. </param>
+            <returns> </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.AddRange(System.Array)">
+            <summary>
+              Adds an array of parameters with the specified values to the <see
+               cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection" />.
+            </summary>
+            <param name="values"> An array of values of type <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> to add to the collection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Contains(System.Object)">
+            <summary>
+              Indicates whether a <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> with the specified <see
+               cref="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Value" /> is contained in the collection.
+            </summary>
+            <param name="value"> The <see cref="P:CUBRID.Data.CUBRIDClient.CUBRIDParameter.Value" /> of the <see
+               cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> to look for in the collection. </param>
+            <returns> true if the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> is in the collection; otherwise false. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Contains(System.String)">
+            <summary>
+              Gets a value indicating whether there is a parameter in the collection has the specified name.
+            </summary>
+            <param name="parameterName"> The name of the parameter. </param>
+            <returns> true if the collection contains the parameter; otherwise, false. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.CopyTo(System.Array,System.Int32)">
+            <summary>
+              Copies an array of parameters to the collection starting at the specified index.
+            </summary>
+            <param name="array"> The array of parameters to copy to the collection. </param>
+            <param name="index"> The index in the collection to copy the parameters. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.GetEnumerator">
+            <summary>
+              Exposes the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method, which supports a simple iteration over a collection by a .NET Framework data provider.
+            </summary>
+            <returns> An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.IndexOf(System.Object)">
+            <summary>
+              Returns the index of the specified <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object.
+            </summary>
+            <param name="value"> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object in the collection. </param>
+            <returns> The index of the specified <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.IndexOf(System.String)">
+            <summary>
+              Returns the index of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object with the specified name.
+            </summary>
+            <param name="parameterName"> The name of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object in the collection. </param>
+            <returns> The index of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object with the specified name. </returns>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Insert(System.Int32,System.Object)">
+            <summary>
+              Inserts the specified <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object with the specified name into the collection at the specified index.
+            </summary>
+            <param name="index"> The index at which to insert the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object. </param>
+            <param name="value"> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object to insert into the collection. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Remove(System.Object)">
+            <summary>
+              Removes the specified <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object from the collection.
+            </summary>
+            <param name="value"> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object to remove. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.RemoveAt(System.Int32)">
+            <summary>
+              Removes the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object at the specified from the collection.
+            </summary>
+            <param name="index"> The index where the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object is located. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.RemoveAt(System.String)">
+            <summary>
+              Removes the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object with the specified name from the collection.
+            </summary>
+            <param name="parameterName"> The name of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> object to remove. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.SetParameter(System.Int32,System.Data.Common.DbParameter)">
+            <summary>
+              Sets the <see cref="T:System.Data.Common.DbParameter" /> object at the specified index to a new value.
+            </summary>
+            <param name="index"> The index where the <see cref="T:System.Data.Common.DbParameter" /> object is located. </param>
+            <param name="value"> The new <see cref="T:System.Data.Common.DbParameter" /> value. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.SetParameter(System.String,System.Data.Common.DbParameter)">
+            <summary>
+              Sets the <see cref="T:System.Data.Common.DbParameter" /> object with the specified name to a new value.
+            </summary>
+            <param name="parameterName"> The name of the <see cref="T:System.Data.Common.DbParameter" /> object in the collection. </param>
+            <param name="value"> The new <see cref="T:System.Data.Common.DbParameter" /> value. </param>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Count">
+            <summary>
+              Returns the number of items in the collection.
+            </summary>
+            <returns> The number of items in the collection. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.IsFixedSize">
+            <summary>
+              Specifies whether the collection is a fixed size.
+            </summary>
+            <returns> true if the collection is a fixed size; otherwise false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.IsReadOnly">
+            <summary>
+              Specifies whether the collection is read-only.
+            </summary>
+            <returns> true if the collection is read-only; otherwise false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.IsSynchronized">
+            <summary>
+              Specifies whether the collection is synchronized.
+            </summary>
+            <returns> true if the collection is synchronized; otherwise false. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.SyncRoot">
+            <summary>
+              Specifies the <see cref="T:System.Object" /> to be used to synchronize access to the collection.
+            </summary>
+            <returns> A <see cref="T:System.Object" /> to be used to synchronize access to the <see
+               cref="T:System.Data.Common.DbParameterCollection" /> . </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Item(System.Int32)">
+            <summary>
+              Gets and sets the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> with the specified name.
+            </summary>
+            <returns> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> with the specified name. </returns>
+            <exception cref="T:System.IndexOutOfRangeException">The specified index does not exist.</exception>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDParameterCollection.Item(System.String)">
+            <summary>
+              Gets and sets the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> with the specified name.
+            </summary>
+            <returns> The <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDParameter" /> with the specified name. </returns>
+            <exception cref="T:System.IndexOutOfRangeException">The specified index does not exist.</exception>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.CUBRIDTransaction">
+            <summary>
+              CUBRID implementation of the <see cref="T:System.Data.Common.DbTransaction" /> class.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.#ctor(CUBRID.Data.CUBRIDClient.CUBRIDConnection,CUBRID.Data.CUBRIDClient.CUBRIDIsolationLevel)">
+            <summary>
+              Initializes a new instance of the <see cref="T:CUBRID.Data.CUBRIDClient.CUBRIDTransaction"/> class.
+            </summary>
+            <param name="conn"> The connection. </param>
+            <param name="isolationLevel"> The isolation level. </param>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.Commit">
+            <summary>
+              Commits the database transaction.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.Rollback">
+            <summary>
+              Rolls back a transaction from a pending state.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.Dispose(System.Boolean)">
+            <summary>
+              Releases the unmanaged resources used by the <see cref="T:System.Data.Common.DbTransaction" /> and optionally releases the managed resources.
+            </summary>
+            <param name="disposing"> If true, this method releases all resources held by any managed objects that this <see
+               cref="T:System.Data.Common.DbTransaction" /> references. </param>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.Connection">
+            <summary>
+              Specifies the <see cref="T:System.Data.Common.DbConnection" /> object associated with the transaction.
+            </summary>
+            <returns> The <see cref="T:System.Data.Common.DbConnection" /> object associated with the transaction. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.DbConnection">
+            <summary>
+              Specifies the <see cref="T:System.Data.Common.DbConnection" /> object associated with the transaction.
+            </summary>
+            <returns> The <see cref="T:System.Data.Common.DbConnection" /> object associated with the transaction. </returns>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.CUBRIDIsolationLevel">
+            <summary>
+              Gets the CUBRID isolation level.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.CUBRIDTransaction.IsolationLevel">
+            <summary>
+              Specifies the <see cref="T:System.Data.IsolationLevel" /> for this transaction.
+            </summary>
+            <returns> The <see cref="T:System.Data.IsolationLevel" /> for this transaction. </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.Resource">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ArgumentMustBeCUBRIDParameter">
+            <summary>
+              Looks up a localized string similar to Argument must be of type CUBRIDParameter.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.BufferIndexMustBeValidIndexInBuffer">
+            <summary>
+              Looks up a localized string similar to Buffer index must be a valid index in buffer.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.BufferNotLargeEnoughToHoldRequestedData">
+            <summary>
+              Looks up a localized string similar to Buffer is not large enough to hold the requested data.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.CantChangeDatabase">
+            <summary>
+              Looks up a localized string similar to Changing database is not supported in CUBRID. Please open a new connection instead.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.collectionNameIsNull">
+            <summary>
+              Looks up a localized string similar to The collectionName is specified as null..
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ConnectionAlreadyOpen">
+            <summary>
+              Looks up a localized string similar to Connection is already open.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ConnectionMustBeValidAndOpenToCommit">
+            <summary>
+              Looks up a localized string similar to Connection must be valid and open to commit transaction.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.CUBRIDDataTypeCantBeMappedToDbType">
+            <summary>
+              Looks up a localized string similar to CUBRID data type can&apos;t be mapped to a Db type.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DataOffsetMustBeValidPositionInField">
+            <summary>
+              Looks up a localized string similar to Data offset must be a valid position in the field.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DataReaderIsAlreadyOpen">
+            <summary>
+              Looks up a localized string similar to The DataReader is already open.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DBNameIsEmpty">
+            <summary>
+              Looks up a localized string similar to The database name can&apos;t be empty.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DbTypeCantBeMappedToCUBRIDDataType">
+            <summary>
+              Looks up a localized string similar to DbType can&apos;t be mapped to a CUBRID data type.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DefineWhetherTraceInformationIsLogged">
+            <summary>
+              Looks up a localized string similar to Define whether trace information is logged.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.DontKnowHowToWriteParameter">
+            <summary>
+              Looks up a localized string similar to Don&apos;t know how to write the parameter.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ErrorReadingLOBContent">
+            <summary>
+              Looks up a localized string similar to Error reading LOB content.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ErrorWrittingLOBContent">
+            <summary>
+              Looks up a localized string similar to Error writting LOB content.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.GetBytesCanBeCalledOnlyOnBinaryColumns">
+            <summary>
+              Looks up a localized string similar to GetBytes() can be called only on binary (BLOB, CLOB) columns.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.IncorrectNumberOfFilters">
+            <summary>
+              Looks up a localized string similar to Incorrect number of filters were specified.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidAttemptToReadDataWhenReaderNotOpen">
+            <summary>
+              Looks up a localized string similar to Invalid attempt to read data when reader is not open.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidBufferPosition">
+            <summary>
+              Looks up a localized string similar to Invalid buffer position.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidConnectionParameter">
+            <summary>
+              Looks up a localized string similar to Invalid connection parameter.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidConnectionPort">
+            <summary>
+              Looks up a localized string similar to Invalid connection port.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidConnectionString">
+            <summary>
+              Looks up a localized string similar to Invalid connection string.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidLOBPosition">
+            <summary>
+              Looks up a localized string similar to Invalid LOB Position.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidPropertyName">
+            <summary>
+              Looks up a localized string similar to Invalid property name.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidQueryType">
+            <summary>
+              Looks up a localized string similar to Invalid query type.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.InvalidTimeoutValue">
+            <summary>
+              Looks up a localized string similar to Invalid Timeout value! Expected a value between 1 and 99.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NoFiltersSpecified">
+            <summary>
+              Looks up a localized string similar to No filters were specified.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotAllowedToChangeConnectionStringWhenStateIs">
+            <summary>
+              Looks up a localized string similar to Not allowed to change the &apos;ConnectionString&apos; property while the connection state is.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotAllowedToChangeConnectionTimeoutWhenStateIs">
+            <summary>
+              Looks up a localized string similar to Not allowed to change the &apos;ConnectionTimeout&apos; property while the connection state is.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotAllowedToChangeLockTimeoutWhenStateIs">
+            <summary>
+              Looks up a localized string similar to Not allowed to change the &apos;LockTimeout&apos; property while the connection state is.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotAllParametersAreBound">
+            <summary>
+              Looks up a localized string similar to Not all parameters are bound.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotAValidLOBType">
+            <summary>
+              Looks up a localized string similar to Not a valid LOB type.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotImplemented">
+            <summary>
+              Looks up a localized string similar to Not implemented.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotSupported">
+            <summary>
+              Looks up a localized string similar to Not supported.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.NotSupportedInCUBRID">
+            <summary>
+              Looks up a localized string similar to Not supported in CUBRID.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.OnlyCUBRIDParameterObjectsAreValid">
+            <summary>
+              Looks up a localized string similar to Only CUBRIDParameter objects are valid.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ParameterAlreadyAdded">
+            <summary>
+              Looks up a localized string similar to Parameter already added to the collection.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ParameterNameMustStartWith">
+            <summary>
+              Looks up a localized string similar to Parameter name must start with &apos;?&apos;.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ParameterNotFound">
+            <summary>
+              Looks up a localized string similar to Parameter not found in the collection.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ParameterNotFoundMissingPrefix">
+            <summary>
+              Looks up a localized string similar to Parameter not found in collection. You should add &apos;?&apos; to the parameter name before searching..
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ParametersMustBeNamed">
+            <summary>
+              Looks up a localized string similar to Parameters must be named.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.ResultsetIsClosed">
+            <summary>
+              Looks up a localized string similar to Resultset is closed.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.TheConnectionIsNotOpen">
+            <summary>
+              Looks up a localized string similar to The connection is not open.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.TheConnectionPropertyHasNotBeenSet">
+            <summary>
+              Looks up a localized string similar to The connection property has not been set.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.TransactionAlreadyCommittedOrNotPending">
+            <summary>
+              Looks up a localized string similar to Transaction has already been committed or is not pending.
+            </summary>
+        </member>
+        <member name="P:CUBRID.Data.CUBRIDClient.Resource.UnknownIsolationLevelNotSupported">
+            <summary>
+              Looks up a localized string similar to Unknown isolation level is not supported.
+            </summary>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.ResultInfo">
+            <summary>
+              Internal class storing execution result information.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.ResultTuple.ToString">
+            <summary>
+              Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns> A <see cref="T:System.String"/> that represents this instance. </returns>
+        </member>
+        <member name="T:CUBRID.Data.CUBRIDClient.Utils">
+            <summary>
+              Utilities class
+            </summary>
+        </member>
+        <member name="F:CUBRID.Data.CUBRIDClient.Utils.TraceState">
+            <summary>
+              Flag which sets if trace messages are being output.
+            </summary>
+        </member>
+        <member name="M:CUBRID.Data.CUBRIDClient.Utils.Byte2Bool(System.Byte)">
+            <summary>
+              Convert byte to bool.
+            </summary>
+            <param name="val"> The byte value. </param>
+            <returns> </returns>
+        </member>
+    </members>
+</doc>
