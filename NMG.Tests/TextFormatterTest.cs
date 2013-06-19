@@ -47,7 +47,7 @@ namespace NMG.Tests
         public void CamelCasePlural()
         {
             var formatter = new CamelCaseTextFormatter();
-
+            Inflector.EnableInflection = true;
             Assert.AreEqual("columnNames", formatter.FormatPlural("Column_Name"));
             Assert.AreEqual("columnNames", formatter.FormatPlural("COLUMN_NAME"));
         }
@@ -56,7 +56,7 @@ namespace NMG.Tests
         public void PascalCaseSingular()
         {
             var formatter = new PascalCaseTextFormatter();
-
+            Inflector.EnableInflection = true;
             Assert.AreEqual("ColumnName", formatter.FormatSingular("Column_Names"));
             Assert.AreEqual("ColumnName", formatter.FormatSingular("COLUMN_NAMES"));
         }
@@ -65,7 +65,7 @@ namespace NMG.Tests
         public void PascalCasePlural()
         {
             var formatter = new PascalCaseTextFormatter();
-
+            Inflector.EnableInflection = true;
             Assert.AreEqual("ColumnNames", formatter.FormatPlural("Column_Name"));
             Assert.AreEqual("ColumnNames", formatter.FormatPlural("COLUMN_NAME"));
         }
@@ -77,7 +77,9 @@ namespace NMG.Tests
 
             Assert.AreEqual("columnName", formatter.FormatText("Column_Name"));
             Assert.AreEqual("columnName", formatter.FormatText("COLUMN_NAME"));
-            Assert.AreEqual("hitMan", formatter.FormatText("HitMan"));
+            Assert.AreEqual("hitMan", formatter.FormatText("Hit_Man"));
+            Assert.AreEqual("hitMan", formatter.FormatText("Hit Man"));
+            Assert.AreEqual("hitman", formatter.FormatText("HitMan"));
         }
 
         [Test] public void ConvertStringToPascalCase()

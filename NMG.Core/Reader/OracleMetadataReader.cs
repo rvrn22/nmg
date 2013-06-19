@@ -9,24 +9,24 @@ namespace NMG.Core.Reader
 {
     public static class ConstraintTypeResolver //: IConstraintTypeResolver
     {
-        public static bool IsPrimaryKey(string constraintType)
+        public static bool IsPrimaryKey(int constraintType)
         {
-            return (constraintType == OracleConstraintType.PrimaryKey.ToString());
+            return (constraintType & OracleConstraintType.PrimaryKey.Value) == OracleConstraintType.PrimaryKey.Value;
         }
 
-        public static bool IsForeignKey(string constraintType)
+        public static bool IsForeignKey(int constraintType)
         {
-            return (constraintType == OracleConstraintType.ForeignKey.ToString());
+            return (constraintType & OracleConstraintType.ForeignKey.Value) == OracleConstraintType.ForeignKey.Value;
         }
 
-        public static bool IsUnique(string constraintType)
+        public static bool IsUnique(int constraintType)
         {
-            return (constraintType == OracleConstraintType.Unique.ToString());
+            return (constraintType & OracleConstraintType.Unique.Value) == OracleConstraintType.Unique.Value;
         }
 
-        public static bool IsCheck(string constraintType)
+        public static bool IsCheck(int constraintType)
         {
-            return (constraintType == OracleConstraintType.Check.ToString());
+            return (constraintType & OracleConstraintType.Check.Value) == OracleConstraintType.Check.Value;
         }
     }
 
@@ -38,9 +38,7 @@ namespace NMG.Core.Reader
         {
             this.connectionStr = connectionStr;
         }
-
         #region IMetadataReader Members
-
         /// <summary>
         /// Return all table details based on table and owner.
         /// </summary>
@@ -56,24 +54,28 @@ namespace NMG.Core.Reader
                 using (OracleCommand tableCommand = conn.CreateCommand())
                 {
                     tableCommand.CommandText =
-                          @"SELECT tc.column_name AS column_name, tc.data_type AS data_type, tc.nullable AS NULLABLE, 
-                                    nvl(c.constraint_type,'CHANGE THIS IN CODE') AS constraint_type, 
-                                    data_length, data_precision, data_scale
-                            from all_tab_columns tc
-                                left outer join (
-                                        all_cons_columns cc
-                                        join all_constraints c on (
-                                            c.owner=cc.owner 
-                                            and c.constraint_name = cc.constraint_name 
-                                            and c.constraint_type <> 'C'
-                                        )
-                                    ) on (
-                                        tc.owner = cc.owner
-                                        and tc.table_name = cc.table_name
-                                        and tc.column_name = cc.column_name
-                                    )
-                                where tc.table_name = :table_name and tc.owner = :owner
-                            order by tc.table_name, cc.position nulls last, tc.column_id";
+                        @"select column_name, data_type, nullable, sum(constraint_type) constraint_type, data_length, data_precision, data_scale
+from (
+SELECT tc.column_name AS column_name, tc.data_type AS data_type, tc.nullable AS NULLABLE, 
+                                    decode(c.constraint_type, 'P', 1, 'R', 2, 'U', 4, 'C', 8, 16) AS constraint_type, 
+                                    data_length, data_precision, data_scale, column_id
+from all_tab_columns tc
+    left outer join (
+            all_cons_columns cc
+            join all_constraints c on (
+                c.owner=cc.owner 
+                and c.constraint_name = cc.constraint_name 
+            )
+        ) on (
+            tc.owner = cc.owner
+            and tc.table_name = cc.table_name
+            and tc.column_name = cc.column_name
+        )
+    where tc.table_name = :table_name and tc.owner = :owner    
+order by tc.table_name, cc.position nulls last, tc.column_id)
+group by column_name, data_type, nullable, data_length, data_precision, data_scale, column_id
+order by column_id";
+
                     tableCommand.Parameters.Add("table_name", table.Name);
                     tableCommand.Parameters.Add("owner", owner);
                     using (OracleDataReader oracleDataReader = tableCommand.ExecuteReader(CommandBehavior.Default))
@@ -81,33 +83,34 @@ namespace NMG.Core.Reader
                         var m = new DataTypeMapper();
                         while (oracleDataReader.Read())
                         {
-                            var constraintType = oracleDataReader.GetOracleString(3).Value;
+                            var constraintType = Convert.ToInt32(oracleDataReader.GetOracleNumber(3).Value);
                             int? dataLength = oracleDataReader.IsDBNull(4) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(4).Value);
                             int? dataPrecision = oracleDataReader.IsDBNull(5) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(5).Value);
                             int? dataScale = oracleDataReader.IsDBNull(6) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(6).Value);
 
-                            columns.Add(new Column
-                                            {
-                                                Name = oracleDataReader.GetOracleString(0).Value,
-                                                DataType = oracleDataReader.GetOracleString(1).Value,
-                                                IsNullable = string.Equals(oracleDataReader.GetOracleString(2).Value, "Y", StringComparison.OrdinalIgnoreCase),
-                                                IsPrimaryKey = ConstraintTypeResolver.IsPrimaryKey(constraintType),
-                                                IsForeignKey = ConstraintTypeResolver.IsForeignKey(constraintType),
-                                                IsUnique = ConstraintTypeResolver.IsUnique(constraintType),
-                                                MappedDataType = m.MapFromDBType(ServerType.Oracle, oracleDataReader.GetOracleString(1).Value, dataLength, dataPrecision, dataScale).ToString(),
-                                                DataLength = dataLength,
-                                                DataPrecision = dataPrecision,
-                                                DataScale = dataScale
-                                            });
+                            columns.Add(new Column {
+                                Name = oracleDataReader.GetOracleString(0).Value,
+                                DataType = oracleDataReader.GetOracleString(1).Value,
+                                IsNullable = string.Equals(oracleDataReader.GetOracleString(2).Value, "Y", StringComparison.OrdinalIgnoreCase),
+                                IsPrimaryKey = ConstraintTypeResolver.IsPrimaryKey(constraintType),
+                                IsForeignKey = ConstraintTypeResolver.IsForeignKey(constraintType),
+                                IsUnique = ConstraintTypeResolver.IsUnique(constraintType),
+                                MappedDataType = m.MapFromDBType(ServerType.Oracle, oracleDataReader.GetOracleString(1).Value, dataLength, dataPrecision, dataScale).ToString(),
+                                DataLength = dataLength,
+                                DataPrecision = dataPrecision,
+                                DataScale = dataScale
+                            });
                         }
                         table.Owner = owner;
                         table.Columns = columns;
                         table.PrimaryKey = DeterminePrimaryKeys(table);
 
                         // Need to find the table name associated with the FK
-                        foreach (var c in table.Columns)
+                        foreach (var c in table.Columns.Where(c => c.IsForeignKey))
                         {
-                            c.ForeignKeyTableName = GetForeignKeyReferenceTableName(table.Name, c.Name);
+                            var foreignInfo = GetForeignKeyReferenceTableName(table.Name, c.Name);
+                            c.ForeignKeyTableName = foreignInfo.Item1;
+                            c.ForeignKeyColumnName = foreignInfo.Item2;
                         }
                         table.ForeignKeys = DetermineForeignKeyReferences(table);
                         table.HasManyRelationships = DetermineHasManyRelationships(table);
@@ -135,7 +138,7 @@ namespace NMG.Core.Reader
                         while (oracleDataReader.Read())
                         {
                             string tableName = oracleDataReader.GetString(0);
-                            tables.Add(new Table {Name = tableName});
+                            tables.Add(new Table { Name = tableName });
                         }
                     }
                 }
@@ -197,8 +200,7 @@ namespace NMG.Core.Reader
             if (primaryKeys.Count() == 1)
             {
                 var c = primaryKeys.First();
-                var key = new PrimaryKey
-                {
+                var key = new PrimaryKey {
                     Type = PrimaryKeyType.PrimaryKey,
                     Columns = { c }
                 };
@@ -208,8 +210,7 @@ namespace NMG.Core.Reader
             if (primaryKeys.Count() > 1)
             {
                 // Composite key
-                var key = new PrimaryKey
-                {
+                var key = new PrimaryKey {
                     Type = PrimaryKeyType.CompositeKey,
                     Columns = primaryKeys
                 };
@@ -225,21 +226,18 @@ namespace NMG.Core.Reader
             var foreignKeys = (from c in table.Columns
                                where c.IsForeignKey
                                group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
-                               select new ForeignKey
-                               {
-                                   Name = g.Key.ConstraintName,
-                                   References = g.Key.ForeignKeyTableName,
-                                   Columns = g.ToList(),
-                                   UniquePropertyName = g.Key.ForeignKeyTableName
-                               }).ToList();
+                               select new ForeignKey {
+                Name = g.Key.ConstraintName,
+                References = g.Key.ForeignKeyTableName,
+                Columns = g.ToList(),
+                UniquePropertyName = g.Key.ForeignKeyTableName
+            }).ToList();
 
             Table.SetUniqueNamesForForeignKeyProperties(foreignKeys);
 
             return foreignKeys;
         }
-
         #endregion
-
         public IList<HasMany> DetermineHasManyRelationships(Table table)
         {
             var hasManyRelationships = new List<HasMany>();
@@ -263,40 +261,46 @@ WHERE C.TABLE_NAME = :TABLE_NAME
 
                     while (reader.Read())
                     {
-                        hasManyRelationships.Add(new HasMany
-                                                     {
-                                                         Reference = reader.GetString(0),
-                                                         ReferenceColumn = reader.GetString(1)
-                                                     });
+                        hasManyRelationships.Add(new HasMany {
+                            Reference = reader.GetString(0),
+                            ReferenceColumn = reader.GetString(1)
+                        });
                     }
 
                     return hasManyRelationships;
                 }
             }
         }
-
         // http://blog.mclaughlinsoftware.com/2009/03/05/validating-foreign-keys/
-
-        private string GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
+        private Tuple<string, string> GetForeignKeyReferenceTableName(string selectedTableName, string columnName)
         {
-            string foreignKeyReferenceTableName = string.Empty;
-            var conn = new OracleConnection(connectionStr);
-            conn.Open();
-            using (conn)
+            using (var conn = new OracleConnection(connectionStr))
             {
-                OracleCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format(
-                    @"SELECT    ucc2.table_name
+                conn.Open();
+                using (OracleCommand tableCommand = conn.CreateCommand())
+                {
+                    tableCommand.CommandText = 
+                    @"SELECT  ucc2.table_name, ucc2.column_name
                       FROM all_constraints uc, all_cons_columns ucc1, all_cons_columns ucc2
                      WHERE uc.constraint_name = ucc1.constraint_name
                        AND uc.r_constraint_name = ucc2.constraint_name
                        AND uc.constraint_type = 'R'
-                       AND ucc1.table_name = '{0}'
-                      and ucc1.column_name = '{1}'",
-                    selectedTableName, columnName);
-                object referencedTableName = tableCommand.ExecuteScalar();
-
-                return (string)referencedTableName;
+                       AND ucc1.table_name = :table_name
+                      and ucc1.column_name = :column_name";
+                 
+                    tableCommand.Parameters.Add("table_name", selectedTableName);
+                    tableCommand.Parameters.Add("column_name", columnName);
+                    using (var reader = tableCommand.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Tuple<string, string>(reader.GetOracleString(0).Value, reader.GetOracleString(1).Value);
+                        } 
+                        else
+                            return null;
+                    }
+                }
+                conn.Close();
             }
         }
     }

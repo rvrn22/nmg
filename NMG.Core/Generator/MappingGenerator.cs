@@ -1,3 +1,4 @@
+using System.Linq;
 using System.IO;
 using System.Xml;
 using NMG.Core.Domain;
@@ -57,89 +58,78 @@ namespace NMG.Core.Generator
             PrimaryKey primaryKey = Table.PrimaryKey;
 
 
-            if (primaryKey != null && primaryKey.Type == PrimaryKeyType.CompositeKey)
+            if (primaryKey != null)
             {
-                XmlElement idElement = xmldoc.CreateElement("composite-id");
-                foreach (Column key in primaryKey.Columns)
+                if (primaryKey.Type == PrimaryKeyType.CompositeKey)
                 {
-                    XmlElement keyProperty = xmldoc.CreateElement("key-property");
-                    keyProperty.SetAttribute("name", Formatter.FormatText(key.Name));
-                    keyProperty.SetAttribute("column", key.Name);
-
-                    idElement.AppendChild(keyProperty);
-
-                    classElement.AppendChild(idElement);
+                    XmlElement idElement = xmldoc.CreateElement("composite-id");
+                    foreach (Column key in primaryKey.Columns)
+                    {
+                        XmlElement keyProperty;
+                        if (key.IsForeignKey && applicationPreferences.IncludeForeignKeys)
+                        {
+                            keyProperty = xmldoc.CreateElement("key-many-to-one");
+                            keyProperty.SetAttribute("name", Formatter.FormatSingular(key.ForeignKeyTableName));
+                            keyProperty.SetAttribute("column", key.Name);
+                        } else
+                        {
+                            keyProperty = xmldoc.CreateElement("key-property");
+                            keyProperty.SetAttribute("name", Formatter.FormatText(key.Name));
+                            keyProperty.SetAttribute("column", key.Name);
+                        }
+                        idElement.AppendChild(keyProperty);
+                        classElement.AppendChild(idElement);
+                    }
+                } else
+                {
+                    XmlElement keyProperty = xmldoc.CreateElement("id");
+                    Column primaryKeyColum = primaryKey.Columns.Single();
+                    keyProperty.SetAttribute("name", Formatter.FormatText(primaryKeyColum.Name));
+                    keyProperty.SetAttribute("column", primaryKeyColum.Name); //If ID Column is attribute.
+                    if (primaryKeyColum.IsIdentity)
+                    {
+                        XmlElement generatorElement = xmldoc.CreateElement("generator");
+                        generatorElement.SetAttribute("class", "identity");
+                        keyProperty.AppendChild(generatorElement);
+                    }
+                    classElement.AppendChild(keyProperty);
                 }
             }
 
-
-            foreach (Column column in Table.Columns)
+            foreach (Column column in Table.Columns.Where(c => !c.IsPrimaryKey).OrderByDescending(c => c.IsForeignKey))
             {
-                XmlElement property = null;
-                XmlElement property2;
-
-                if (column.IsForeignKey)
-                {
-                    property = xmldoc.CreateElement("many-to-one");
-                    property.SetAttribute("insert", "false");
-                    property.SetAttribute("update", "false");
-                    property.SetAttribute("lazy", "false");
-                    property2 = xmldoc.CreateElement("property");
-                }
-                else if (column.IsPrimaryKey)
-                {
-                    property2 = xmldoc.CreateElement("id");
-                    XmlElement generatorElement = xmldoc.CreateElement("generator");
-                    generatorElement.SetAttribute("class", "identity");
-                    property2.AppendChild(generatorElement);
-                }
+                XmlElement element = column.IsForeignKey && applicationPreferences.IncludeForeignKeys ? xmldoc.CreateElement("many-to-one") 
+                                                                                                      : xmldoc.CreateElement("property");
+                if (column.IsForeignKey && applicationPreferences.IncludeForeignKeys && applicationPreferences.NameFkAsForeignTable)
+                    element.SetAttribute("name", Formatter.FormatSingular(column.ForeignKeyTableName));
                 else
-                {
-                    property2 = xmldoc.CreateElement("property");
-                }
+                    element.SetAttribute("name", Formatter.FormatText(column.Name));
 
-
-                if (property != null)
-                    property.SetAttribute("name", Formatter.FormatText(column.Name));
-                property2.SetAttribute("name", Formatter.FormatText(column.Name));
-                XmlElement columnProperty = xmldoc.CreateElement("column");
-                if (property != null)
-                    property.AppendChild(columnProperty);
-
-                columnProperty.SetAttribute("name", column.Name);
-                columnProperty.SetAttribute("sql-type", column.DataType);
-                columnProperty.SetAttribute("not-null", (!column.IsNullable).ToString().ToLower());
+                XmlElement columnElement = xmldoc.CreateElement("column");
+                columnElement.SetAttribute("name", column.Name);
+                columnElement.SetAttribute("sql-type", column.DataType);
+                columnElement.SetAttribute("not-null", (column.IsNullable ? "false" : "true"));
                 if (column.IsUnique)
                 {
-                    columnProperty.SetAttribute("unique", "true");
+                    columnElement.SetAttribute("unique", "true");
                 }
-
-                property2.AppendChild(columnProperty.Clone());
-                if (property != null)
-                    classElement.AppendChild(property);
-                classElement.AppendChild(property2);
+                element.AppendChild(columnElement);
+                classElement.AppendChild(element);
             }
+
 
             foreach (var hasMany in Table.HasManyRelationships)
             {
-                XmlElement bagElement = xmldoc.CreateElement("bag");
-
+                XmlElement bagElement = applicationPreferences.ForeignEntityCollectionType.Contains("Set") ? xmldoc.CreateElement("set") : xmldoc.CreateElement("bag");
                 bagElement.SetAttribute("name", Formatter.FormatPlural(hasMany.Reference));
-                bagElement.SetAttribute("inverse", "true");
-                bagElement.SetAttribute("cascade", "none");
-
+                if (applicationPreferences.IncludeHasMany)
+                    bagElement.SetAttribute("inverse", "true");
                 classElement.AppendChild(bagElement);
-
                 XmlElement keyElement = xmldoc.CreateElement("key");
-
                 keyElement.SetAttribute("column", hasMany.ReferenceColumn);
-
                 bagElement.AppendChild(keyElement);
-
                 XmlElement oneToManyElement = xmldoc.CreateElement("one-to-many");
-
                 oneToManyElement.SetAttribute("class", Formatter.FormatSingular(hasMany.Reference));
-
                 bagElement.AppendChild(oneToManyElement);
             }
 

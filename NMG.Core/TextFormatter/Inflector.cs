@@ -26,7 +26,21 @@ namespace NMG.Core.TextFormatter
         private static readonly List<InflectorRule> _plurals = new List<InflectorRule>();
         private static readonly List<InflectorRule> _singulars = new List<InflectorRule>();
         private static readonly List<string> _uncountables = new List<string>();
-        public static bool EnableInflection { get; set; }
+
+        private static bool _enableInflection;
+        public static bool EnableInflection 
+        { 
+            get
+            {
+                return _enableInflection;
+            }
+            set
+            {
+                _enableInflection = value;
+                if (value)
+                    SetRules();
+            }
+        }
 
         /// <summary>
         /// Initializes the <see cref="Inflector"/> class.
@@ -34,6 +48,14 @@ namespace NMG.Core.TextFormatter
         static Inflector()
         {
             if (!EnableInflection) return;
+            SetRules();
+        }
+
+        private static void SetRules()
+        {
+            _plurals.Clear();
+            _singulars.Clear();
+            _uncountables.Clear();
             AddPluralRule("$", "s");
             AddPluralRule("s$", "s");
             AddPluralRule("(ax|test)is$", "$1es");
@@ -147,7 +169,7 @@ namespace NMG.Core.TextFormatter
         {
             if (string.IsNullOrEmpty(word)) return word;
 
-            return ApplyRules(_plurals, word);
+            return SetRules(_plurals, word);
         }
 
         /// <summary>
@@ -159,7 +181,7 @@ namespace NMG.Core.TextFormatter
         {
             if (string.IsNullOrEmpty(word)) return word;
 
-            return ApplyRules(_singulars, word);
+            return SetRules(_singulars, word);
         }
 
         /// <summary>
@@ -168,7 +190,7 @@ namespace NMG.Core.TextFormatter
         /// <param name="rules">The rules.</param>
         /// <param name="word">The word.</param>
         /// <returns></returns>
-        private static string ApplyRules(IList<InflectorRule> rules, string word)
+        private static string SetRules(IList<InflectorRule> rules, string word)
         {
             if (string.IsNullOrEmpty(word)) return word;
 
@@ -243,23 +265,15 @@ namespace NMG.Core.TextFormatter
             text = text.Replace("_", " ");
             string joinString = removeUnderscores ? String.Empty : "_";
             string[] words = text.Split(' ');
-            if (words.Length > 1 || words[0].IsUpperCase())
+            if (words.Length > 1)
             {
                 for (int i = 0; i < words.Length; i++)
                 {
-                    if (words[i].Length > 0)
-                    {
-                        string word = words[i];
-                        string restOfWord = word.Substring(1);
-                        //if (restOfWord.IsUpperCase())
-                        //    restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
-                        char firstChar = char.ToUpper(word[0], CultureInfo.CurrentUICulture);
-                        words[i] = String.Concat(firstChar, restOfWord);
-                    }
+                    words[i] = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(words[i].ToLowerInvariant());
                 }
                 return String.Join(joinString, words);
             }
-            return String.Concat(words[0].Substring(0, 1).ToUpper(CultureInfo.CurrentUICulture), words[0].Substring(1));
+            return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(words[0].ToLowerInvariant());
         }
         /// <summary>
         /// Converts the string to camel case.

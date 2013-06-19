@@ -15,6 +15,7 @@ namespace NMG.Core.Generator
         protected string tableName;
 		internal const string TABS = "\t\t\t";
     	protected string ClassNamePrefix { get; set;}
+        protected ApplicationPreferences applicationPreferences;
 
         protected AbstractGenerator(string filePath, string specificFolder, string tableName, string nameSpace, string assemblyName, string sequenceName, Table table, ApplicationPreferences appPrefs)
         {
@@ -33,6 +34,7 @@ namespace NMG.Core.Generator
             this.sequenceName = sequenceName;
             Table = table;
             Formatter = TextFormatterFactory.GetTextFormatter(appPrefs);
+            this.applicationPreferences = appPrefs;
         }
 
         public bool UsesSequence

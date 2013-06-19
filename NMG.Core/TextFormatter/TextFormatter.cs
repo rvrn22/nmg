@@ -32,7 +32,8 @@ namespace NMG.Core.TextFormatter
                 .Replace("ó", "o")
                 .Replace("ú", "u");
             //Ommit any chars except letters and numbers in class or properties.
-            result = Regex.Replace(result, "[^a-zA-Z0-9]", String.Empty);
+            result = result.Replace(" ", "_");
+            result = Regex.Replace(result, "[^a-zA-Z0-9_]", String.Empty); //And Underscore
 
             if (result.Length != 0 && char.IsNumber(result.ToCharArray(0, 1)[0]))
             {
