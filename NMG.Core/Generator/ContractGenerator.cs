@@ -28,10 +28,14 @@ namespace NMG.Core.Generator
             {
                 WriteToFile(generateCode, className);
             }
-
         }
 
-		public CodeCompileUnit GetCompileUnit(string className)
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
+        }
+
+        public CodeCompileUnit GetCompileUnit(string className)
         {
             var codeGenerationHelper = new CodeGenerationHelper();
 			var compileUnit = codeGenerationHelper.GetCodeCompileUnit(nameSpace, className);

@@ -13,12 +13,14 @@ namespace NHibernateMappingGenerator
         private readonly MappingGenerator mappingGenerator;
         private readonly ContractGenerator contractGenerator;
         private readonly ByCodeGenerator byCodeGenerator;
+        private EntityFrameworkGenerator entityFrameworkGenerator;
 
         public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
             this.applicationPreferences = applicationPreferences;
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
+            entityFrameworkGenerator = new EntityFrameworkGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
             contractGenerator = new ContractGenerator(applicationPreferences, table);
             byCodeGenerator = new ByCodeGenerator(applicationPreferences, table);
@@ -44,6 +46,11 @@ namespace NHibernateMappingGenerator
             {
                 fluentGenerator.Generate(writeToFile);
                 GeneratedMapCode = fluentGenerator.GeneratedCode;
+            }
+            if (applicationPreferences.IsEntityFramework)
+            {
+                entityFrameworkGenerator.Generate(writeToFile);
+                GeneratedMapCode = entityFrameworkGenerator.GeneratedCode;
             }
             else if (applicationPreferences.IsCastle)
             {

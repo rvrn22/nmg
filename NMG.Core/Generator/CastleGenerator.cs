@@ -12,8 +12,6 @@ namespace NMG.Core.Generator
 {
     public class CastleGenerator : AbstractGenerator
     {
-        private readonly ApplicationPreferences applicationPreferences;
-
         public CastleGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences.FolderPath, "Mapping", applicationPreferences.TableName, applicationPreferences.NameSpaceMap, applicationPreferences.AssemblyName, applicationPreferences.Sequence, table, applicationPreferences)
         {
             this.applicationPreferences = applicationPreferences;
@@ -29,7 +27,7 @@ namespace NMG.Core.Generator
             }
             else
             {
-                WriteToString(compileUnit, Formatter.FormatSingular(tableName));
+                WriteToString(compileUnit);
             }
         }
 
@@ -47,13 +45,11 @@ namespace NMG.Core.Generator
             {
                 foreach (var pk in Table.PrimaryKey.Columns)
                 {
-                    var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, pk.DataType,
-                                                             pk.DataLength, pk.DataPrecision, pk.DataScale);
+                    var mapFromDbType = mapper.MapFromDBType(applicationPreferences.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
 
                     var declaration = new CodeAttributeDeclaration("PrimaryKey");
                     declaration.Arguments.Add(new CodeAttributeArgument("Column", new CodePrimitiveExpression(pk.Name)));
-                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(),
-                                                                                pk.Name.GetFormattedText(), declaration));
+                    newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), pk.Name.GetFormattedText(), declaration));
                 }
             }
 
@@ -75,7 +71,7 @@ namespace NMG.Core.Generator
                     declaration.Arguments.Add(new CodeAttributeArgument("NotNull", new CodePrimitiveExpression(true)));
                 }
 
-                var mapFromDbType = mapper.MapFromDBType(this.applicationPreferences.ServerType, property.DataType, property.DataLength, property.DataPrecision, property.DataScale);
+                var mapFromDbType = mapper.MapFromDBType(applicationPreferences.ServerType, property.DataType, property.DataLength, property.DataPrecision, property.DataScale);
                 newType.Members.Add(codeGenerationHelper.CreateAutoProperty(mapFromDbType.ToString(), property.Name.GetFormattedText(), declaration));
             }
 
@@ -107,7 +103,7 @@ namespace NMG.Core.Generator
             }
         }
 
-        private void WriteToString(CodeCompileUnit compileUnit, string className)
+        private void WriteToString(CodeCompileUnit compileUnit)
         {
             var provider = (CodeDomProvider)new CSharpCodeProvider();
             var streamWriter = new StringWriter();
@@ -126,7 +122,7 @@ namespace NMG.Core.Generator
             GeneratedCode = CleanupGeneratedFile(streamWriter.ToString());
         }
 
-        private static string CleanupGeneratedFile(string entireContent)
+        protected override string CleanupGeneratedFile(string entireContent)
         {
             entireContent = RemoveComments(entireContent);
             entireContent = AddStandardHeader(entireContent);
@@ -165,7 +161,7 @@ namespace NMG.Core.Generator
 
         private static string RemoveComments(string entireContent)
         {
-            int end = entireContent.LastIndexOf("----------");
+            var end = entireContent.LastIndexOf("----------", StringComparison.Ordinal);
             entireContent = entireContent.Remove(0, end + 10);
             return entireContent;
         }
@@ -173,9 +169,7 @@ namespace NMG.Core.Generator
         private string GetCompleteFilePath(CodeDomProvider provider, string className)
         {
             string fileName = filePath + className;
-            return provider.FileExtension[0] == '.'
-                       ? fileName + provider.FileExtension
-                       : fileName + "." + provider.FileExtension;
+            return provider.FileExtension[0] == '.' ? fileName + provider.FileExtension : fileName + "." + provider.FileExtension;
         }
     }
 }

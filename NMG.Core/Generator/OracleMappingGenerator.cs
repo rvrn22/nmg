@@ -21,5 +21,10 @@ namespace NMG.Core.Generator
             paramElement.InnerText = sequenceName;
             generatorElement.AppendChild(paramElement);
         }
+
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
+        }
     }
 }

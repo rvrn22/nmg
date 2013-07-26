@@ -30,6 +30,15 @@ namespace NMG.Core.Generator
             {
                 WriteToFile(generateCode, className);
             }
+            else
+            {
+                GeneratedCode = WriteToString(compileUnit, GetCodeDomProvider());
+            }
+        }
+
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
         }
 
         public CodeCompileUnit GetCompleteCompileUnit(string className)

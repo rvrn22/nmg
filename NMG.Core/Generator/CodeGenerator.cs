@@ -38,7 +38,7 @@ namespace NMG.Core.Generator
             } else
             {
                 // Output to property
-                GeneratedCode = WriteToString(compileUnit);
+                GeneratedCode = WriteToString(compileUnit, GetCodeDomProvider());
             }
         }
 
@@ -57,7 +57,7 @@ namespace NMG.Core.Generator
             // Generate GetHashCode() and Equals() methods.
             if (Table.PrimaryKey != null && Table.PrimaryKey.Columns.Count != 0 && Table.PrimaryKey.Type == PrimaryKeyType.CompositeKey)
             {
-                List<string> pkColsList = new List<string>();
+                var pkColsList = new List<string>();
                 foreach (var pkCol in Table.PrimaryKey.Columns)
                 {
                     if (pkCol.IsForeignKey && appPrefs.IncludeForeignKeys)
@@ -129,8 +129,7 @@ namespace NMG.Core.Generator
             {
                 foreach (var pk in Table.PrimaryKey.Columns)
                 {
-                    var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength,
-                                                             pk.DataPrecision, pk.DataScale);
+                    var mapFromDbType = mapper.MapFromDBType(appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
                     var propertyName = Formatter.FormatText(pk.Name);
                     var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
                     var pkAlsoFkQty = (from fk in Table.ForeignKeys.Where(fk => fk.UniquePropertyName == pk.Name) select fk).Count();
@@ -157,7 +156,7 @@ namespace NMG.Core.Generator
 
             foreach (var column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
-                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
+                var mapFromDbType = mapper.MapFromDBType(appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                 var propertyName = Formatter.FormatText(column.Name);
                 var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
                 newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, fieldName, column.IsNullable));
@@ -179,15 +178,15 @@ namespace NMG.Core.Generator
                     } 
                     else
                     {
-                        var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, pk.DataType, pk.DataLength,
-                                                                 pk.DataPrecision, pk.DataScale);
+                        var mapFromDbType = mapper.MapFromDBType(appPrefs.ServerType, pk.DataType, pk.DataLength, pk.DataPrecision, pk.DataScale);
 
                         var pkAlsoFkQty = (from fk in Table.ForeignKeys.Where(fk => fk.UniquePropertyName == pk.Name) select fk).Count();
                         var fieldName = FixPropertyWithSameClassName(pk.Name, Table.Name);
                         if (pkAlsoFkQty > 0)
+                        {
                             fieldName = fieldName + "Id";
-                        newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(fieldName),
-                                                                             true));
+                        }
+                        newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(fieldName), true));
                         newType.Members.Add(codeGenerationHelper.CreateProperty(mapFromDbType, Formatter.FormatText(fieldName), appPrefs.UseLazy));
                     }
                 }
@@ -210,7 +209,7 @@ namespace NMG.Core.Generator
 
             foreach (var column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !appPrefs.IncludeForeignKeys)))
             {
-                var mapFromDbType = mapper.MapFromDBType(this.appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
+                var mapFromDbType = mapper.MapFromDBType(appPrefs.ServerType, column.DataType, column.DataLength, column.DataPrecision, column.DataScale);
                 var fieldName = FixPropertyWithSameClassName(column.Name, Table.Name);
                 newType.Members.Add(codeGenerationHelper.CreateField(mapFromDbType, "_" + camelCaseFormatter.FormatText(fieldName), column.IsNullable));
 
@@ -430,27 +429,7 @@ namespace NMG.Core.Generator
             }
         }
 
-        private string WriteToString(CodeCompileUnit compileUnit)
-        {
-            var provider = GetCodeDomProvider();
-            var streamWriter = new StringWriter();
-            using (provider)
-            {
-                var textWriter = new IndentedTextWriter(streamWriter, "    ");
-                using (textWriter)
-                {
-                    using (streamWriter)
-                    {
-                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = false };
-                        provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
-                    }
-                }
-            }
-            
-            return CleanupGeneratedFile(streamWriter.ToString());
-        }
-
-        private string CleanupGeneratedFile(string entireContent)
+        protected override string CleanupGeneratedFile(string entireContent)
         {
             entireContent = RemoveComments(entireContent);
             entireContent = AddStandardHeader(entireContent);
@@ -482,7 +461,7 @@ namespace NMG.Core.Generator
                 entireContent = entireContent.Replace(builder.ToString(), "{ get; set; }");
             } else if (appPrefs.Language == Language.VB)
             {
-                var blah = @"
+                const string blah = @"
             Get
             End Get
             Set
@@ -525,11 +504,8 @@ namespace NMG.Core.Generator
 
         private string AddStandardHeader(string entireContent)
         {
-            var scopeStatements = new List<string>();
+            var scopeStatements = new List<string> {"System", "System.Text", "System.Collections.Generic"};
 
-            scopeStatements.Add("System");
-            scopeStatements.Add("System.Text");
-            scopeStatements.Add("System.Collections.Generic");
             if (appPrefs.ValidatorStyle == ValidationStyle.Microsoft)
             {
                 scopeStatements.Add("System.ComponentModel");
@@ -569,7 +545,7 @@ namespace NMG.Core.Generator
 
         private static string RemoveComments(string entireContent)
         {
-            int end = entireContent.LastIndexOf("----------");
+            int end = entireContent.LastIndexOf("----------", StringComparison.Ordinal);
             entireContent = entireContent.Remove(0, end + 10);
             return entireContent;
         }

@@ -1,4 +1,6 @@
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.IO;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
@@ -45,14 +47,31 @@ namespace NMG.Core.Generator
             }
         }
 
-        #region IGenerator Members
-
         public ITextFormatter Formatter { get; set; }
 
         public string GeneratedCode { get; set; }
 
         public abstract void Generate(bool writeToFile = true);
 
-        #endregion
+        protected string WriteToString(CodeCompileUnit compileUnit, CodeDomProvider provider)
+        {
+            var streamWriter = new StringWriter();
+            using (provider)
+            {
+                var textWriter = new IndentedTextWriter(streamWriter, "    ");
+                using (textWriter)
+                {
+                    using (streamWriter)
+                    {
+                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = false };
+                        provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
+                    }
+                }
+            }
+
+            return CleanupGeneratedFile(streamWriter.ToString());
+        }
+
+        protected abstract string CleanupGeneratedFile(string generatedContent);
     }
 }

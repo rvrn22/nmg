@@ -75,7 +75,9 @@ namespace NMG.Core.Domain
 		public string ReferenceColumn { 
 			get { return AllReferenceColumns.Count > 0 ? AllReferenceColumns[0] : ""; }
 			set { AllReferenceColumns = new List<string>{value};   }   }
-	}
+
+        public string PKTableName { get; set; }
+    }
 
     /// <summary>
     /// Defines a database column entity;
@@ -179,6 +181,8 @@ namespace NMG.Core.Domain
 		/// When one table has multiple fields that represent different relationships to the same foreign entity, it is required to give them unique names.
 		/// </summary>
 		public string UniquePropertyName { get; set; }
+
+        public bool IsNullable { get; set; }
 
         public override string ToString() { return Name; }
     }

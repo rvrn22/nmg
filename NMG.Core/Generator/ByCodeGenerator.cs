@@ -1,6 +1,4 @@
-using System;
 using System.CodeDom;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using NMG.Core.Domain;
@@ -21,8 +19,7 @@ namespace NMG.Core.Generator
         
         public override void Generate(bool writeToFile = true)
         {
-            var pascalCaseTextFormatter = new PascalCaseTextFormatter();
-            pascalCaseTextFormatter.PrefixRemovalList = appPrefs.FieldPrefixRemovalList;
+            var pascalCaseTextFormatter = new PascalCaseTextFormatter {PrefixRemovalList = appPrefs.FieldPrefixRemovalList};
 
             var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
             var compileUnit = GetCompleteCompileUnit(className);
@@ -33,7 +30,12 @@ namespace NMG.Core.Generator
                 WriteToFile(generateCode, className);
             }
         }
-        
+
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
+        }
+
         public CodeCompileUnit GetCompleteCompileUnit(string mapName)
         {
             var codeGenerationHelper = new CodeGenerationHelper();

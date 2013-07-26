@@ -28,6 +28,8 @@ namespace NHibernateMappingGenerator
 
         public bool IsFluent { get; set; }
 
+        public bool IsEntityFramework { get; set; }
+
         public bool IsAutoProperty { get; set; }
 
         public CodeGenerationOptions CodeGenerationOptions { get; set; }

@@ -119,6 +119,11 @@ namespace NHibernateMappingGenerator
             get { return fluentMappingOption.Checked; }
         }
 
+        public bool IsEntityFramework
+        {
+            get { return entityFrameworkRadionBtn.Checked; }
+        }
+
         public bool IsCastle
         {
             get { return castleMappingOption.Checked; }
@@ -173,6 +178,7 @@ namespace NHibernateMappingGenerator
                 includeHasManyCheckBox.Checked = applicationSettings.IncludeHasMany;
 
                 fluentMappingOption.Checked = applicationSettings.IsFluent;
+                entityFrameworkRadionBtn.Checked = applicationSettings.IsEntityFramework;
                 castleMappingOption.Checked = applicationSettings.IsCastle;
                 byCodeMappingOption.Checked = applicationSettings.IsByCode;
 
@@ -269,11 +275,11 @@ namespace NHibernateMappingGenerator
             }
 
             // Map Code Formatting
-            if (appSettings.Language == Language.CSharp & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle)
+            if (appSettings.Language == Language.CSharp & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle || appSettings.IsEntityFramework)
             {
                 mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.CSharp;
             }
-            else if (appSettings.Language == Language.VB & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle)
+            else if (appSettings.Language == Language.VB & appSettings.IsByCode || appSettings.IsFluent || appSettings.IsNhFluent || appSettings.IsCastle || appSettings.IsEntityFramework)
             {
                 mapCodeFastColoredTextBox.Language = FastColoredTextBoxNS.Language.VB;
             }
@@ -285,7 +291,7 @@ namespace NHibernateMappingGenerator
 
         private void DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            toolStripStatusLabel1.Text = string.Format("Error in column {0} of row {1} - {3}. Detail : {2}", e.ColumnIndex, e.RowIndex, e.Exception.Message, (gridData != null ? gridData[e.RowIndex].Name : ""));
+            toolStripStatusLabel.Text = string.Format("Error in column {0} of row {1} - {3}. Detail : {2}", e.ColumnIndex, e.RowIndex, e.Exception.Message, (gridData != null ? gridData[e.RowIndex].Name : ""));
         }
 
         private void App_Closing(object sender, CancelEventArgs e)
@@ -311,6 +317,7 @@ namespace NHibernateMappingGenerator
 
             applicationSettings.ValidationStyle = validationStyle;
             applicationSettings.IsFluent = fluentMappingOption.Checked;
+            applicationSettings.IsEntityFramework = entityFrameworkRadionBtn.Checked;
             applicationSettings.IsAutoProperty = autoPropertyRadioBtn.Checked;
             applicationSettings.FolderPath = folderTextBox.Text;
             applicationSettings.DomainFolderPath = domainFolderTextBox.Text;
@@ -361,9 +368,7 @@ namespace NHibernateMappingGenerator
 
         private void TablesListSelectedIndexChanged(object sender, EventArgs e)
         {
-            
-
-            toolStripStatusLabel1.Text = string.Empty;
+            toolStripStatusLabel.Text = string.Empty;
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -373,7 +378,7 @@ namespace NHibernateMappingGenerator
                     return;
                 }
 
-                int? lastTableSelectedIndex = LastTableSelected();
+                var lastTableSelectedIndex = LastTableSelected();
                 if (lastTableSelectedIndex != null)
                 {
                     var table = tablesListBox.Items[lastTableSelectedIndex.Value] as Table;
@@ -397,7 +402,7 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
             finally
             {
@@ -427,7 +432,7 @@ namespace NHibernateMappingGenerator
 
         private void PopulateTableDetails(Table selectedTable)
         {
-            toolStripStatusLabel1.Text = string.Empty;
+            toolStripStatusLabel.Text = string.Empty;
             try
             {
                 //dbTableDetailsGridView.AutoGenerateColumns = true;
@@ -443,7 +448,7 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
         }
 
@@ -452,7 +457,7 @@ namespace NHibernateMappingGenerator
             if (_currentConnection == null)
                 return;
 
-            toolStripStatusLabel1.Text = string.Format("Connecting to {0}...", _currentConnection.Name);
+            toolStripStatusLabel.Text = string.Format("Connecting to {0}...", _currentConnection.Name);
             statusStrip1.Refresh();
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -463,15 +468,15 @@ namespace NHibernateMappingGenerator
 
                 metadataReader = MetadataFactory.GetReader(_currentConnection.Type, _currentConnection.ConnectionString);
 
-                toolStripStatusLabel1.Text = "Retrieving owners...";
+                toolStripStatusLabel.Text = "Retrieving owners...";
                 statusStrip1.Refresh();
                 PopulateOwners();
 
-                toolStripStatusLabel1.Text = string.Empty;
+                toolStripStatusLabel.Text = string.Empty;
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
             finally
             {
@@ -500,7 +505,7 @@ namespace NHibernateMappingGenerator
         {
             try
             {
-                toolStripStatusLabel1.Text = "Retrieving tables...";
+                toolStripStatusLabel.Text = "Retrieving tables...";
                 statusStrip1.Refresh();
 
                 if (ownersComboBox.SelectedItem == null)
@@ -531,12 +536,12 @@ namespace NHibernateMappingGenerator
                     sequencesComboBox.SelectedIndex = 0;
                 }
 
-                toolStripStatusLabel1.Text = string.Empty;
+                toolStripStatusLabel.Text = string.Empty;
                 statusStrip1.Refresh();
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
         }
 
@@ -562,38 +567,38 @@ namespace NHibernateMappingGenerator
 
         private void GenerateClicked(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = string.Empty;
+            toolStripStatusLabel.Text = string.Empty;
             var selectedItems = tablesListBox.SelectedItems;
             if (selectedItems.Count == 0)
             {
-                toolStripStatusLabel1.Text = @"Please select table(s) above to generate the mapping files.";
+                toolStripStatusLabel.Text = @"Please select table(s) above to generate the mapping files.";
                 return;
             }
             try
             {
                 foreach (var selectedItem in selectedItems)
                 {
-                    toolStripStatusLabel1.Text = string.Format("Generating {0} mapping file ...", selectedItem);
+                    toolStripStatusLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
                     var table = (Table)selectedItem;
                     metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                     CaptureApplicationSettings();
                     Generate(table, selectedItems.Count > 1, applicationSettings);                
                 }
-                toolStripStatusLabel1.Text = @"Generated all files successfully.";
+                toolStripStatusLabel.Text = @"Generated all files successfully.";
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
         }
 
         private void GenerateAllClicked(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = string.Empty;
+            toolStripStatusLabel.Text = string.Empty;
             var items = tablesListBox.Items;
             if (items.Count == 0)
             {
-                toolStripStatusLabel1.Text = @"Please connect to a database to populate the tables first.";
+                toolStripStatusLabel.Text = @"Please connect to a database to populate the tables first.";
                 return;
             }
             try
@@ -615,22 +620,21 @@ namespace NHibernateMappingGenerator
             }
             catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = ex.Message;
+                toolStripStatusLabel.Text = ex.Message;
             }
         }
      
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             toolStripProgressBar1.Value = 100;
-            toolStripStatusLabel1.Text = @"Generated all files successfully.";
+            toolStripStatusLabel.Text = @"Generated all files successfully.";
         }
 
         private void DoWork(object sender, DoWorkEventArgs e)
         {
             var appSettings = e.Argument as ApplicationSettings; 
             var items = tablesListBox.Items;
-            var pOptions = new ParallelOptions();
-            pOptions.MaxDegreeOfParallelism = Environment.ProcessorCount;
+            var pOptions = new ParallelOptions {MaxDegreeOfParallelism = Environment.ProcessorCount};
             Parallel.ForEach(items.Cast<Table>(), pOptions, (table, loopState) =>
             {
                 if (worker != null && worker.CancellationPending && !loopState.IsStopped)
@@ -656,9 +660,8 @@ namespace NHibernateMappingGenerator
         
         private void Generate(Table table, bool generateAll, ApplicationSettings appSettings)
         {
-            ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, generateAll, appSettings);
-            var applicationController = new ApplicationController(applicationPreferences, table);
-            applicationController.Generate();
+            var applicationPreferences = GetApplicationPreferences(table, generateAll, appSettings);
+            new ApplicationController(applicationPreferences, table).Generate();
         }
 
         private void prefixCheckChanged(object sender, EventArgs e)
@@ -721,6 +724,7 @@ namespace NHibernateMappingGenerator
                                                  FieldGenerationConvention = GetFieldGenerationConvention(),
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
+                                                 IsEntityFramework = IsEntityFramework,
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = appSettings.GeneratePartialClasses,
                                                  GenerateWcfDataContract = appSettings.GenerateWcfContracts,
@@ -745,7 +749,7 @@ namespace NHibernateMappingGenerator
 
         private FieldGenerationConvention GetFieldGenerationConvention()
         {
-            FieldGenerationConvention convention = FieldGenerationConvention.Field;
+            var convention = FieldGenerationConvention.Field;
             if (autoPropertyRadioBtn.Checked)
                 convention = FieldGenerationConvention.AutoProperty;
             if (propertyRadioBtn.Checked)
@@ -755,7 +759,7 @@ namespace NHibernateMappingGenerator
 
         private FieldNamingConvention GetFieldNamingConvention()
         {
-            FieldNamingConvention convention = FieldNamingConvention.SameAsDatabase;
+            var convention = FieldNamingConvention.SameAsDatabase;
             if (prefixRadioButton.Checked)
                 convention = FieldNamingConvention.Prefixed;
             if (camelCasedRadioButton.Checked)
@@ -767,9 +771,9 @@ namespace NHibernateMappingGenerator
 
         private static string AddSlashToFolderPath(string folderPath)
         {
-            if (!folderPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+            if (!folderPath.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture)))
             {
-                folderPath += System.IO.Path.DirectorySeparatorChar;
+                folderPath += Path.DirectorySeparatorChar;
             }
             return folderPath;
         }
@@ -800,7 +804,7 @@ namespace NHibernateMappingGenerator
 
             // Display filtered list of tables
             var query = (from t in _tables
-                         where t.Name.StartsWith(textbox.Text, true, CultureInfo.CurrentCulture)
+                         where t.Name.ToLower().Contains(textbox.Text.ToLower())
                          select t).ToList();
 
             SuspendLayout();
@@ -872,7 +876,7 @@ namespace NHibernateMappingGenerator
             // Show map and domain code preview
             ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
             var applicationController = new ApplicationController(applicationPreferences, table);
-            applicationController.Generate(writeToFile: false);
+            applicationController.Generate(false);
             mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
             domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
         }

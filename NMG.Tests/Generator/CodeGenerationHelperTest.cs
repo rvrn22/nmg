@@ -34,7 +34,7 @@ namespace NMG.Tests.Generator
             codeCompileUnit.Namespaces[0].Types[0].Members.Add(autoProperty);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
                                                            new CodeGeneratorOptions());
-            StringBuilder builderCompare = new StringBuilder();
+            var builderCompare = new StringBuilder();
             builderCompare.AppendLine("public virtual string Name {");
             builderCompare.AppendLine("            get {");
             builderCompare.AppendLine("            }");
@@ -66,7 +66,7 @@ namespace NMG.Tests.Generator
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
                                                            new CodeGeneratorOptions());
             
-            StringBuilder builderCompare = new StringBuilder();
+            var builderCompare = new StringBuilder();
             builderCompare.AppendLine("public virtual System.Nullable<int> Name {");
             builderCompare.AppendLine("            get {");
             builderCompare.AppendLine("            }");
@@ -86,17 +86,16 @@ namespace NMG.Tests.Generator
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
                                                            new CodeGeneratorOptions());
             
-            StringBuilder builderCompare = new StringBuilder();
+            var builderCompare = new StringBuilder();
             builderCompare.AppendLine("public virtual string Name {");
             builderCompare.AppendLine("            get {");
-            builderCompare.AppendLine("                return this.name;");
+            builderCompare.AppendLine("                return this._name;");
             builderCompare.AppendLine("            }");
             builderCompare.AppendLine("            set {");
-            builderCompare.AppendLine("                this.name = value;");
+            builderCompare.AppendLine("                this._name = value;");
             builderCompare.AppendLine("            }");
             builderCompare.Append("        }");
-            Assert.IsTrue(
-                stringBuilder.ToString().Contains(builderCompare.ToString()));
+            Assert.IsTrue(stringBuilder.ToString().Contains(builderCompare.ToString()));
         }
 
         [Test]
@@ -108,7 +107,7 @@ namespace NMG.Tests.Generator
             codeCompileUnit.Namespaces[0].Types[0].Members.Add(memberProperty);
             cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
                                                            new CodeGeneratorOptions());
-            StringBuilder builderCompare = new StringBuilder();
+            var builderCompare = new StringBuilder();
             builderCompare.AppendLine("public virtual string Name {");
             builderCompare.AppendLine("            get {");
             builderCompare.AppendLine("            }");

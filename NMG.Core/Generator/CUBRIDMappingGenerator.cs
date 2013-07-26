@@ -10,8 +10,7 @@ namespace NMG.Core.Generator
     /// </summary>
     public class CUBRIDMappingGenerator : MappingGenerator
     {
-        public CUBRIDMappingGenerator(ApplicationPreferences applicationPreferences, Table table)
-            : base(applicationPreferences, table)
+        public CUBRIDMappingGenerator(ApplicationPreferences applicationPreferences, Table table) : base(applicationPreferences, table)
         {
         }
 
@@ -23,6 +22,11 @@ namespace NMG.Core.Generator
             var generatorElement = xmldoc.CreateElement("generator");
             generatorElement.SetAttribute("class", "identity");
             idElement.AppendChild(generatorElement);
+        }
+
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
         }
     }
 }

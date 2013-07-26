@@ -199,10 +199,11 @@ from information_schema.columns c
         {
             var foreignKeys = (from c in table.Columns
                                where c.IsForeignKey
-                               group c by new { c.ConstraintName, c.ForeignKeyTableName } into g
+                               group c by new { c.ConstraintName, c.ForeignKeyTableName, c.IsNullable } into g
                                select new ForeignKey
                                {
                                    Name = g.Key.ConstraintName,
+                                   IsNullable = g.Key.IsNullable,
                                    References = g.Key.ForeignKeyTableName,
                                    Columns = g.ToList(),
                                    UniquePropertyName = g.Key.ForeignKeyTableName
@@ -308,12 +309,14 @@ WHERE KCU1.CONSTRAINT_NAME = '{0}'",
 						while (reader.Read()) {
 							var constraintName = reader["CONSTRAINT_NAME"].ToString();
 							var fkColumnName = reader["FK_COLUMN_NAME"].ToString();
+                            var pkTableName = reader["PK_TABLE"].ToString();
 							var existing = hasManyRelationships.FirstOrDefault(hm => hm.ConstraintName == constraintName);
 							if (existing == null) {
 								var newHasManyItem = new HasMany
 												{
 													ConstraintName = constraintName,
-													Reference = reader.GetString(1)
+													Reference = reader.GetString(1),
+                                                    PKTableName = pkTableName
 												};
 								newHasManyItem.AllReferenceColumns.Add(fkColumnName);
 								hasManyRelationships.Add(newHasManyItem);

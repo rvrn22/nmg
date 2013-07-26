@@ -95,6 +95,7 @@
     <Compile Include="Generator\CastleGenerator.cs" />
     <Compile Include="Generator\CodeGenerationHelper.cs" />
     <Compile Include="Generator\ContractGenerator.cs" />
+    <Compile Include="Generator\EntityFrameworkGenerator.cs" />
     <Compile Include="Generator\CUBRIDMappingGenerator.cs" />
     <Compile Include="Generator\FluentGenerator.cs" />
     <Compile Include="Generator\MappingGenerator.cs" />

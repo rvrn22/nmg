@@ -13,8 +13,7 @@ namespace NMG.Tests.Generator
         [Test]
         public void ShouldGenerateMappingForSqlServerTable()
         {
-            const string generatedXML =
-                "<?xml version=\"1.0\"?><hibernate-mapping assembly=\"myAssemblyName\" namespace=\"myNameSpace\" xmlns=\"urn:nhibernate-mapping-2.2\"><class name=\"Customer\" table=\"Customer\" lazy=\"true\" xmlns=\"\"><id name=\"Id\"><generator class=\"identity\" /><column name=\"Id\" sql-type=\"Int\" not-null=\"true\" /></id></class></hibernate-mapping>";
+            const string generatedXML = "<?xml version=\"1.0\"?><hibernate-mapping assembly=\"myAssemblyName\" namespace=\"myNameSpace\" xmlns=\"urn:nhibernate-mapping-2.2\"><class name=\"Customer\" table=\"Customer\" lazy=\"true\" xmlns=\"\"><id name=\"Id\" column=\"Id\" /></class></hibernate-mapping>";
             var preferences = new ApplicationPreferences
                                   {
                                       FolderPath = "\\",

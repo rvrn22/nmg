@@ -16,5 +16,10 @@ namespace NMG.Core.Generator
             generatorElement.SetAttribute("class", "identity");
             idElement.AppendChild(generatorElement);
         }
+
+        protected override string CleanupGeneratedFile(string generatedContent)
+        {
+            return generatedContent;
+        }
     }
 }

@@ -105,6 +105,7 @@ namespace NHibernateMappingGenerator
             this.textBoxClassNamePrefix = new System.Windows.Forms.TextBox();
             this.textBoxInheritence = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.nameAsForeignTableCheckBox = new System.Windows.Forms.CheckBox();
             this.includeHasManyCheckBox = new System.Windows.Forms.CheckBox();
             this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
             this.autoPropertyRadioBtn = new System.Windows.Forms.RadioButton();
@@ -125,6 +126,7 @@ namespace NHibernateMappingGenerator
             this.vbRadioButton = new System.Windows.Forms.RadioButton();
             this.cSharpRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.EnableInflectionsCheckBox = new System.Windows.Forms.CheckBox();
             this.pascalCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.prefixTextBox = new System.Windows.Forms.TextBox();
             this.prefixRadioButton = new System.Windows.Forms.RadioButton();
@@ -132,10 +134,9 @@ namespace NHibernateMappingGenerator
             this.camelCasedRadioButton = new System.Windows.Forms.RadioButton();
             this.sameAsDBRadioButton = new System.Windows.Forms.RadioButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.EnableInflectionsCheckBox = new System.Windows.Forms.CheckBox();
-            this.nameAsForeignTableCheckBox = new System.Windows.Forms.CheckBox();
+            this.entityFrameworkRadionBtn = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -510,7 +511,6 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.mapCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.mapCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.mapCodeFastColoredTextBox.IsReplaceMode = false;
             this.mapCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
@@ -537,7 +537,6 @@ namespace NHibernateMappingGenerator
             this.domainCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.domainCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.domainCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.domainCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.domainCodeFastColoredTextBox.IsReplaceMode = false;
             this.domainCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
@@ -902,6 +901,16 @@ namespace NHibernateMappingGenerator
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
             // 
+            // nameAsForeignTableCheckBox
+            // 
+            this.nameAsForeignTableCheckBox.AutoSize = true;
+            this.nameAsForeignTableCheckBox.Location = new System.Drawing.Point(29, 134);
+            this.nameAsForeignTableCheckBox.Name = "nameAsForeignTableCheckBox";
+            this.nameAsForeignTableCheckBox.Size = new System.Drawing.Size(136, 17);
+            this.nameAsForeignTableCheckBox.TabIndex = 11;
+            this.nameAsForeignTableCheckBox.Text = "Name as Foreign Table";
+            this.nameAsForeignTableCheckBox.UseVisualStyleBackColor = true;
+            // 
             // includeHasManyCheckBox
             // 
             this.includeHasManyCheckBox.AutoSize = true;
@@ -1021,6 +1030,7 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.entityFrameworkRadionBtn);
             this.groupBox3.Controls.Add(this.castleMappingOption);
             this.groupBox3.Controls.Add(this.fluentMappingOption);
             this.groupBox3.Controls.Add(this.hbmMappingOption);
@@ -1125,6 +1135,16 @@ namespace NHibernateMappingGenerator
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generated Property Name";
             // 
+            // EnableInflectionsCheckBox
+            // 
+            this.EnableInflectionsCheckBox.AutoSize = true;
+            this.EnableInflectionsCheckBox.Location = new System.Drawing.Point(6, 111);
+            this.EnableInflectionsCheckBox.Name = "EnableInflectionsCheckBox";
+            this.EnableInflectionsCheckBox.Size = new System.Drawing.Size(222, 17);
+            this.EnableInflectionsCheckBox.TabIndex = 22;
+            this.EnableInflectionsCheckBox.Text = "Load Inflections to Singularize or Pruralize";
+            this.EnableInflectionsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // pascalCasedRadioButton
             // 
             this.pascalCasedRadioButton.AutoSize = true;
@@ -1189,7 +1209,7 @@ namespace NHibernateMappingGenerator
             // 
             this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel,
             this.toolStripProgressBar1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 720);
             this.statusStrip1.Name = "statusStrip1";
@@ -1197,17 +1217,17 @@ namespace NHibernateMappingGenerator
             this.statusStrip1.TabIndex = 23;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // toolStripStatusLabel
             // 
-            this.toolStripStatusLabel1.AutoToolTip = true;
-            this.toolStripStatusLabel1.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.toolStripStatusLabel1.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
-            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.toolStripStatusLabel1.ForeColor = System.Drawing.Color.Red;
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(856, 17);
-            this.toolStripStatusLabel1.Spring = true;
-            this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripStatusLabel.AutoToolTip = true;
+            this.toolStripStatusLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.toolStripStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
+            this.toolStripStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripStatusLabel.ForeColor = System.Drawing.Color.Red;
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(856, 17);
+            this.toolStripStatusLabel.Spring = true;
+            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // toolStripProgressBar1
             // 
@@ -1215,25 +1235,16 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
-            // EnableInflectionsCheckBox
+            // entityFrameworkRadionBtn
             // 
-            this.EnableInflectionsCheckBox.AutoSize = true;
-            this.EnableInflectionsCheckBox.Location = new System.Drawing.Point(6, 111);
-            this.EnableInflectionsCheckBox.Name = "EnableInflectionsCheckBox";
-            this.EnableInflectionsCheckBox.Size = new System.Drawing.Size(222, 17);
-            this.EnableInflectionsCheckBox.TabIndex = 22;
-            this.EnableInflectionsCheckBox.Text = "Load Inflections to Singularize or Pruralize";
-            this.EnableInflectionsCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // nameAsForeignTableCheckBox
-            // 
-            this.nameAsForeignTableCheckBox.AutoSize = true;
-            this.nameAsForeignTableCheckBox.Location = new System.Drawing.Point(29, 134);
-            this.nameAsForeignTableCheckBox.Name = "nameAsForeignTableCheckBox";
-            this.nameAsForeignTableCheckBox.Size = new System.Drawing.Size(136, 17);
-            this.nameAsForeignTableCheckBox.TabIndex = 11;
-            this.nameAsForeignTableCheckBox.Text = "Name as Foreign Table";
-            this.nameAsForeignTableCheckBox.UseVisualStyleBackColor = true;
+            this.entityFrameworkRadionBtn.AutoSize = true;
+            this.entityFrameworkRadionBtn.Location = new System.Drawing.Point(6, 109);
+            this.entityFrameworkRadionBtn.Name = "entityFrameworkRadionBtn";
+            this.entityFrameworkRadionBtn.Size = new System.Drawing.Size(106, 17);
+            this.entityFrameworkRadionBtn.TabIndex = 11;
+            this.entityFrameworkRadionBtn.TabStop = true;
+            this.entityFrameworkRadionBtn.Text = "Entity Framework";
+            this.entityFrameworkRadionBtn.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -1370,7 +1381,7 @@ namespace NHibernateMappingGenerator
         private FastColoredTextBoxNS.FastColoredTextBox mapCodeFastColoredTextBox;
         private FastColoredTextBoxNS.FastColoredTextBox domainCodeFastColoredTextBox;
         private StatusStrip statusStrip1;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabel;
         private ToolStripProgressBar toolStripProgressBar1;
         private Label label4;
         private TextBox namespaceMapTextBox;
@@ -1396,6 +1407,7 @@ namespace NHibernateMappingGenerator
         private CheckBox includeHasManyCheckBox;
         private CheckBox EnableInflectionsCheckBox;
         private CheckBox nameAsForeignTableCheckBox;
+        private RadioButton entityFrameworkRadionBtn;
     }
 }
 
