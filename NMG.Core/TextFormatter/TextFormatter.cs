@@ -31,7 +31,12 @@ namespace NMG.Core.TextFormatter
                 .Replace("í", "i")
                 .Replace("ó", "o")
                 .Replace("ú", "u");
-            //Ommit any chars except letters and numbers in class or properties.
+
+            // Split by capitals to preserve pascal/camelcasing in original text value
+            // Preserves TLAs. See http://stackoverflow.com/a/1098039
+            result = Regex.Replace(result, "((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1").Trim();
+
+            // Omit any chars except letters and numbers in class or properties.
             result = result.Replace(" ", "_");
             result = Regex.Replace(result, "[^a-zA-Z0-9_]", String.Empty); //And Underscore
 
