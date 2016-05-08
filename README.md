@@ -13,7 +13,7 @@ Features:
 - Option to generate NHibernate or MS validators
 
 ## Build Status
-https://snap-ci.com/rvrn22/nmg/branch/master/build_image
+<img src="https://snap-ci.com/rvrn22/nmg/branch/master/build_image" />
 
 ## Tutorial:
 
