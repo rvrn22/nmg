@@ -1,5 +1,2 @@
-bin/
-obj/
-*.suo
-*.user
-*.dat
+language: csharp
+solution: NMG.sln
