@@ -12,8 +12,7 @@ Features:
 - Its super fast and free. No licensing restrictions.
 - Option to generate NHibernate or MS validators
 
-## Build Status
-<img src="https://snap-ci.com/rvrn22/nmg/branch/master/build_image" />
+[![Build Status](https://snap-ci.com/rvrn22/nmg/branch/master/build_image)](https://snap-ci.com/rvrn22/nmg/branch/master)
 
 ## Tutorial:
 
