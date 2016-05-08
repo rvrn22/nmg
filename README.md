@@ -12,6 +12,9 @@ Features:
 - Its super fast and free. No licensing restrictions.
 - Option to generate NHibernate or MS validators
 
+## Build Status
+https://snap-ci.com/rvrn22/nmg/branch/master/build_image
+
 ## Tutorial:
 
 CUBRID : http://www.cubrid.org/wiki_apis/entry/using-nmg-nhibernate-mappings-generator-with-cubrid
