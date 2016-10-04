@@ -2,6 +2,7 @@ using NMG.Core.Domain;
 using NMG.Core.Fluent;
 using NMG.Core.TextFormatter;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 
 namespace NMG.Tests.Fluent
 {

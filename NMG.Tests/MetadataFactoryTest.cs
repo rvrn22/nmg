@@ -2,6 +2,7 @@ using NMG.Core;
 using NMG.Core.Domain;
 using NMG.Core.Reader;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 
 namespace NMG.Tests
 {
