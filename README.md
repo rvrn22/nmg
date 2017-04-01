@@ -15,3 +15,7 @@ Features:
 ## Tutorial:
 
 CUBRID : http://www.cubrid.org/wiki_apis/entry/using-nmg-nhibernate-mappings-generator-with-cubrid
+
+## Wiki:
+
+[Documentation](https://github.com/rvrn22/nmg/wiki)
