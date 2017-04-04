@@ -78,7 +78,7 @@ namespace NMG.Tests
             Assert.AreEqual("columnName", formatter.FormatText("Column_Name"));
             Assert.AreEqual("columnName", formatter.FormatText("COLUMN_NAME"));
             Assert.AreEqual("hitMan", formatter.FormatText("Hit_Man"));
-            Assert.AreEqual("hitMan", formatter.FormatText("Hit Man"));
+            Assert.AreEqual("hitman", formatter.FormatText("Hit Man"));
             Assert.AreEqual("hitman", formatter.FormatText("HitMan"));
         }
 

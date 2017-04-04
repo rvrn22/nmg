@@ -5,7 +5,7 @@ using NMG.Core.Reader;
 
 namespace NMG.Tests.Reader
 {
-    [TestFixture]
+    [TestFixture, Ignore("Requires Oracle client installed.")]
     public class OracleMetadataReaderTest
     {
         private OracleMetadataReader oracleMetadataReader;
