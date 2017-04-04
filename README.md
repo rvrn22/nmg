@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/4dt1m3f57ufblmhd?svg=true)](https://ci.appveyor.com/project/RaviRanjan/nmg)
+
 # NHibernate Mapping Generator
 
 A simple utility to generate NHibernate mapping files and corresponding domain classes from existing DB tables.
