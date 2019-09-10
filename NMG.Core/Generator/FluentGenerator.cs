@@ -128,9 +128,14 @@ namespace NMG.Core.Generator
 
             string idGeneratorType = (isPkTypeIntegral ? "GeneratedBy.Identity()" : "GeneratedBy.Assigned()");
             var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
-            var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumnName) select fk).Count();
-            if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
-             return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");",
+            var pkAlsoFkQty = table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumnName).Count();
+            
+	    if (pkAlsoFkQty > 0) 
+	    {
+	        fieldName = fieldName + "Id";
+	    }
+	    
+            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");",
                                                        formatter.FormatText(fieldName),
                                                        idGeneratorType,
                                                        pkColumnName));
@@ -144,9 +149,13 @@ namespace NMG.Core.Generator
             {
                 var propertyName = formatter.FormatText(pkColumn.Name);
                 var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
-                var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumn.Name) select fk).Count();
-                if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
-             var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")",fieldName, pkColumn.Name);
+                var pkAlsoFkQty = table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumn.Name).Count();
+                
+		if (pkAlsoFkQty > 0){
+		    fieldName = fieldName + "Id";
+		}
+		
+                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")",fieldName, pkColumn.Name);
                 keyPropertyBuilder.Append(first ? tmp : "\n" + TABS + "             " + tmp);
                 first = false;
             }
