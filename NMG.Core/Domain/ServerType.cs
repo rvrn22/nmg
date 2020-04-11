@@ -8,6 +8,7 @@ namespace NMG.Core.Domain
         MySQL,
         SQLite,
         Sybase,
+        Informix,
         Ingres,
         CUBRID
     }

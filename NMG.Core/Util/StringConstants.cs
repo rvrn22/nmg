@@ -19,8 +19,11 @@
         public static string SYBASE_CONN_STR_TEMPLATE =
             "Provider=ASAProv;UID=uidname;PWD=password;DatabaseName=databasename;EngineName=enginename;CommLinks=TCPIP{host=servername}";
 
-        public static string INGRES_CONN_STR_TEMPLATE = "Host=localhost;Port=II7;Database=myDb;User ID=myUser;Password=myPassword;";
+        public static string INFORMIX_CONN_STR_TEMPLATE =
+            "Server=localhost:port;Database=myDataBase;CurrentSchema=mySchema;UID=myUsername;PWS=myPassword";
+            //"Server=localhost:port;Database=myDataBase;CurrentSchema=mySchema;UID=myUsername;PWS=myPassword;Max Pool Size=100;Min Pool Size=10;Connection Lifetime=60;";
 
+        public static string INGRES_CONN_STR_TEMPLATE = "Host=localhost;Port=II7;Database=myDb;User ID=myUser;Password=myPassword;";
 
         public static string CUBRID_CONN_STR_TEMPLATE =
             "server=localhost;port=33000;database=demodb;user=dba;password=";
