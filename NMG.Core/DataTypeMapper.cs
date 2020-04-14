@@ -52,10 +52,14 @@ namespace NMG.Core
                     return MapFromOracleDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.MySQL:
                     return MapFromMySqlDBType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.SQLite:
+                    return MapFromSqliteDbType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.PostgreSQL:
                     return MapFromPostgreDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.Sybase:
                     return MapFromSqlServerDBType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.Informix:
+                    return MapFromInformixDbType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.Ingres:
                     return MapFromIngresDbType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.CUBRID:
@@ -154,6 +158,19 @@ namespace NMG.Core
         private Type MapFromSqliteDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+        }
+
+        private Type MapFromInformixDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        {
+            switch (dataType)
+            {
+                case "Serial":
+                    return typeof(int);
+                case "Serial8":
+                    return typeof(long);
+                default:
+                    return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+            }
         }
 
         /// <summary>

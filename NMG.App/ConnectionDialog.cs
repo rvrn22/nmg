@@ -94,6 +94,8 @@ namespace NHibernateMappingGenerator
                     return StringConstants.SQLITE_CONN_STR_TEMPLATE;
                 case ServerType.Sybase:
                     return StringConstants.SYBASE_CONN_STR_TEMPLATE;
+                case ServerType.Informix:
+                    return StringConstants.INFORMIX_CONN_STR_TEMPLATE;
                 case ServerType.Ingres:
                     return StringConstants.INGRES_CONN_STR_TEMPLATE;
                 case ServerType.CUBRID:

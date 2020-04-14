@@ -32,6 +32,8 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -54,6 +56,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64">
+      <HintPath>..\packages\IBM.Data.DB.Provider.11.1.4040.4\lib\net451\x64\IBM.Data.DB2.dll</HintPath>
+    </Reference>
     <Reference Include="Ingres.Client, Version=2.1.0.0, Culture=neutral, PublicKeyToken=363043b363d069c5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Ingres .NET Data Provider\Ingres.Client.dll</HintPath>
@@ -121,6 +126,7 @@
     <Compile Include="Reader\NpgsqlMetadataReader.cs" />
     <Compile Include="Reader\OracleConstraintType.cs" />
     <Compile Include="Reader\OracleMetadataReader.cs" />
+    <Compile Include="Reader\InformixMetadataReader.cs" />
     <Compile Include="Reader\SqliteMetadataReader.cs" />
     <Compile Include="Reader\SqlServerConstraintType.cs" />
     <Compile Include="Reader\SqlServerMetadataReader.cs" />
@@ -164,5 +170,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets" Condition="Exists('..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets'))" />
+  </Target>
 </Project>
