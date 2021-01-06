@@ -59,6 +59,8 @@ namespace NMG.Tests
             Inflector.EnableInflection = true;
             Assert.AreEqual("ColumnName", formatter.FormatSingular("Column_Names"));
             Assert.AreEqual("ColumnName", formatter.FormatSingular("COLUMN_NAMES"));
+            Assert.AreEqual("ColumnName", formatter.FormatSingular("COLumnName"));
+            Assert.AreEqual("ColumnName", formatter.FormatSingular("cOlumnName"));
         }
 
         [Test]
@@ -78,8 +80,8 @@ namespace NMG.Tests
             Assert.AreEqual("columnName", formatter.FormatText("Column_Name"));
             Assert.AreEqual("columnName", formatter.FormatText("COLUMN_NAME"));
             Assert.AreEqual("hitMan", formatter.FormatText("Hit_Man"));
-            Assert.AreEqual("hitman", formatter.FormatText("Hit Man"));
-            Assert.AreEqual("hitman", formatter.FormatText("HitMan"));
+            Assert.AreEqual("hitMan", formatter.FormatText("Hit Man"));
+            Assert.AreEqual("hitMan", formatter.FormatText("HitMan"));
         }
 
         [Test] public void ConvertStringToPascalCase()
