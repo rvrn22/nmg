@@ -1,16 +1,16 @@
-// 
+//
 //   SubSonic - http://subsonicproject.com
-// 
+//
 //   The contents of this file are subject to the New BSD
 //   License (the "License"); you may not use this file
 //   except in compliance with the License. You may obtain a copy of
 //   the License at http://www.opensource.org/licenses/bsd-license.php
-//  
-//   Software distributed under the License is distributed on an 
+//
+//   Software distributed under the License is distributed on an
 //   "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 //   implied. See the License for the specific language governing
 //   rights and limitations under the License.
-// 
+//
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,8 +28,8 @@ namespace NMG.Core.TextFormatter
         private static readonly List<string> _uncountables = new List<string>();
 
         private static bool _enableInflection;
-        public static bool EnableInflection 
-        { 
+        public static bool EnableInflection
+        {
             get
             {
                 return _enableInflection;
@@ -273,7 +273,7 @@ namespace NMG.Core.TextFormatter
                 }
                 return String.Join(joinString, words);
             }
-            return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(words[0].ToLowerInvariant());
+            return MakeInitialCaps(words[0]);
         }
         /// <summary>
         /// Converts the string to camel case.
@@ -304,7 +304,35 @@ namespace NMG.Core.TextFormatter
         /// <returns></returns>
         public static string MakeInitialCaps(this string word)
         {
-            return String.Concat(word.Substring(0, 1).ToUpper(), word.Substring(1).ToLower());
+            var tmp = new char[word.Length];
+            bool lastCharUpper = false;
+            for (int i = 0; i < word.Length; i++)
+            {
+                if (i == 0)
+                {
+                    tmp[i] = char.ToUpperInvariant(word[i]);
+                    lastCharUpper = true;
+                }
+                else if (char.IsUpper(word[i]))
+                {
+                    if (lastCharUpper)
+                    {
+                        tmp[i] = char.ToLowerInvariant(word[i]);
+                    }
+                    else
+                    {
+                        tmp[i] = word[i];
+                        lastCharUpper = true;
+                    }
+                }
+                else
+                {
+                    lastCharUpper = false;
+                    tmp[i] = word[i];
+                }
+            }
+
+            return new string(tmp);
         }
 
         /// <summary>
@@ -374,12 +402,12 @@ namespace NMG.Core.TextFormatter
         private class InflectorRule
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public readonly Regex regex;
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public readonly string replacement;
 
