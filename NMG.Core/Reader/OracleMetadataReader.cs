@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OracleClient;
 using System.Linq;
 using NMG.Core.Domain;
+using Oracle.ManagedDataAccess.Client;
 
 namespace NMG.Core.Reader
 {
@@ -83,10 +83,10 @@ order by column_id";
                         var m = new DataTypeMapper();
                         while (oracleDataReader.Read())
                         {
-                            var constraintType = Convert.ToInt32(oracleDataReader.GetOracleNumber(3).Value);
-                            int? dataLength = oracleDataReader.IsDBNull(4) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(4).Value);
-                            int? dataPrecision = oracleDataReader.IsDBNull(5) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(5).Value);
-                            int? dataScale = oracleDataReader.IsDBNull(6) ? (int?)null : Convert.ToInt32(oracleDataReader.GetOracleNumber(6).Value);
+                            var constraintType = oracleDataReader.Get<int>("constraint_type");
+                            int? dataLength = oracleDataReader.IsDBNull(4) ? (int?)null : oracleDataReader.Get<int>("data_length");
+                            int? dataPrecision = oracleDataReader.IsDBNull(5) ? (int?)null : oracleDataReader.Get<int>("data_precision");
+                            int? dataScale = oracleDataReader.IsDBNull(6) ? (int?)null : oracleDataReader.Get<int>("data_scale");
 
                             columns.Add(new Column {
                                 Name = oracleDataReader.GetOracleString(0).Value,

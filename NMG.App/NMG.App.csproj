@@ -32,7 +32,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <StartupObject>NHibernateMappingGenerator.Program</StartupObject>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -62,8 +62,8 @@
     <Reference Include="FastColoredTextBox">
       <HintPath>..\Lib\FastColoredTextBox\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64">
-      <HintPath>..\packages\IBM.Data.DB.Provider.11.1.4040.4\lib\net451\x64\IBM.Data.DB2.dll</HintPath>
+    <Reference Include="IBM.Data.DB2, Version=11.5.5.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64">
+      <HintPath>..\packages\IBM.Data.DB.Provider.11.5.5010.4\lib\net451\x64\IBM.Data.DB2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.ConnectionUI">
       <HintPath>..\Lib\Microsoft.Data.ConnectionUI\Microsoft.Data.ConnectionUI.dll</HintPath>
@@ -163,12 +163,12 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets" Condition="Exists('..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets')" />
+  <Import Project="..\packages\IBM.Data.DB.Provider.11.5.5010.4\build\IBM.Data.DB.Provider.targets" Condition="Exists('..\packages\IBM.Data.DB.Provider.11.5.5010.4\build\IBM.Data.DB.Provider.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IBM.Data.DB.Provider.11.1.4040.4\build\IBM.Data.DB.Provider.targets'))" />
+    <Error Condition="!Exists('..\packages\IBM.Data.DB.Provider.11.5.5010.4\build\IBM.Data.DB.Provider.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IBM.Data.DB.Provider.11.5.5010.4\build\IBM.Data.DB.Provider.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
