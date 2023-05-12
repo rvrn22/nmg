@@ -152,7 +152,15 @@ namespace NMG.Core
 
         private Type MapFromPostgreDBType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
-            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+            switch (dataType)
+            {
+                case "double precision":
+                    return typeof(double);
+                case "uuid":
+                    return typeof(Guid);
+                default:
+                    return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+            }
         }
 
         private Type MapFromSqliteDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
