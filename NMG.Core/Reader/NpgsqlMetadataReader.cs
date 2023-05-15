@@ -35,6 +35,7 @@ namespace NMG.Core.Reader
                             c.column_name
                             ,c.data_type
                             ,c.is_nullable
+                            ,c.is_identity
                             ,b.constraint_type as type
                             from information_schema.constraint_column_usage a
                             inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
@@ -45,6 +46,7 @@ namespace NMG.Core.Reader
                             a.column_name
                             ,a.data_type
                             ,a.is_nullable
+                            ,a.is_identity
                             ,b.constraint_type as type
                             from information_schema.columns a
                             inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey'
@@ -53,6 +55,7 @@ namespace NMG.Core.Reader
                             a.column_name
                             ,a.data_type
                             ,a.is_nullable
+                            ,a.is_identity
                             ,''
                             from  information_schema.columns a
                             where a.table_schema='{1}' and a.table_name='{0}' and a.column_name not in (
@@ -79,15 +82,18 @@ namespace NMG.Core.Reader
                                 bool isNullable = sqlDataReader.GetString(2).Equals("YES",
                                                                                     StringComparison.
                                                                                         CurrentCultureIgnoreCase);
+                                bool isIdentity = sqlDataReader.GetString(3).Equals("YES",
+                                                        StringComparison.
+                                                            CurrentCultureIgnoreCase);
                                 bool isPrimaryKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
-                                             NpgsqlConstraintType.PrimaryKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
+                                        (!sqlDataReader.IsDBNull(4)
+                                             ? sqlDataReader.GetString(4).Equals(
+                                                 NpgsqlConstraintType.PrimaryKey.ToString(),
+                                                 StringComparison.CurrentCultureIgnoreCase)
+                                             : false);
                                 bool isForeignKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
+                                    (!sqlDataReader.IsDBNull(4)
+                                         ? sqlDataReader.GetString(4).Equals(
                                              NpgsqlConstraintType.ForeignKey.ToString(),
                                              StringComparison.CurrentCultureIgnoreCase)
                                          : false);
@@ -101,6 +107,7 @@ namespace NMG.Core.Reader
                                     IsNullable = isNullable,
                                     IsPrimaryKey = isPrimaryKey,
                                     //IsPrimaryKey(selectedTableName.Name, columnName)
+                                    IsIdentity = isIdentity,
                                     IsForeignKey = isForeignKey,                                    
                                     // IsFK()
                                     MappedDataType =
