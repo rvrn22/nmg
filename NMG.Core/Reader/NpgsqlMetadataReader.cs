@@ -83,20 +83,18 @@ namespace NMG.Core.Reader
                                                                                     StringComparison.
                                                                                         CurrentCultureIgnoreCase);
                                 bool isIdentity = sqlDataReader.GetString(3).Equals("YES",
-                                                        StringComparison.
-                                                            CurrentCultureIgnoreCase);
+                                                                                    StringComparison.
+                                                                                        CurrentCultureIgnoreCase);
                                 bool isPrimaryKey =
-                                        (!sqlDataReader.IsDBNull(4)
-                                             ? sqlDataReader.GetString(4).Equals(
-                                                 NpgsqlConstraintType.PrimaryKey.ToString(),
-                                                 StringComparison.CurrentCultureIgnoreCase)
-                                             : false);
-                                bool isForeignKey =
-                                    (!sqlDataReader.IsDBNull(4)
-                                         ? sqlDataReader.GetString(4).Equals(
-                                             NpgsqlConstraintType.ForeignKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
+                                        !sqlDataReader.IsDBNull(4)
+                                        && sqlDataReader.GetString(4).Equals(
+                                                    NpgsqlConstraintType.PrimaryKey.ToString(),
+                                                    StringComparison.CurrentCultureIgnoreCase);
+                                bool isForeignKey = 
+                                        !sqlDataReader.IsDBNull(4)
+                                        && sqlDataReader.GetString(4).Equals(
+                                                    NpgsqlConstraintType.ForeignKey.ToString(),
+                                                    StringComparison.CurrentCultureIgnoreCase);
 
                                 var m = new DataTypeMapper();
 
@@ -330,20 +328,26 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                         String.Format(
                             @"
                         select DISTINCT
-	                         b.TABLE_NAME,
-	                         c.TABLE_NAME
+                            b.TABLE_NAME,
+                            c.TABLE_NAME,
+                            d.COLUMN_NAME
                         from
-	                        INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
-	                        on
-	                        a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
-	                        a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
-	                        on
-	                        a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
-	                        a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
+                            join
+                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
+                            on
+                            a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
+                            a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
+                            join
+                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
+                            on
+                            a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
+                            a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            join
+                            INFORMATION_SCHEMA.KEY_COLUMN_USAGE d
+                            on
+                            d.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
+                            d.CONSTRAINT_NAME = c.CONSTRAINT_NAME
                         where
 	                        b.TABLE_NAME = '{0}'
                         order by
@@ -355,7 +359,8 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                     {
                         hasManyRelationships.Add(new HasMany
                         {
-                            Reference = reader.GetString(1)
+                            Reference = reader.GetString(1),
+                            ReferenceColumn = reader.GetString(2)
                         });
                     }
 
