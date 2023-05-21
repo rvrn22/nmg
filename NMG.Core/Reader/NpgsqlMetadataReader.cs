@@ -37,19 +37,23 @@ namespace NMG.Core.Reader
                             ,c.is_nullable
                             ,c.is_identity
                             ,b.constraint_type as type
+                            ,b.constraint_name
                             from information_schema.constraint_column_usage a
                             inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
                             inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
                             where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
                             union
                             select
-                            a.column_name
-                            ,a.data_type
-                            ,a.is_nullable
-                            ,a.is_identity
+                            c.column_name
+                            ,c.data_type
+                            ,c.is_nullable
+                            ,c.is_identity
                             ,b.constraint_type as type
-                            from information_schema.columns a
-                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey'
+                            ,b.constraint_name
+                            from information_schema.key_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('FOREIGN KEY')
                             union
                             select 
                             a.column_name
@@ -57,9 +61,9 @@ namespace NMG.Core.Reader
                             ,a.is_nullable
                             ,a.is_identity
                             ,''
+                            ,''
                             from  information_schema.columns a
                             where a.table_schema='{1}' and a.table_name='{0}' and a.column_name not in (
-
                             select
                             c.column_name
                             from information_schema.constraint_column_usage a
@@ -68,9 +72,11 @@ namespace NMG.Core.Reader
                             where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
                             union
                             select
-                            a.column_name
-                            from information_schema.columns a
-                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey')", table.Name, owner);
+                            c.column_name
+                            from information_schema.key_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('FOREIGN KEY'))", table.Name, owner);
 
 
                         using (NpgsqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
@@ -88,14 +94,16 @@ namespace NMG.Core.Reader
                                 bool isPrimaryKey =
                                         !sqlDataReader.IsDBNull(4)
                                         && sqlDataReader.GetString(4).Equals(
-                                                    NpgsqlConstraintType.PrimaryKey.ToString(),
-                                                    StringComparison.CurrentCultureIgnoreCase);
-                                bool isForeignKey = 
+                                                 NpgsqlConstraintType.PrimaryKey.ToString(),
+                                                 StringComparison.CurrentCultureIgnoreCase);
+                                bool isForeignKey =
                                         !sqlDataReader.IsDBNull(4)
                                         && sqlDataReader.GetString(4).Equals(
-                                                    NpgsqlConstraintType.ForeignKey.ToString(),
-                                                    StringComparison.CurrentCultureIgnoreCase);
+                                                 NpgsqlConstraintType.ForeignKey.ToString(),
+                                                 StringComparison.CurrentCultureIgnoreCase);
 
+                                string constraintName = sqlDataReader.GetString(5);
+                                
                                 var m = new DataTypeMapper();
 
                                 columns.Add(new Column
@@ -108,6 +116,7 @@ namespace NMG.Core.Reader
                                     IsIdentity = isIdentity,
                                     IsForeignKey = isForeignKey,                                    
                                     // IsFK()
+                                    ConstraintName = constraintName,
                                     MappedDataType =
                                         m.MapFromDBType(ServerType.PostgreSQL, dataType, null, null, null).ToString(),
                                     //DataLength = dataLength
