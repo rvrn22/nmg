@@ -227,7 +227,7 @@ namespace NMG.Core.ByCode
                 {
                     mapList.Add("map.PropertyRef(\"" + formatter.FormatText(fk.Columns.First().ForeignKeyColumnName) + "\")");
                 }
-                if (fk.Columns.First().IsNullable)
+                if (!fk.Columns.First().IsNullable)
                 {
                     mapList.Add("map.NotNullable(true)");
                 }
