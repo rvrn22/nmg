@@ -232,7 +232,7 @@ namespace NMG.Core.ByCode
                     mapList.Add("map.NotNullable(true)");
                 }
                 mapList.Add("map.Cascade(Cascade.None)");
-                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(fk.UniquePropertyName ?? fk.Name), mapList));
+                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(fk.UniquePropertyName ?? fk.References), mapList));
             }
             else
             {
