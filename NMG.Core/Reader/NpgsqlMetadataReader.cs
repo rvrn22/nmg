@@ -35,28 +35,35 @@ namespace NMG.Core.Reader
                             c.column_name
                             ,c.data_type
                             ,c.is_nullable
+                            ,c.is_identity
                             ,b.constraint_type as type
+                            ,b.constraint_name
                             from information_schema.constraint_column_usage a
                             inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
                             inner join  information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
                             where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
                             union
                             select
-                            a.column_name
-                            ,a.data_type
-                            ,a.is_nullable
+                            c.column_name
+                            ,c.data_type
+                            ,c.is_nullable
+                            ,c.is_identity
                             ,b.constraint_type as type
-                            from information_schema.columns a
-                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey'
+                            ,b.constraint_name
+                            from information_schema.key_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('FOREIGN KEY')
                             union
                             select 
                             a.column_name
                             ,a.data_type
                             ,a.is_nullable
+                            ,a.is_identity
+                            ,''
                             ,''
                             from  information_schema.columns a
                             where a.table_schema='{1}' and a.table_name='{0}' and a.column_name not in (
-
                             select
                             c.column_name
                             from information_schema.constraint_column_usage a
@@ -65,9 +72,11 @@ namespace NMG.Core.Reader
                             where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('PRIMARY KEY')
                             union
                             select
-                            a.column_name
-                            from information_schema.columns a
-                            inner join information_schema.table_constraints b on b.constraint_name ='{0}_'||a.column_name||'_fkey')", table.Name, owner);
+                            c.column_name
+                            from information_schema.key_column_usage a
+                            inner join information_schema.table_constraints b on a.constraint_name=b.constraint_name
+                            inner join information_schema.columns c on a.column_name=c.column_name and a.table_name=c.table_name
+                            where a.table_schema='{1}' and a.table_name='{0}' and b.constraint_type in ('FOREIGN KEY'))", table.Name, owner);
 
 
                         using (NpgsqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
@@ -79,19 +88,22 @@ namespace NMG.Core.Reader
                                 bool isNullable = sqlDataReader.GetString(2).Equals("YES",
                                                                                     StringComparison.
                                                                                         CurrentCultureIgnoreCase);
+                                bool isIdentity = sqlDataReader.GetString(3).Equals("YES",
+                                                                                    StringComparison.
+                                                                                        CurrentCultureIgnoreCase);
                                 bool isPrimaryKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
-                                             NpgsqlConstraintType.PrimaryKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
+                                        !sqlDataReader.IsDBNull(4)
+                                        && sqlDataReader.GetString(4).Equals(
+                                                 NpgsqlConstraintType.PrimaryKey.ToString(),
+                                                 StringComparison.CurrentCultureIgnoreCase);
                                 bool isForeignKey =
-                                    (!sqlDataReader.IsDBNull(3)
-                                         ? sqlDataReader.GetString(3).Equals(
-                                             NpgsqlConstraintType.ForeignKey.ToString(),
-                                             StringComparison.CurrentCultureIgnoreCase)
-                                         : false);
+                                        !sqlDataReader.IsDBNull(4)
+                                        && sqlDataReader.GetString(4).Equals(
+                                                 NpgsqlConstraintType.ForeignKey.ToString(),
+                                                 StringComparison.CurrentCultureIgnoreCase);
 
+                                string constraintName = sqlDataReader.GetString(5);
+                                
                                 var m = new DataTypeMapper();
 
                                 columns.Add(new Column
@@ -101,8 +113,10 @@ namespace NMG.Core.Reader
                                     IsNullable = isNullable,
                                     IsPrimaryKey = isPrimaryKey,
                                     //IsPrimaryKey(selectedTableName.Name, columnName)
+                                    IsIdentity = isIdentity,
                                     IsForeignKey = isForeignKey,                                    
                                     // IsFK()
+                                    ConstraintName = constraintName,
                                     MappedDataType =
                                         m.MapFromDBType(ServerType.PostgreSQL, dataType, null, null, null).ToString(),
                                     //DataLength = dataLength
@@ -323,20 +337,26 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                         String.Format(
                             @"
                         select DISTINCT
-	                         b.TABLE_NAME,
-	                         c.TABLE_NAME
+                            b.TABLE_NAME,
+                            c.TABLE_NAME,
+                            d.COLUMN_NAME
                         from
-	                        INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
-	                        on
-	                        a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
-	                        a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
-	                        join
-	                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
-	                        on
-	                        a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
-	                        a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS a
+                            join
+                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS b
+                            on
+                            a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA and
+                            a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME
+                            join
+                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
+                            on
+                            a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
+                            a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            join
+                            INFORMATION_SCHEMA.KEY_COLUMN_USAGE d
+                            on
+                            d.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
+                            d.CONSTRAINT_NAME = c.CONSTRAINT_NAME
                         where
 	                        b.TABLE_NAME = '{0}'
                         order by
@@ -348,7 +368,8 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                     {
                         hasManyRelationships.Add(new HasMany
                         {
-                            Reference = reader.GetString(1)
+                            Reference = reader.GetString(1),
+                            ReferenceColumn = reader.GetString(2)
                         });
                     }
 

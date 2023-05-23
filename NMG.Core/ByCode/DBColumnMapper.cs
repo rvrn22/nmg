@@ -227,12 +227,12 @@ namespace NMG.Core.ByCode
                 {
                     mapList.Add("map.PropertyRef(\"" + formatter.FormatText(fk.Columns.First().ForeignKeyColumnName) + "\")");
                 }
-                if (fk.Columns.First().IsNullable)
+                if (!fk.Columns.First().IsNullable)
                 {
                     mapList.Add("map.NotNullable(true)");
                 }
                 mapList.Add("map.Cascade(Cascade.None)");
-                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(fk.UniquePropertyName),mapList));
+                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(fk.UniquePropertyName ?? fk.References), mapList));
             }
             else
             {
