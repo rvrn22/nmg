@@ -52,6 +52,8 @@ namespace NMG.Core
                     return MapFromOracleDBType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.MySQL:
                     return MapFromMySqlDBType(dataType, dataLength, dataPrecision, dataScale);
+                case ServerType.MSAccess:
+                    return MapFromMSAccessDbType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.SQLite:
                     return MapFromSqliteDbType(dataType, dataLength, dataPrecision, dataScale);
                 case ServerType.PostgreSQL:
@@ -164,6 +166,10 @@ namespace NMG.Core
         }
 
         private Type MapFromSqliteDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
+        {
+            return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
+        }
+        private Type MapFromMSAccessDbType(string dataType, int? dataLength, int? dataPrecision, int? dataScale)
         {
             return MapFromDBType(dataType, dataLength, dataPrecision, dataScale);
         }

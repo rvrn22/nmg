@@ -27,5 +27,7 @@
 
         public static string CUBRID_CONN_STR_TEMPLATE =
             "server=localhost;port=33000;database=demodb;user=dba;password=";
+        
+        public static string MSACCESS_CONN_STR_TEMPLATE = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\myFolder\myAccessFile.accdb";
     }
 }

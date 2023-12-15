@@ -10,6 +10,7 @@ namespace NMG.Core.Domain
         Sybase,
         Informix,
         Ingres,
-        CUBRID
+        CUBRID,
+        MSAccess
     }
 }

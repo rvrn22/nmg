@@ -162,6 +162,7 @@
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Reader\MSAccessMetadataReader.cs" />
     <Compile Include="Reader\CUBRIDConstraintType.cs" />
     <Compile Include="Reader\CUBRIDMetadataReader.cs" />
     <Compile Include="Reader\IConstraintTypeResolver.cs" />
