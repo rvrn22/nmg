@@ -65,5 +65,29 @@ namespace NMG.Core.Util
             TextInfo textInfo = cultureInfo.TextInfo;
             return textInfo.ToTitleCase(text);
         }
+
+        /// <summary>
+        /// Wrap word in double quotes, then backticks (`)
+        /// for NHibernate to interpret
+        /// without backticks
+        ///
+        /// This is for table / column / object
+        /// names that contain spaces or that use
+        /// db-specific keywords
+        /// so NHibernate will behave correctly
+        ///
+        /// Reference:
+        /// https://groups.google.com/g/nhusers/c/-46QXkkXVV0
+        /// https://sdesmedt.wordpress.com/2006/09/04/nhibernate-part-4-mapping-techniques-for-aggregation-one-to-many-mapping/
+        /// and from Hibernate:
+        /// https://stackoverflow.com/questions/50783644/add-backticks-to-column-names-in-hibernate
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToStringLiteral(this string input)
+        {
+            if (input == null) return null;
+            return string.Format("\"`{0}`\"", input);
+        }
     }
 }

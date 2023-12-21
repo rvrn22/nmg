@@ -4,6 +4,7 @@ using System.Text;
 using NMG.Core.Domain;
 using NMG.Core.ByCode;
 using NMG.Core.TextFormatter;
+using NMG.Core.Util;
 
 namespace NMG.Core.Generator
 {
@@ -61,12 +62,12 @@ namespace NMG.Core.Generator
             // Table Name - Only ouput if table is different than the class name.
             if (Table.Name.ToLower() != className.ToLower())
             {
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(" + Table.Name.ToStringLiteral() + ");"));
             }
             // Scheme / Owner Name
             if (!string.IsNullOrEmpty(Table.Owner))
             {
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Schema(\"" + Table.Owner + "\");"));
+                constructor.Statements.Add(new CodeSnippetStatement(TABS + "Schema(" + Table.Owner.ToStringLiteral() + ");"));
             }
 
             constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));

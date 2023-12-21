@@ -84,6 +84,8 @@ namespace NHibernateMappingGenerator
         {
             switch (serverType)
             {
+                case ServerType.MSAccess:
+                    return StringConstants.MSACCESS_CONN_STR_TEMPLATE;
                 case ServerType.Oracle:
                     return StringConstants.ORACLE_CONN_STR_TEMPLATE;
                 case ServerType.SqlServer:

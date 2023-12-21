@@ -18,7 +18,7 @@ namespace NMG.Tests.Fluent
                                  DataType = "Int",
                                  IsNullable = true
                              };
-            Assert.That(mapper.Map(column, "Age", new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Age).Column(\"Age\");"));
+            Assert.That(mapper.Map(column, "Age", new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Age).Column(\"`Age`\");"));
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace NMG.Tests.Fluent
                                  IsPrimaryKey = false,
                                  MappedDataType = "string"
                              };
-            Assert.That(mapper.Map(column, "Name", new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Name).Column(\"Name\").Not.Nullable().Length(16);"));
+            Assert.That(mapper.Map(column, "Name", new PascalCaseTextFormatter()), Is.EqualTo("Map(x => x.Name).Column(\"`Name`\").Not.Nullable().Length(16);"));
         }
     }
 }
