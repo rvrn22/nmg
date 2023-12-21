@@ -7,6 +7,12 @@ namespace NMG.Tests.Util
     public class StringExtensionsTest
     {
         [Test]
+        public void StringLiteral()
+        {
+            Assert.AreEqual("\"`Snow Ball`\"", "Snow Ball".ToStringLiteral());
+        }
+
+        [Test]
         public void FirstCharAsLower()
         {
             const string name = "HitMan";

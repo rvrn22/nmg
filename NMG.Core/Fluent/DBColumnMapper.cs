@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
+using NMG.Core.Util;
 
 namespace NMG.Core.Fluent
 {
@@ -10,7 +11,7 @@ namespace NMG.Core.Fluent
         {
             var mappedStrBuilder = new StringBuilder(string.Format("Map(x => x.{0})", fieldName));
             mappedStrBuilder.Append(Constants.Dot);
-            mappedStrBuilder.Append("Column(\"" + column.Name + "\")");
+            mappedStrBuilder.Append("Column(" + column.Name.ToStringLiteral() + ")");
 
             if (!column.IsNullable)
             {

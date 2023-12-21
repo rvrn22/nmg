@@ -92,7 +92,7 @@ namespace NMG.Core.Reader
 
         public IList<string> GetOwners()
         {
-            return new List<string> { "dbo" };
+            return new List<string> { "master" };
         }
 
         public List<string> GetSequences(string owner)

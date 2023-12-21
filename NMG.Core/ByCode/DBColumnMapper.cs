@@ -4,6 +4,7 @@ using System.Linq;
 using NMG.Core.Domain;
 using NMG.Core.TextFormatter;
 using System.Text;
+using NMG.Core.Util;
 
 namespace NMG.Core.ByCode
 {
@@ -32,15 +33,15 @@ namespace NMG.Core.ByCode
                     builder.AppendFormat("Id(x => x.{0}, map => ", formatter.FormatText(column.Name));
                     builder.AppendLine();
                     builder.AppendLine("\t\t\t\t{");
-                    builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
-                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, g => g.Params(new { sequence = \"" + sequenceName + "\" }));");
+                    builder.AppendLine("\t\t\t\t\tmap.Column(" + column.Name.ToStringLiteral() + ");");
+                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, g => g.Params(new { sequence = " + sequenceName.ToStringLiteral() + " }));");
                     builder.Append("\t\t\t\t});");
                     break;
                 case Language.VB:
                     builder.AppendFormat("Id(Function(x) x.{0}, Sub(map)", formatter.FormatText(column.Name));
                     builder.AppendLine();
-                    builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\")");
-                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, Function(g) g.Params(New { sequence = \"" + sequenceName + "\" }))");
+                    builder.AppendLine("\t\t\t\t\tmap.Column(" + column.Name.ToStringLiteral() + ")");
+                    builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, Function(g) g.Params(New { sequence = " + sequenceName.ToStringLiteral() + " }))");
                     builder.Append("\t\t\t\tEnd Sub)");
                     break;
             }
@@ -55,7 +56,7 @@ namespace NMG.Core.ByCode
 
             if (column.Name.ToLower() != propertyName.ToLower())
             {
-                mapList.Add("map.Column(\"" + column.Name + "\")");
+                mapList.Add("map.Column(" + column.Name.ToStringLiteral() + ")");
             }
             mapList.Add(column.IsIdentity ? "map.Generator(Generators.Identity)" : "map.Generator(Generators.Assigned)");
 
@@ -75,7 +76,7 @@ namespace NMG.Core.ByCode
                     builder.AppendLine("\t\t\t\t{");
                     foreach (var column in columns)
                     {
-                        builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(\"" + column.Name + "\"));");
+                        builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(" + column.Name.ToStringLiteral() + "));");
                     }
                     builder.Append("\t\t\t\t});");
                     break;
@@ -83,7 +84,7 @@ namespace NMG.Core.ByCode
                     builder.AppendLine("ComposedId(Sub(compId)");
                     foreach (var column in columns)
                     {
-                        builder.AppendLine("\t\t\t\t\tcompId.Property(Function(x) x." + formatter.FormatText(column.Name) + ", Sub(m) m.Column(\"" + column.Name + "\"))");
+                        builder.AppendLine("\t\t\t\t\tcompId.Property(Function(x) x." + formatter.FormatText(column.Name) + ", Sub(m) m.Column(" + column.Name.ToStringLiteral() + "))");
                     }
                     builder.AppendLine("\t\t\t\tEnd Sub)");
                     break;
@@ -108,7 +109,7 @@ namespace NMG.Core.ByCode
             // Column
             if (column.Name.ToLower() != propertyName.ToLower())
             {
-                mapList.Add("map.Column(\"" + column.Name + "\")");
+                mapList.Add("map.Column(" + column.Name.ToStringLiteral() + ")");
             }
             // Not Null
             if (!column.IsNullable)
@@ -200,16 +201,16 @@ namespace NMG.Core.ByCode
             if (_language == Language.CSharp)
             {
                 builder.AppendFormat(
-                    "\t\t\tBag(x => x.{0}, colmap =>  {{ colmap.Key(x => x.Column(\"{1}\")); colmap.Inverse(true); }}, map => {{ map.OneToMany(); }});",
+                    "\t\t\tBag(x => x.{0}, colmap =>  {{ colmap.Key(x => x.Column({1})); colmap.Inverse(true); }}, map => {{ map.OneToMany(); }});",
                     formatter.FormatPlural(hasMany.Reference),
-                    hasMany.ReferenceColumn);
+                    hasMany.ReferenceColumn.ToStringLiteral());
             }
             else if (_language == Language.VB)
             {
                 builder.AppendFormat(
-                    "\t\t\tBag(Function(x) x.{0}, Sub(colmap) colmap.Key(Function(x) x.Column(\"{1}\")), Sub(map) map.OneToMany())",
+                    "\t\t\tBag(Function(x) x.{0}, Sub(colmap) colmap.Key(Function(x) x.Column({1})), Sub(map) map.OneToMany())",
                     formatter.FormatPlural(hasMany.Reference),
-                    hasMany.ReferenceColumn);
+                    hasMany.ReferenceColumn.ToStringLiteral());
             }
             return builder.ToString();
         }
@@ -220,12 +221,12 @@ namespace NMG.Core.ByCode
             if (fk.Columns.Count() == 1)
             {
                 var mapList = new List<string>();
-                mapList.Add("map.Column(\"" + fk.Columns.First().Name + "\")");
+                mapList.Add("map.Column(" + fk.Columns.First().Name.ToStringLiteral() + ")");
 
                 // PropertyRef - Used with a FK that doesnt map to a primary key on referenced table.
                 if (!string.IsNullOrEmpty(fk.Columns.First().ForeignKeyColumnName))
                 {
-                    mapList.Add("map.PropertyRef(\"" + formatter.FormatText(fk.Columns.First().ForeignKeyColumnName) + "\")");
+                    mapList.Add("map.PropertyRef(" + formatter.FormatText(fk.Columns.First().ForeignKeyColumnName).ToStringLiteral() + ")");
                 }
                 if (!fk.Columns.First().IsNullable)
                 {
@@ -247,7 +248,7 @@ namespace NMG.Core.ByCode
                     var lastColumn = fk.Columns.Last();
                     foreach (var column in fk.Columns)
                     {
-                        builder.AppendFormat("x => x.Name(\"{0}\")", column.Name);
+                        builder.AppendFormat("x => x.Name({0})", column.Name.ToStringLiteral());
 
                         var isLastColumn = lastColumn == column;
                         if (!isLastColumn)
@@ -267,7 +268,7 @@ namespace NMG.Core.ByCode
                     var lastColumn = fk.Columns.Last();
                     foreach (var column in fk.Columns)
                     {
-                        builder.AppendFormat("x.Name(\"{0}\")", column.Name);
+                        builder.AppendFormat("x.Name({0})", column.Name.ToStringLiteral());
 
                         var isLastColumn = lastColumn == column;
                         if (!isLastColumn)
